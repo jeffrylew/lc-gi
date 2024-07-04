@@ -102,6 +102,37 @@ static bool threeConsecutiveOddsDS2(std::vector<int> arr)
 
 } // static bool threeConsecutiveOddsDS2( ...
 
+//! @brief Product of three numbers discussion solution
+//! @param[in] arr Vector of integers from 1 to 1000
+//! @return True if there are three consecutive odd numbers in arr, else false
+static bool threeConsecutiveOddsDS3(std::vector<int> arr)
+{
+    //! @detail https://leetcode.com/problems/three-consecutive-odds/description
+    //!
+    //!         A product is odd if all numbers are odd. Each is constrained to
+    //!         10 ^ 3 so the max product is 10 ^ 9, and we won't overflow a
+    //!         23-bit integer.
+    //!
+    //!         Time complexity O(N) where N = arr.size()
+    //!         Space complexity O(1)
+
+    const auto arr_size = static_cast<int>(arr.size());
+
+    //! Loop through vector up to third-to-last element
+    for (int idx = 0; idx < arr_size - 2; ++idx)
+    {
+        const int product {arr[idx] * arr[idx + 1] * arr[idx + 2]};
+
+        if (product % 2 == 1)
+        {
+            return true;
+        }
+    }
+
+    return false;
+
+} // static bool threeConsecutiveOddsDS3( ...
+
 TEST(ThreeConsecutiveOddsTest, SampleTest1)
 {
     EXPECT_FALSE(threeConsecutiveOddsFA({2, 6, 4, 1}));
