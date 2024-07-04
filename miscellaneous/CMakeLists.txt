@@ -1,6 +1,7 @@
 set (
     cpp_files
     "intersection_of_two_arrays_ii"
+    "merge_nodes_in_between_zeros"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "three_consecutive_odds"
 )
