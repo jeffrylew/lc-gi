@@ -60,6 +60,47 @@ static ListNode* mergeNodesFA(ListNode* head)
 
 } // static ListNode* mergeNodesFA( ...
 
+//! @brief Two-pointer discussion solution
+//! @param[in] head Pointer to head of singly-linked list
+//! @return Head of modified linked list
+static ListNode* mergeNodesDS1(ListNode* head)
+{
+    //! @details https://leetcode.com/problems/merge-nodes-in-between-zeros
+    //!
+    //!          Time complexity O(N) where N = size of linked list. All nodes
+    //!          of linked list are visited exactly once.
+    //!          Space complexity O(1). No additional space is used.
+
+    //! Initialize a sentinel/dummy node with the first non-zero value
+    ListNode* modify   = head->next;
+    ListNode* next_sum = modify;
+
+    while (next_sum != nullptr)
+    {
+        int sum {};
+
+        //! Find the sum of all nodes until a zero is encountered
+        while (next_sum != nullptr && next_sum->val != 0)
+        {
+            sum += next_sum->val;
+            next_sum = next_sum->next;
+        }
+
+        //! Assign sum to current node's value
+        modify->val = sum;
+
+        //! Move next_sum to first non-zero value of next block
+        next_sum = next_sum->next;
+
+        //! Also move modify to this node
+        modify->next = next_sum;
+        modify = modify->next;
+    }
+
+    return head->next;
+
+} // static ListNode* mergeNodesDS1( ...
+
 TEST(MergeNodesTest, SampleTest1)
 {
     //! Output nodes starting with four
