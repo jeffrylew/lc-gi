@@ -38,9 +38,38 @@ static bool threeConsecutiveOddsFA(std::vector<int> arr)
 
 } // static bool threeConsecutiveOddsFA( ...
 
+//! @brief Brute force discussion solution
+//! @param[in] arr Vector of integers from 1 to 1000
+//! @return True if there are three consecutive odd numbers in arr, else false
+static bool threeConsecutiveOddsDS1(std::vector<int> arr)
+{
+    //! @detail https://leetcode.com/problems/three-consecutive-odds/description
+    //!
+    //!         Time complexity O(N) where N = arr.size()
+    //!         Space complexity O(1)
+
+    const auto arr_size = static_cast<int>(arr.size());
+
+    //! Loop through vector up to third-to-last element
+    for (int idx = 0; idx < arr_size - 2; ++idx)
+    {
+        //! Check if current element and next two elements are all odd
+        if (arr[idx] % 2 == 1
+            && arr[idx + 1] % 2 == 1
+            && arr[idx + 2] % 2 == 1)
+        {
+            return true;
+        }
+    }
+
+    return false;
+
+} // static bool threeConsecutiveOddsDS1( ...
+
 TEST(ThreeConsecutiveOddsTest, SampleTest1)
 {
     EXPECT_FALSE(threeConsecutiveOddsFA({2, 6, 4, 1}));
+    EXPECT_FALSE(threeConsecutiveOddsDS1({2, 6, 4, 1}));
 }
 
 TEST(ThreeConsecutiveOddsTest, SampleTest2)
@@ -48,4 +77,5 @@ TEST(ThreeConsecutiveOddsTest, SampleTest2)
     const std::vector<int> arr {1, 2, 34, 3, 4, 5, 7, 23, 12};
 
     EXPECT_TRUE(threeConsecutiveOddsFA(arr));
+    EXPECT_TRUE(threeConsecutiveOddsDS1(arr));
 }
