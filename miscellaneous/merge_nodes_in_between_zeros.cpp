@@ -101,6 +101,44 @@ static ListNode* mergeNodesDS1(ListNode* head)
 
 } // static ListNode* mergeNodesDS1( ...
 
+//! @brief Recursion discussion solution
+//! @param[in] head Pointer to head of singly-linked list
+//! @return Head of modified linked list
+static ListNode* mergeNodesDS2(ListNode* head)
+{
+    //! @details https://leetcode.com/problems/merge-nodes-in-between-zeros
+    //!
+    //!          Time complexity O(N) where N = size of linked list. All nodes
+    //!          are visited exactly once.
+    //!          Space complexity O(N). Recursion could go up to N levels deep.
+
+    // Start with first non-zero value
+    head = head->next;
+    if (head == nullptr)
+    {
+        return head;
+    }
+
+    //! Initialize a dummy head node
+    ListNode* temp = head;
+    int       sum {};
+
+    while (temp != nullptr && temp->val != 0)
+    {
+        sum += temp->val;
+        temp = temp->next;
+    }
+
+    //! Store the sum in head's value
+    head->val = sum;
+
+    //! Store head's next node as recursive result for temp node
+    head->next = mergeNodesDS2(temp);
+
+    return head;
+
+} // static ListNode* mergeNodesDS2( ...
+
 TEST(MergeNodesTest, SampleTest1)
 {
     //! Output nodes starting with four
