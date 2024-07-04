@@ -128,6 +128,34 @@ static std::vector<int> intersectDS2(std::vector<int> nums1,
 
 } // static std::vector<int> intersectDS2( ...
 
+//! @brief Built-in intersection discussion solution
+//! @param[in] nums1 Vector of integers from 0 to 1000
+//! @param[in] nums2 Vector of integers from 0 to 1000
+//! @return Intersection of nums1 and nums2
+static std::vector<int> intersectDS3(std::vector<int> nums1,
+                                     std::vector<int> nums2)
+{
+    //! @details https://leetcode.com/problems/intersection-of-two-arrays-ii
+    //!
+    //!          Time complexity O(N * log N + M * log M) where N = nums1.size()
+    //!          and M = nums2.size() to sort two vectors. std::set_intersection
+    //!          takes at most O(2 * (N + M)).
+    //!          Space complexity O(log N + log M) for C++'s std::sort.
+
+    std::sort(nums1.begin(), nums1.end());
+    std::sort(nums2.begin(), nums2.end());
+
+    nums1.erase(std::set_intersection(nums1.begin(),
+                                      nums1.end(),
+                                      nums2.begin(),
+                                      nums2.end(),
+                                      nums1.begin()),
+                nums1.end());
+
+    return nums1;
+
+} // static std::vector<int> intersectDS3( ...
+
 TEST(IntersectTest, SampleTest1)
 {
     const std::vector<int> nums1 {1, 2, 2, 1};
@@ -137,6 +165,7 @@ TEST(IntersectTest, SampleTest1)
     EXPECT_EQ(expected_output, intersectFA(nums1, nums2));
     EXPECT_EQ(expected_output, intersectDS1(nums1, nums2));
     EXPECT_EQ(expected_output, intersectDS2(nums1, nums2));
+    EXPECT_EQ(expected_output, intersectDS3(nums1, nums2));
 }
 
 TEST(IntersectTest, SampleTest2)
@@ -148,4 +177,5 @@ TEST(IntersectTest, SampleTest2)
     EXPECT_EQ(expected_output, intersectFA(nums1, nums2));
     EXPECT_EQ(expected_output, intersectDS1(nums1, nums2));
     EXPECT_EQ(expected_output, intersectDS2(nums1, nums2));
+    EXPECT_EQ(expected_output, intersectDS3(nums1, nums2));
 }
