@@ -1,6 +1,7 @@
 set (
     cpp_files
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
+    "three_consecutive_odds"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
