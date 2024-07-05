@@ -1,25 +1,6 @@
+#include "ListNode.hpp"
+
 #include <gtest/gtest.h>
-
-//! @struct ListNode
-//! @brief Definition for singly-linked list
-struct ListNode
-{
-    int       val {};
-    ListNode* next {nullptr};
-
-    ListNode() = default;
-
-    ListNode(int x)
-        : val {x}
-    {
-    }
-
-    ListNode(int x, ListNode* next_node)
-        : val {x}
-        , next {next_node}
-    {
-    }
-};
 
 //! @brief First attempt to merge nodes between zero nodes in singly-linked list
 //! @param[in] head Pointer to head of singly-linked list
