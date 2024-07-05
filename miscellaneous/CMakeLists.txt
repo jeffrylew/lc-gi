@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
     "intersection_of_two_arrays_ii"
     "merge_nodes_in_between_zeros"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
