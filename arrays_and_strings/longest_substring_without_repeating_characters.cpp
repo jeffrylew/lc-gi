@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <tuple>
+#include <unordered_map>
 #include <unordered_set>
 
 //! @brief Find length of longest substring without repeating characters
@@ -49,23 +50,65 @@ static int lengthOfLongestSubstringFA(std::string s)
     return max_len;
 }
 
+//! @brief Sliding window discussion solution
+//! @param[in] s std::string to find substring in
+//! @return Length of longest substring in s without repeating characters
+static int lengthOfLongestSubstringDS1(std::string s)
+{
+    //! @details https://leetcode.com/problems/
+    //!          longest-substring-without-repeating-characters
+    //!
+    //!          Time complexity O(N) where N = s.size(). In the worst case each
+    //!          character will be visited twice by i and j in the sliding
+    //!          window given by [i, j).
+    //!          Space complexity O(min(M, N)) where M = size of the charset
+
+    std::unordered_map<char, int> char_count {};
+
+    int max_len {};
+    int left {};
+    int right {};
+
+    while (right < static_cast<int>(std::ssize(s)))
+    {
+        const char right_char {s[right]};
+        ++char_count[right_char];
+
+        while (char_count[right_char] > 1)
+        {
+            --char_count[s[left]];
+            ++left;
+        }
+
+        max_len = std::max(max_len, right - left + 1);
+
+        ++right;
+    }
+
+    return max_len;
+}
+
 TEST(LengthOfLongestSubstringTest, SampleTest1)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringFA("abcabcbb"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS1("abcabcbb"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest2)
 {
     EXPECT_EQ(1, lengthOfLongestSubstringFA("bbbbb"));
+    EXPECT_EQ(1, lengthOfLongestSubstringDS1("bbbbb"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest3)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringFA("pwwkew"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS1("pwwkew"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest4)
 {
     EXPECT_EQ(2, lengthOfLongestSubstringFA("dvdf"));
     EXPECT_NE(3, lengthOfLongestSubstringFA("dvdf"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS1("dvdf"));
 }
