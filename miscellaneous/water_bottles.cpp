@@ -59,14 +59,45 @@ static int numWaterBottlesDS1(int numBottles, int numExchange)
     return consumed_bottles + numBottles;
 }
 
+//! @brief Optimized simulation discussion solution
+//! @param[in] numBottles  Initial number of bottles filled with water
+//! @param[in] numExchange Empty water bottle to full water bottle exchange rate
+//! @return Max number of water bottles one can drink
+static int numWaterBottlesDS2(int numBottles, int numExchange)
+{
+    //! @details https://leetcode.com/problems/water-bottles/description/
+    //!
+    //!          Time complexity O(log_M N) where M = numExchange and N = number
+    //!          of initially full bottles. Divide number of full bottles
+    //!          numBottles by numExchange at each iteration.
+    //!          Space complexity O(1), no extra space is required.
+
+    int consumed_bottles {};
+
+    while (numBottles >= numExchange)
+    {
+        //! Max number of times can consume numExchange bottles using numBottles
+        const int max_times {numBottles / numExchange};
+
+        consumed_bottles += numExchange * max_times;
+        numBottles -= numExchange * max_times;
+
+        numBottles += max_times;
+    }
+
+    return consumed_bottles + numBottles;
+}
+
 TEST(NumWaterBottlesTest, SampleTest1)
 {
     EXPECT_EQ(13, numWaterBottlesFA(9, 3));
     EXPECT_EQ(13, numWaterBottlesDS1(9, 3));
+    EXPECT_EQ(13, numWaterBottlesDS2(9, 3));
 }
 
 TEST(NumWaterBottlesTest, SampleTest2)
 {
     EXPECT_EQ(19, numWaterBottlesFA(15, 4));
     EXPECT_EQ(19, numWaterBottlesDS1(15, 4));
+    EXPECT_EQ(19, numWaterBottlesDS2(15, 4));
 }
