@@ -88,22 +88,81 @@ static int lengthOfLongestSubstringDS1(std::string s)
     return max_len;
 }
 
+//! @brief Optimized sliding window discussion solution
+//! @param[in] s std::string to find substring in
+//! @return Length of longest substring in s without repeating characters
+static int lengthOfLongestSubstringDS2(std::string s)
+{
+    //! @details https://leetcode.com/problems/
+    //!          longest-substring-without-repeating-characters
+    //!
+    //!          Time complexity O(N) where N = s.size(). right iterates N times
+    //!          Space complexity O(min(M, N)) where M = size of the charset
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    std::unordered_map<char, int> char_idx {};
+
+    int max_len {};
+    int left {};
+
+    for (int right = 0; right < s_len; ++right)
+    {
+        const char right_char {s[right]};
+
+        if (char_idx[right_char] > 0)
+        {
+            left = std::max(left, char_idx[right_char]);
+        }
+
+        max_len = std::max(max_len, right - left + 1);
+
+        //! Store right + 1 so left can jump to the next non-duplicate character
+        //! in the if statement above
+        char_idx[right_char] = right + 1;
+    }
+
+    /*
+    //! More intuitive version from discussion solution
+    int left {};
+    for (int right = 0; right < s_len; ++right)
+    {
+        const char right_char {s[right]};
+
+        auto right_it = char_idx.find(right_char);
+        if (right_it != char_idx.end() && right_it->second >= left)
+        {
+            left = right_it->second + 1;
+        }
+
+        max_len = std::max(max_len, right - left + 1);
+
+        char_idx[right_char] = right;
+    }
+     */
+
+    return max_len;
+}
+
 TEST(LengthOfLongestSubstringTest, SampleTest1)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringFA("abcabcbb"));
     EXPECT_EQ(3, lengthOfLongestSubstringDS1("abcabcbb"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS2("abcabcbb"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest2)
 {
     EXPECT_EQ(1, lengthOfLongestSubstringFA("bbbbb"));
     EXPECT_EQ(1, lengthOfLongestSubstringDS1("bbbbb"));
+    EXPECT_EQ(1, lengthOfLongestSubstringDS2("bbbbb"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest3)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringFA("pwwkew"));
     EXPECT_EQ(3, lengthOfLongestSubstringDS1("pwwkew"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS2("pwwkew"));
 }
 
 TEST(LengthOfLongestSubstringTest, SampleTest4)
@@ -111,4 +170,5 @@ TEST(LengthOfLongestSubstringTest, SampleTest4)
     EXPECT_EQ(2, lengthOfLongestSubstringFA("dvdf"));
     EXPECT_NE(3, lengthOfLongestSubstringFA("dvdf"));
     EXPECT_EQ(3, lengthOfLongestSubstringDS1("dvdf"));
+    EXPECT_EQ(3, lengthOfLongestSubstringDS2("dvdf"));
 }
