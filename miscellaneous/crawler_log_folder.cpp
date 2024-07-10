@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -74,12 +75,48 @@ static int minOperationsDS1(std::vector<std::string> logs)
     return folder_depth;
 }
 
+//! @brief Stack discussion solution
+//! @param[in] logs Vector of change folder operation strings
+//! @return Min number of operations needed to get back to the main folder
+static int minOperationsDS2(std::vector<std::string> logs)
+{
+    //! @details https://leetcode.com/problems/crawler-log-folder/
+    //!
+    //!          Time complexity O(N) where N = logs.size(). The algorithm
+    //!          iterates through each operation once and each push/pop is O(1).
+    //!          Space complexity O(N), folder_stack can store up to N entries.
+
+    std::stack<std::string> folder_stack {};
+
+    for (const auto& current_operation : logs)
+    {
+        if (current_operation == "../")
+        {
+            //! Move up to parent directory if not already at main folder
+            if (!folder_stack.empty())
+            {
+                folder_stack.pop();
+            }
+        }
+        else if (current_operation != "./")
+        {
+            //! Enter a new folder
+            folder_stack.push(current_operation);
+        }
+
+        //! Ignore "./" operations as they don't change the current folder
+    }
+
+    return static_cast<int>(folder_stack.size());
+}
+
 TEST(MinOperationsTest, SampleTest1)
 {
     const std::vector<int> logs {"d1/", "d2/", "../", "d21/", "./"};
 
     EXPECT_EQ(2, minOperationsFA(logs));
     EXPECT_EQ(2, minOperationsDS1(logs));
+    EXPECT_EQ(2, minOperationsDS2(logs));
 }
 
 TEST(MinOperationsTest, SampleTest2)
@@ -88,6 +125,7 @@ TEST(MinOperationsTest, SampleTest2)
 
     EXPECT_EQ(3, minOperationsFA(logs));
     EXPECT_EQ(3, minOperationsDS1(logs));
+    EXPECT_EQ(3, minOperationsDS2(logs));
 }
 
 TEST(MinOperationsTest, SampleTest3)
@@ -96,4 +134,5 @@ TEST(MinOperationsTest, SampleTest3)
 
     EXPECT_EQ(0, minOperationsFA(logs));
     EXPECT_EQ(0, minOperationsDS1(logs));
+    EXPECT_EQ(0, minOperationsDS2(logs));
 }
