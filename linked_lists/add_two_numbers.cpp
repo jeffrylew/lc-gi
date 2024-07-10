@@ -96,6 +96,48 @@ static ListNode* addTwoNumbersFA(ListNode* l1, ListNode* l2)
 
 } // static ListNode* addTwoNumbersFA( ...
 
+//! @brief Elementary math discussion solution
+//! @param[in] l1 First linked list where digits are stored in reverse order
+//! @param[in] l2 Second linked list where digits are stored in reverse order
+//! @return Linked list containing sum of two numbers
+static ListNode* addTwoNumbersDS(ListNode* l1, ListNode* l2)
+{
+    //! @details https://leetcode.com/problems/add-two-numbers/description/
+    //!
+    //!          Time complexity O(max(M, N)) where M = length of l1 and N =
+    //!          length of l2. The algorithm iterates at most max(M, N) times.
+    //!          Space complexity O(1). The length of the new list is at most
+    //!          max(M, N) + 1. However, we don't count the answer as part of
+    //!          the space complexity.
+
+    ListNode* dummy_head = new ListNode(0);
+    auto*     curr       = dummy_head;
+
+    int carry {};
+
+    while (l1 != nullptr || l2 != nullptr || carry != 0)
+    {
+        const int x {l1 != nullptr ? l1->val : 0};
+        const int y {l2 != nullptr ? l2->val : 0};
+        const int sum {carry + x + y};
+
+        carry      = sum / 10;
+        curr->next = new ListNode(sum % 10);
+        curr       = curr->next;
+
+        l1 = (l1 != nullptr) ? l1->next : nullptr;
+        l2 = (l2 != nullptr) ? l2->next : nullptr;
+    }
+
+    auto* result = dummy_head->next;
+
+    //! Free memory allocated for dummy_head
+    delete dummy_head;
+
+    return result;
+
+} // static ListNode* addTwoNumbersDS( ...
+
 TEST(AddTwoNumbersTest, SampleTest1)
 {
     //! Memory allocation with new is undesired but required
@@ -114,6 +156,24 @@ TEST(AddTwoNumbersTest, SampleTest1)
 
     auto* head = addTwoNumbersFA(two, five);
     auto* prev = head;
+
+    while (head != nullptr && expected_output_head != nullptr)
+    {
+        EXPECT_EQ(head->val, expected_output_head->val);
+
+        //! Update prev for memory deallocation
+        prev = head;
+
+        head                 = head->next;
+        expected_output_head = expected_output_head->next;
+
+        //! Deallocate prev
+        delete prev;
+    }
+
+    expected_output_head = &seven;
+    head                 = addTwoNumbersDS(two, five);
+    prev                 = head;
 
     while (head != nullptr && expected_output_head != nullptr)
     {
