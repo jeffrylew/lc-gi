@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -37,17 +38,62 @@ static int minOperationsFA(std::vector<std::string> logs)
     return num_ops;
 }
 
+//! @brief Counter discussion solution
+//! @param[in] logs Vector of change folder operation strings
+//! @return Min number of operations needed to get back to the main folder
+static int minOperationsDS1(std::vector<std::string> logs)
+{
+    //! @details https://leetcode.com/problems/crawler-log-folder/
+    //!
+    //!          Time complexity O(N) where N = logs.size(). The algorithm
+    //!          iterates through each operation once. String matching ops take
+    //!          linear time wrt string length but the length of strings is
+    //!          limited to 10 so this does not significantly impact the overall
+    //!          time complexity
+    //!          Space complexity O(1) for folder_depth
+
+    int folder_depth {};
+
+    for (const auto& current_operation : logs)
+    {
+        if (current_operation == "../")
+        {
+            //! Go up one directory if "../" is encountered,
+            //! but don't go above the root
+            folder_depth = std::max(0, folder_depth - 1);
+        }
+        else if (current_operation != "./")
+        {
+            //! Increase depth if operation moves out of current directory
+            ++folder_depth;
+        }
+
+        //! Ignore "./" operations as they don't change the current folder
+    }
+
+    return folder_depth;
+}
+
 TEST(MinOperationsTest, SampleTest1)
 {
-    EXPECT_EQ(2, minOperationsFA({"d1/", "d2/", "../", "d21/", "./"}));
+    const std::vector<int> logs {"d1/", "d2/", "../", "d21/", "./"};
+
+    EXPECT_EQ(2, minOperationsFA(logs));
+    EXPECT_EQ(2, minOperationsDS1(logs));
 }
 
 TEST(MinOperationsTest, SampleTest2)
 {
-    EXPECT_EQ(3, minOperationsFA({"d1/", "d2/", "./", "d3/", "../", "d31/"}));
+    const std::vector<int> logs {"d1/", "d2/", "./", "d3/", "../", "d31/"};
+
+    EXPECT_EQ(3, minOperationsFA(logs));
+    EXPECT_EQ(3, minOperationsDS1(logs));
 }
 
 TEST(MinOperationsTest, SampleTest3)
 {
-    EXPECT_EQ(0, minOperationsFA({"d1/", "../", "../", "../"}));
+    const std::vector<int> logs {"d1/", "../", "../", "../"};
+
+    EXPECT_EQ(0, minOperationsFA(logs));
+    EXPECT_EQ(0, minOperationsDS1(logs));
 }
