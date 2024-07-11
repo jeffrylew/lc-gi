@@ -6,6 +6,7 @@ set (
     "merge_nodes_in_between_zeros"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "pass_the_pillow"
+    "reverse_substrings_between_each_pair_of_parentheses"
     "three_consecutive_odds"
     "water_bottles"
 )
