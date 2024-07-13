@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <stack>
 #include <string>
 
@@ -8,7 +9,36 @@
 //! @return std::string with reverse strings in each pair of matching brackets
 static std::string reverseParenthesesFA(std::string s)
 {
-    //! @todo
+    //! @details https://leetcode.com/problems/
+    //!          reverse-substrings-between-each-pair-of-parentheses
+
+    std::string output {};
+    output.reserve(s.size());
+
+    std::stack<std::string> substrs {};
+
+    for (const auto& ele : s)
+    {
+        if (ele == '(')
+        {
+            substrs.emplace();
+        }
+        else if (ele == ')')
+        {
+            auto str = substrs.top();
+            substrs.pop();
+
+            std::reverse(str.begin(), str.end());
+            std::reverse(output.begin(), output.end());
+            output.append(str);
+        }
+        else
+        {
+            substrs.top().append(ele);
+        }
+    }
+
+    return output;
 
 } // static std::string reverseParenthesesFA( ...
 
