@@ -147,26 +147,90 @@ static std::string reverseParenthesesDS1(std::string s)
 
 } // static std::string reverseParenthesesDS1( ...
 
+//! @brief Wormhole teleportation discussion solution
+//! @param[in] s std::string consisting of lower case English letters/brackets
+//! @return std::string with reverse strings in each pair of matching brackets
+static std::string reverseParenthesesDS2(std::string s)
+{
+    //! @details https://leetcode.com/problems/
+    //!          reverse-substrings-between-each-pair-of-parentheses
+    //!
+    //!          Time complexity O(N) where N = s.size(). Iterate through string
+    //!          once to pair parentheses using a stack. Each char is processed
+    //!          once in O(N). After pairing, we iterate through string again to
+    //!          construct final result string. Each char is processed once and
+    //!          navigate through pairs in constant time, resulting in O(N).
+    //!          Space complexity O(N). Use stack to track opening parentheses
+    //!          indices. In worst case, stack can hold up to O(N / 2) elements
+    //!          when all are opening parentheses. A vector paired_indices of
+    //!          size N stores indices of matching parentheses.
+
+    const auto       s_len = static_cast<int>(std::ssize(s));
+    std::stack<int>  open_parentheses_indices {};
+    std::vector<int> paired_indices(s_len);
+
+    //! First pass: Pair up parentheses
+    for (int idx = 0; idx < s_len; ++idx)
+    {
+        if (s[idx] == '(')
+        {
+            open_parentheses_indices.push(idx);
+        }
+        else if (s[idx] == ')')
+        {
+            const int open_parenthesis_idx {open_parentheses_indices.top()};
+            open_parentheses_indices.pop();
+
+            paired_indices[idx]                  = open_parenthesis_idx;
+            paired_indices[open_parenthesis_idx] = idx;
+        }
+    }
+
+    //! Second pass: Build the result string
+    std:string result;
+    int        direction {1};
+
+    for (int curr_idx = 0; curr_idx < s_len; curr_idx += direction)
+    {
+        if (s[curr_idx] == '(' || s[curr_idx] == ')')
+        {
+            curr_idx  = paired_indices[curr_idx];
+            direction = -direction;
+        }
+        else
+        {
+            result += s[curr_idx];
+        }
+    }
+
+    return result;
+
+} // static std::string reverseParenthesesDS2( ...
+
 TEST(ReverseParenthesesTest, SampleTest1)
 {
     EXPECT_EQ("dcba", reverseParenthesesFA("(abcd)"));
     EXPECT_EQ("dcba", reverseParenthesesDS1("(abcd)"));
+    EXPECT_EQ("dcba", reverseParenthesesDS2("(abcd)"));
 }
 
 TEST(ReverseParenthesesTest, SampleTest2)
 {
     EXPECT_EQ("iloveu", reverseParenthesesFA("(u(love)i)"));
     EXPECT_EQ("iloveu", reverseParenthesesDS1("(u(love)i)"));
+    EXPECT_EQ("iloveu", reverseParenthesesDS2("(u(love)i)"));
 }
 
 TEST(ReverseParenthesesTest, SampleTest3)
 {
     EXPECT_EQ("leetcode", reverseParenthesesFA("(ed(et(oc))el)"));
     EXPECT_EQ("leetcode", reverseParenthesesDS1("(ed(et(oc))el)"));
+    EXPECT_EQ("leetcode", reverseParenthesesDS2("(ed(et(oc))el)"));
 }
 
 TEST(ReverseParenthesesTest, SampleTest4)
 {
     EXPECT_NE("yfgnxf", reverseParenthesesFA("yfgnxf"));
     EXPECT_EQ("yfgnxf", reverseParenthesesDS1("yfgnxf"));
+    EXPECT_EQ("yfgnxf", reverseParenthesesDS2("yfgnxf"));
 }
