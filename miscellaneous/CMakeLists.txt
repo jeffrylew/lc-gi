@@ -1,6 +1,7 @@
 set (
     cpp_files
     "crawler_log_folder"
+    "create_binary_tree_from_descriptions"
     "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
     "intersection_of_two_arrays_ii"
     "merge_nodes_in_between_zeros"
