@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <utility>
 #include <vector>
 
@@ -45,6 +46,65 @@ static std::vector<int> luckyNumbersFA(
 
 } // static std::vector<int> luckyNumbersFA( ...
 
+//! @brief Simulation discussion solution
+//! @param[in] matrix Reference to an M x N matrix of distinct numbers
+static std::vector<int> luckyNumbersDS1(
+    const std::vector<std::vector<int>>& matrix)
+{
+    //! @details https://leetcode.com/problems/lucky-numbers-in-a-matrix
+    //!
+    //!          Time complexity O(N * M) where N = num rows, M = num cols. To
+    //!          store min of each row, require N * M operations and same for
+    //!          storing max of each column. Need to iterate over each integer
+    //!          to find lucky numbers.
+    //!          Space complexity O(N + M) for row_min and col_max of sizes N
+    //!          and M respectively.
+
+    const auto num_rows = static_cast<int>(matrix.size());
+    const auto num_cols = static_cast<int>(matrix[0].size());
+
+    std::vector<int> row_min {};
+    row_min.reserve(matrix.size());
+    for (int row = 0; row < num_rows; ++row)
+    {
+        int r_min {std::numeric_limits<int>::max()};
+        for (int col = 0; col < num_cols; ++col)
+        {
+            r_min = std::min(r_min, matrix[row][col]);
+        }
+        row_min.push_back(r_min);
+    }
+
+    std::vector<int> col_max {};
+    col_max.reserve(matrix[0].size());
+    for (int col = 0; col < num_cols; ++col)
+    {
+        int c_max {std::numeric_limits<int>::min()};
+        for (int row = 0; row < num_rows; ++row)
+        {
+            c_max = std::max(c_max, matrix[row][col]);
+        }
+        col_max.push_back(c_max);
+    }
+
+    std::vector<int> lucky_numbers {};
+
+    for (int row = 0; row < num_rows; ++row)
+    {
+        for (int col = 0; col < num_cols; ++col)
+        {
+            if (matrix[row][col] == row_min[row]
+                && matrix[row][col] == col_max[col])
+            {
+                lucky_numbers.push_back(matrix[row][col]);
+            }
+        }
+    }
+
+    return lucky_number;
+
+} // static std::vector<int> luckyNumbersDS1( ...
+
 TEST(LuckyNumbersTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -52,6 +112,7 @@ TEST(LuckyNumbersTest, SampleTest1)
     const std::vector<int> expected_output {15};
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
 }
 
 TEST(LuckyNumbersTest, SampleTest2)
@@ -61,6 +122,7 @@ TEST(LuckyNumbersTest, SampleTest2)
     const std::vector<int> expected_output {12};
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
 }
 
 TEST(LuckyNumbersTest, SampleTest3)
@@ -69,4 +131,5 @@ TEST(LuckyNumbersTest, SampleTest3)
     const std::vector<int>              expected_output {7};
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
 }
