@@ -225,6 +225,71 @@ static TreeNode* createBinaryTreeDS2(
 
 } // static TreeNode* createBinaryTreeDS2( ...
 
+//! @brief Construct tree directly from map
+//! @param[in] descriptions Vec descriptions_i = {parent_i, child_i, isLeft_i}
+//! @return Root of binary tree described by descriptions
+static TreeNode* createBinaryTreeDS3(
+    const std::vector<std::vector<int>>& descriptions)
+{
+    //! @details https://leetcode.com/problems
+    //!          /create-binary-tree-from-descriptions
+    //!
+    //!          Time complexity O(N) where N = number of nodes in binary tree.
+    //!          The algorithm iterates through each description once, and for
+    //!          each description, performs constant time operations:
+    //!          - Checking and adding nodes to node_map
+    //!          - Updating node connections (left or right child assignments)
+    //!          - Adding child values to children set
+    //!          The final loop iterates through node_map, which contains all
+    //!          created nodes, to find the root node.
+    //!          Space complexity O(N). node_map stores references to all
+    //!          created nodes. In the worst case, this map contains all nodes.
+    //!          The children set also takes O(N) to store child values.
+
+    //! Map values to TreeNode pointers
+    std::unordered_map<int, TreeNode*> node_map {};
+
+    //! Store children values
+    std::unordered_set<int> children {};
+
+    //! Iterate through descriptions to create nodes and set up tree
+    for (const auto& description : descriptions)
+    {
+        const int  parent {description[0]};
+        const int  child {description[1]};
+        const auto is_left = static_cast<bool>(description[2]);
+
+        //! Create parent and child nodes if not already created
+        auto parent_ret = node_map.try_emplace(parent, new TreeNode(parent));
+        auto child_ret  = node_map.try_emplace(child, new TreeNode(child));
+
+        //! Attach child node to parent's left or right branch
+        if (is_left)
+        {
+            parent_ret.first->second->left = child_ret.first->second;
+        }
+        else
+        {
+            parent_ret.first->second->right = child_ret.first->second;
+        }
+
+        children.insert(child);
+    }
+
+    //! Find and return the root node
+    for (const auto& [value, node] : node_map)
+    {
+        if (!children.contains(value))
+        {
+            return node;
+        }
+    }
+
+    //! Should not occur according to problem statement
+    return nullptr;
+
+} // static TreeNode* createBinaryTreeDS3( ...
+
 TEST(CreateBinaryTreeTest, SampleTest1)
 {
     const std::vector<std::vector<int>> descriptions {
