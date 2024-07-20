@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <functional>
 #include <queue>
 #include <stack>
 #include <tuple>
@@ -68,53 +69,50 @@ static TreeNode* createBinaryTreeDS1(
     //! @details https://leetcode.com/problems
     //!          /create-binary-tree-from-descriptions
     //!
-    //!          Time complexity O(N) where N = number of entries in description
-    //!          Building parent_to_children, children, and parents takes O(N).
-    //!          Finding root node involves iterating through parents, which is
-    //!          O(N) in the worst case. Constructing the binary tree using BFS
-    //!          takes O(N) since each node is processed once.
+    //!          Time complexity O(N) where N = num entries in descriptions.
+    //!          Building parent_to_children, children, and all_nodes takes O(N)
+    //!          Finding root node involves iterating through all_nodes, which
+    //!          is O(N) in the worst case. Constructing the binary tree using
+    //!          BFS takes O(N) since each node is processed once.
     //!          Space complexity O(N). parent_to_children map can store up to
-    //!          N entries. The children and parents sets can store up to N
+    //!          N entries. The children and all_nodes sets can store up to N
     //!          elements. BFS queue can store up to N nodes in the worst case.
 
-    //! Sets to track unique children and parents
-    //! @note Technically parents stores all nodes in the tree
+    //! Sets to track unique children and all nodes in the tree
+    std::unordered_set<int> all_nodes {};
     std::unordered_set<int> children {};
-    std::unordered_set<int> parents {};
 
     //! Map to store parent to children relationships
     //! <parent, vector of <child, is_left>>
     std::unordered_map<int,
-                       std::vector<std::pair<int, int>>> parent_to_children {};
+                       std::vector<std::pair<int, bool>>> parent_to_children {};
 
     //! Build graph from parent to child and add nodes to sets
     for (const auto& description : descriptions)
     {
-        const int parent {description[0]};
-        const int child {description[1]};
-        const int is_left {description[2]};
+        const int  parent {description[0]};
+        const int  child {description[1]};
+        const auto is_left = static_cast<bool>(description[2]);
 
-        parents.insert(parent);
-        parents.insert(child);
+        all_nodes.insert(parent);
+        all_nodes.insert(child);
         children.insert(child);
         parent_to_children[parent].emplace_back(child, is_left);
     }
 
-    //! Find root node - search for node in parents that is not in children
+    //! Find root node - search for node in all_nodes that is not in children
     //! @note Could also use std::set_difference with std::set
-    auto it = parents.begin();
-    while (it != parents.end())
+    int root_val {};
+    for (const int node : all_nodes)
     {
-        if (children.find(*it) != children.end())
+        if (!children.contains(node))
         {
-            it = parents.erase(it);
-            continue;
+            root_val = node;
+            break;
         }
-
-        ++it;
     }
 
-    TreeNode* root = new TreeNode(*parents.begin());
+    TreeNode* root = new TreeNode(root_val);
 
     //! Use BFS to construct binary tree from root
     std::queue<TreeNode*> node_queue;
@@ -126,22 +124,19 @@ static TreeNode* createBinaryTreeDS1(
         node_queue.pop();
 
         //! Iterate over children of current parent
-        for (const auto& child_info : parent_to_children[parent->val])
+        for (const auto& [child_val, is_left] : parent_to_children[parent->val])
         {
-            const int child_value {child_info.first};
-            const int is_left {child_info.second};
-
-            TreeNode* child = new TreeNode(child_value);
-            node_queue.push(child);
+            TreeNode* child_node = new TreeNode(child_val);
+            node_queue.push(child_node);
 
             //! Attach child node to parent based on is_left
-            if (is_left == 1)
+            if (is_left)
             {
-                parent->left = child;
+                parent->left = child_node;
             }
             else
             {
-                parent->right = child;
+                parent->right = child_node;
             }
         }
     }
