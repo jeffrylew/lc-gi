@@ -145,6 +145,86 @@ static TreeNode* createBinaryTreeDS1(
 
 } // static TreeNode* createBinaryTreeDS1( ...
 
+//! @brief Convert to graph with depth first search discussion solution
+//! @param[in] descriptions Vec descriptions_i = {parent_i, child_i, isLeft_i}
+//! @return Root of binary tree described by descriptions
+static TreeNode* createBinaryTreeDS2(
+    const std::vector<std::vector<int>>& descriptions)
+{
+    //! @details https://leetcode.com/problems
+    //!          /create-binary-tree-from-descriptions
+    //!
+    //!          Time complexity O(N) where N = num entries in descriptions.
+    //!          Building parent_to_children, all_nodes, and children takes O(N)
+    //!          Finding root node involves iterating through all_nodes, which
+    //!          is O(N) in the worst case. Constructing the binary tree using
+    //!          DFS takes O(N) since each node is processed once.
+    //!          Space complexity O(N). parent_to_children map can store up to
+    //!          N entries. The all_nodes and children sets can store up to N
+    //!          elements. Recursive DFS stack stores N nodes in worst case.
+
+    //! Sets to track unique children and all nodes in the tree
+    std::unordered_set<int> all_nodes {};
+    std::unordered_set<int> children {};
+
+    //! Map to store parent to children relationships
+    //! <parent, vector of <child, is_left>>
+    std::unordered_map<int,
+                       std::vector<std::pair<int, bool>>> parent_to_children {};
+
+    //! Build graph from parent to child and add nodes to sets
+    for (const auto& description : descriptions)
+    {
+        const int  parent {description[0]};
+        const int  child {description[1]};
+        const auto is_left = static_cast<bool>(description[2]);
+
+        all_nodes.insert(parent);
+        all_nodes.insert(child);
+        children.insert(child);
+        parent_to_children[parent].emplace_back(child, is_left);
+    }
+
+    //! Find root node - search for node in all_nodes that is not in children
+    int root_val {};
+    for (const int node : all_nodes)
+    {
+        if (!children.contains(node))
+        {
+            root_val = node;
+            break;
+        }
+    }
+
+    //! Build the tree using DFS
+    std::function<TreeNode*(int)> dfs = [&](int val) {
+        //! Create new TreeNode for current value
+        TreeNode* node = new TreeNode(val);
+
+        //! If current node has children, recursively build them
+        if (parent_to_children.contains(val))
+        {
+            for (const auto& [child_val, is_left] : parent_to_children[val])
+            {
+                //! Attach child node based on is_left
+                if (is_left)
+                {
+                    node->left = dfs(child_val);
+                }
+                else
+                {
+                    node->right = dfs(child_val);
+                }
+            }
+        }
+
+        return node;
+    };
+
+    return dfs(root_val);
+
+} // static TreeNode* createBinaryTreeDS2( ...
+
 TEST(CreateBinaryTreeTest, SampleTest1)
 {
     const std::vector<std::vector<int>> descriptions {
