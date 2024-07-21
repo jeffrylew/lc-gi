@@ -105,6 +105,53 @@ static std::vector<int> luckyNumbersDS1(
 
 } // static std::vector<int> luckyNumbersDS1( ...
 
+//! @brief Greedy discussion solution
+//! @param[in] matrix Reference to an M x N matrix of distinct numbers
+static std::vector<int> luckyNumbersDS2(
+    const std::vector<std::vector<int>>& matrix)
+{
+    //! @details https://leetcode.com/problems/lucky-numbers-in-a-matrix
+    //!
+    //!          Time complexity O(N * M) where N = num rows, M = num cols. To
+    //!          find r_min_max and c_max_min, iterate over each int in matrix.
+    //!          Space complexity O(1). No extra space apart from few variables.
+
+    const auto num_rows = static_cast<int>(matrix.size());
+    const auto num_cols = static_cast<int>(matrix[0].size());
+
+    //! Maximum of minimum elements from each row
+    int r_min_max {std::numeric_limits<int>::min()};
+    for (int row = 0; row < num_rows; ++row)
+    {
+        int r_min {std::numeric_limits<int>::max()};
+        for (int col = 0; col < num_cols; ++col)
+        {
+            r_min = std::min(r_min, matrix[row][col]);
+        }
+        r_min_max = std::max(r_min_max, r_min);
+    }
+
+    //! Minimum of maximum elements from each column
+    int c_max_min {std::numeric_limits<int>::max()};
+    for (int col = 0; col < num_cols; ++col)
+    {
+        int c_max {std::numeric_limits<int>::min()};
+        for (int row = 0; row < num_rows; ++row)
+        {
+            c_max = std::max(c_max, matrix[row][col]);
+        }
+        c_max_min = std::min(c_max_min, c_max);
+    }
+
+    if (r_min_max == c_max_min)
+    {
+        return {r_min_max};
+    }
+
+    return {};
+
+} // static std::vector<int> luckyNumbersDS2( ...
+
 TEST(LuckyNumbersTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -113,6 +160,7 @@ TEST(LuckyNumbersTest, SampleTest1)
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
     EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS2(matrix));
 }
 
 TEST(LuckyNumbersTest, SampleTest2)
@@ -123,6 +171,7 @@ TEST(LuckyNumbersTest, SampleTest2)
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
     EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS2(matrix));
 }
 
 TEST(LuckyNumbersTest, SampleTest3)
@@ -132,4 +181,5 @@ TEST(LuckyNumbersTest, SampleTest3)
 
     EXPECT_EQ(expected_output, luckyNumbersFA(matrix));
     EXPECT_EQ(expected_output, luckyNumbersDS1(matrix));
+    EXPECT_EQ(expected_output, luckyNumbersDS2(matrix));
 }
