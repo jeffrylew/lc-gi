@@ -9,6 +9,7 @@ set (
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "pass_the_pillow"
     "reverse_substrings_between_each_pair_of_parentheses"
+    "sort_the_people"
     "three_consecutive_odds"
     "water_bottles"
 )
