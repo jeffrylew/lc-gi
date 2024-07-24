@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
 #include <limits>
 #include <queue>
 #include <stack>
@@ -106,6 +107,62 @@ static int maxPathSumFA(TreeNode* root)
 
 } // static int maxPathSumFA( ...
 
+//! @brief Post Order DFS discussion solution
+//! @param[in] root Pointer to root of binary tree
+//! @return Max path sum of any non-empty path
+static int maxPathSumDS(TreeNode* root)
+{
+    //! @details https://leetcode.com/problems/binary-tree-maximum-path-sum
+    //!
+    //!          Time complexity O(N) where N = number of nodes in tree. Each
+    //!          node in tree is visited only once. During a visit, we perform
+    //!          constant time operations including two recursive calls and
+    //!          calculating the max path sum for current node.
+    //!          Space complexity O(N). Recursive stack call can go as deep as
+    //!          tree's height. In the worst case, the tree is a linked list
+    //!          with height N.
+
+    int max_sum {std::numeric_limits<int>::min()};
+
+    //! Post order traversal of subtree rooted at node
+    //! Post order traversal processes children before processing a node
+    std::function<int(TreeNode*)> gain_from_subtree = [&](TreeNode* node) {
+        if (node == nullptr)
+        {
+            //! Base case: If node doesn't have left or right child, the path
+            //! sum contributed by the respective subtree is 0
+            return 0;
+        }
+
+        //! Add path sum from left subtree. Note if path sum is negative, we can
+        //! ignore it or count it as 0. std::max(path_sum, 0) accomplishes this.
+        const int gain_from_left {std::max(gain_from_subtree(node->left), 0)};
+
+        //! Add path sum from right subtree (adds zero if negative)
+        const int gain_from_right {std::max(gain_from_subtree(node->right), 0)};
+
+        //! If left or right path sum is negative, they contribute 0.
+        //! Keep track of max path sum, assuming max path passes through node
+        //! The following takes care of all four scenarios:
+        //!   1) Path starts at root node and goes through left child
+        //!   2) Path starts at root node and goes through right child
+        //!   3) Path involves both left and right child
+        //!   4) Path doesn't involve any child, root node is the only element
+        //!      in the path with the max sum
+        max_sum = std::max(max_sum,
+                           gain_from_left + gain_from_right + node->val);
+
+        //! Return max sum for path starting at root node of subtree
+        //! i.e. return the path sum contributed by the subtree
+        return std::max(gain_from_left, gain_from_right) + node->val;
+    };
+
+    gain_from_subtree(root);
+
+    return max_sum;
+
+} // static int maxPathSumDS( ...
+
 TEST(MaxPathSumTest, SampleTest1)
 {
     const TreeNode three {3};
@@ -113,6 +170,7 @@ TEST(MaxPathSumTest, SampleTest1)
     const TreeNode one {1, &two, &three};
 
     EXPECT_EQ(6, maxPathSumFA(&one));
+    EXPECT_EQ(6, maxPathSumDS(&one));
 }
 
 TEST(MaxPathSumTest, SampleTest2)
@@ -124,6 +182,7 @@ TEST(MaxPathSumTest, SampleTest2)
     const TreeNode neg_ten {-10, &nine, &twenty};
 
     EXPECT_EQ(42, maxPathSumFA(&neg_ten));
+    EXPECT_EQ(42, maxPathSumDS(&neg_ten));
 }
 
 TEST(MaxPathSumTest, SampleTest3)
