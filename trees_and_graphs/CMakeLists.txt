@@ -1,6 +1,7 @@
 set (
     cpp_files
     "binary_tree_maximum_path_sum"
+    "number_of_islands"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
