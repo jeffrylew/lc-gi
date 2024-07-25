@@ -13,6 +13,9 @@ static int numIslandsFA(const std::vector<std::vector<char>>& grid)
     //!
     //!          First attempt solution has Time Limit Exceeded for SampleTest3
     //!          but passes 39 / 49 test cases.
+    //!
+    //!          Updating solution to mark each neighbor with '0' before adding
+    //!          to coords queue passes all test cases.
 
     auto       grid_cpy = grid;
     const auto num_rows = static_cast<int>(std::ssize(grid));
@@ -43,13 +46,13 @@ static int numIslandsFA(const std::vector<std::vector<char>>& grid)
 
             ++num_islands;
 
+            grid_cpy[row][col] = '0';
             coords.emplace(row, col);
+
             while (!coords.empty())
             {
                 const auto [curr_row, curr_col] = coords.front();
                 coords.pop();
-
-                grid_cpy[curr_row][curr_col] = '0';
 
                 for (const auto& [drow, dcol] : directions)
                 {
@@ -62,6 +65,7 @@ static int numIslandsFA(const std::vector<std::vector<char>>& grid)
                         continue;
                     }
 
+                    grid_cpy[next_row][next_col] = '0';
                     coords.emplace(next_row, next_col);
                 }
             }
