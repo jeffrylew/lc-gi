@@ -244,6 +244,145 @@ static int numIslandsDS2(const std::vector<std::vector<char>>& grid)
 
 } // static int numIslandsDS2( ...
 
+class Union_find
+{
+public:
+    explicit Union_find(const std::vector<std::vector<char>>& grid)
+    {
+        const auto num_rows = static_cast<int>(grid.size());
+        const auto num_cols = static_cast<int>(grid[0].size());
+        parent.reserve(num_rows * num_cols);
+
+        for (int row = 0; row < num_rows; ++row)
+        {
+            for (int col = 0; col < num_cols; ++col)
+            {
+                if (grid[row][col] == '1')
+                {
+                    parent.push_back(row * num_cols + col);
+                    ++count;
+                }
+                else
+                {
+                    parent.push_back(-1);
+                }
+                rank.push_back(0);
+            }
+        }
+
+    } // explicit Union_find( ...
+
+    //! Path compression
+    int find(int idx)
+    {
+        if (parent[idx] != idx)
+        {
+            parent[idx] = find(parent[idx]);
+        }
+        return parent[idx];
+    }
+
+    int get_count() const
+    {
+        return count;
+    }
+
+    //! Union with rank
+    void union_rank(int x, int y)
+    {
+        const int rootx {find(x)};
+        const int rooty {find(y)};
+
+        if (rootx != rooty)
+        {
+            if (rank[rootx] > rank[rooty])
+            {
+                parent[rooty] = rootx;
+            }
+            else if (rank[rootx] < rank[rooty])
+            {
+                parent[rootx] = rooty;
+            }
+            else
+            {
+                parent[rooty] = rootx;
+                ++rank[rootx];
+            }
+
+            --count;
+        }
+    }
+
+private:
+    //! Number of connected components
+    int count {};
+
+    std::vector<int> parent {};
+    std::vector<int> rank {};
+    
+}; // class Union_find
+
+//! @brief Union find discussion solution
+//! @param[in] grid Reference to an M x N 2D grid of 1s (land) and 0s (water)
+//! @return Number of islands
+static int numIslandsDS3(const std::vector<std::vector<char>>& grid)
+{
+    //! @details https://leetcode.com/problems/number-of-islands/description
+    //!
+    //!          Time complexity O(M * N) where M = number of rows and
+    //!          N = number of cols. The union_rank operation takes constant
+    //!          time when Union_find is implemented with both path compression
+    //!          and union by rank.
+    //!          Space complexity O(M * N) as required by Union_find structure.
+
+    auto grid_cpy = grid;
+
+    const auto num_rows = static_cast<int>(grid_cpy.size());
+    if (num_rows == 0)
+    {
+        return 0;
+    }
+    const auto num_cols = static_cast<int>(grid_cpy[0].size());
+
+    Union_find uf {grid_cpy};
+
+    for (int row = 0; row < num_rows; ++row)
+    {
+        for (int col = 0; col < num_cols; ++col)
+        {
+            if (grid_cpy[row][col] == '0')
+            {
+                continue;
+            }
+
+            grid_cpy[row][col] = '0';
+
+            if (row - 1 >= 0 && grid_cpy[row - 1][col] == '1')
+            {
+                uf.union_rank(row * num_cols + col, (row - 1) * num_cols + col);
+            }
+
+            if (row + 1 < num_rows && grid_cpy[row + 1][col] == '1')
+            {
+                uf.union_rank(row * num_cols + col, (row + 1) * num_cols + col);
+            }
+
+            if (col - 1 >= 0 && grid_cpy[row][col - 1] == '1')
+            {
+                uf.union_rank(row * num_cols + col, row * num_cols + (col - 1));
+            }
+
+            if (col + 1 < num_cols && grid_cpy[row][col + 1] == '1')
+            {
+                uf.union_rank(row * num_cols + col, row * num_cols + (col + 1));
+            }
+        }
+    }
+
+    return uf.get_count();
+
+} // static int numIslandsDS3( ...
+
 TEST(NumIslandsTest, SampleTest1)
 {
     const std::vector<std::vector<char>> grid {
@@ -255,6 +394,7 @@ TEST(NumIslandsTest, SampleTest1)
     EXPECT_EQ(1, numIslandsFA(grid));
     EXPECT_EQ(1, numIslandsDS1(grid));
     EXPECT_EQ(1, numIslandsDS2(grid));
+    EXPECT_EQ(1, numIslandsDS3(grid));
 }
 
 TEST(NumIslandsTest, SampleTest2)
@@ -268,6 +408,7 @@ TEST(NumIslandsTest, SampleTest2)
     EXPECT_EQ(1, numIslandsFA(grid));
     EXPECT_EQ(1, numIslandsDS1(grid));
     EXPECT_EQ(1, numIslandsDS2(grid));
+    EXPECT_EQ(1, numIslandsDS3(grid));
 }
 
 TEST(NumIslandsTest, SampleTest3)
