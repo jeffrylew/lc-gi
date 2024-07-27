@@ -164,6 +164,86 @@ static int numIslandsDS1(const std::vector<std::vector<char>>& grid)
 
 } // static int numIslandsDS1( ...
 
+//! @brief BFS discussion solution
+//! @param[in] grid Reference to an M x N 2D grid of 1s (land) and 0s (water)
+//! @return Number of islands
+static int numIslandsDS2(const std::vector<std::vector<char>>& grid)
+{
+    //! @details https://leetcode.com/problems/number-of-islands/description
+    //!
+    //!          Time complexity O(M * N) where M = number of rows and
+    //!          N = number of cols
+    //!          Space complexity O(min(M, N)) because in worst case where grid
+    //!          is filled with land, the size of queue can grow up to min(M, N)
+
+    auto grid_cpy = grid;
+
+    const auto num_rows = static_cast<int>(grid_cpy.size());
+    if (num_rows == 0)
+    {
+        return 0;
+    }
+    const auto num_cols = static_cast<int>(grid_cpy[0].size());
+
+    int num_islands {};
+
+    for (int row = 0; row < num_rows; ++row)
+    {
+        for (int col = 0; col < num_cols; ++col)
+        {
+            if (grid[row][col] == '0')
+            {
+                continue;
+            }
+
+            ++num_islands;
+
+            //! Mark as visited
+            grid_cpy[row][col] = '0';
+
+            std::queue<std::pair<int, int>> neighbors {};
+            neighbors.emplace(row, col);
+
+            while (!neighbors.empty())
+            {
+                const auto [next_row, next_col] = neighbors.front();
+                neighbors.pop();
+
+                if (next_row - 1 >= 0
+                    && grid_cpy[next_row - 1][next_col] == '1')
+                {
+                    neighbors.emplace(next_row - 1, next_col);
+                    grid_cpy[next_row - 1][next_col] = '0';
+                }
+
+                if (next_row + 1 < num_rows
+                    && grid_cpy[next_row + 1][next_col] == '1')
+                {
+                    neighbors.emplace(next_row + 1, next_col);
+                    grid_cpy[next_row + 1][next_col] = '0';
+                }
+
+                if (next_col - 1 >= 0
+                    && grid_cpy[next_row][next_col - 1] == '1')
+                {
+                    neighbors.emplace(next_row, next_col - 1);
+                    grid_cpy[next_row][next_col - 1] = '0';
+                }
+
+                if (next_col + 1 < num_cols
+                    && grid_cpy[next_row][next_col + 1] == '1')
+                {
+                    neighbors.emplace(next_row, next_col + 1);
+                    grid_cpy[next_row][next_col + 1] = '0';
+                }
+            }
+        }
+    }
+
+    return num_islands;
+
+} // static int numIslandsDS2( ...
+
 TEST(NumIslandsTest, SampleTest1)
 {
     const std::vector<std::vector<char>> grid {
@@ -174,6 +254,7 @@ TEST(NumIslandsTest, SampleTest1)
 
     EXPECT_EQ(1, numIslandsFA(grid));
     EXPECT_EQ(1, numIslandsDS1(grid));
+    EXPECT_EQ(1, numIslandsDS2(grid));
 }
 
 TEST(NumIslandsTest, SampleTest2)
@@ -186,6 +267,7 @@ TEST(NumIslandsTest, SampleTest2)
 
     EXPECT_EQ(1, numIslandsFA(grid));
     EXPECT_EQ(1, numIslandsDS1(grid));
+    EXPECT_EQ(1, numIslandsDS2(grid));
 }
 
 TEST(NumIslandsTest, SampleTest3)
