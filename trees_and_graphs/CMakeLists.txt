@@ -1,6 +1,7 @@
 set (
     cpp_files
     "binary_tree_maximum_path_sum"
+    "course_schedule_ii"
     "number_of_islands"
 )
 
