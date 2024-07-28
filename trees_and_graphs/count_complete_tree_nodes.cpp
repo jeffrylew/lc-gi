@@ -81,6 +81,22 @@ static int countNodesFA(TreeNode* root)
 
 } // static int countNodesFA( ...
 
+//! @brief Linear time discussion solution
+//! @param[in] root Pointer to root of complete binary tree
+//! @return Number of nodes in complete binary tree
+static int countNodesDS1(TreeNode* root)
+{
+    //! @details https://leetcode.com/problems/count-complete-tree-nodes
+    //!
+    //!          Time complexity O(N) where N = number of nodes in tree
+    //!          Space complexity O(d = log N) for the recursion stack,
+    //!          where d = tree depth.
+
+    return root != nullptr
+        ? 1 + countNodesDS1(root->right) + countNodesDS1(root->left)
+        : 0;
+}
+
 TEST(CountNodesTest, SampleTest1)
 {
     const TreeNode six {6};
@@ -93,11 +109,13 @@ TEST(CountNodesTest, SampleTest1)
     const TreeNode one {1, &two, &three};
 
     EXPECT_EQ(6, countNodesFA(&one));
+    EXPECT_EQ(6, countNodesDS1(&one));
 }
 
 TEST(CountNodesTest, SampleTest2)
 {
     EXPECT_EQ(0, countNodesFA(nullptr));
+    EXPECT_EQ(0, countNodesDS1(nullptr));
 }
 
 TEST(CountNodesTest, SampleTest3)
@@ -105,4 +123,5 @@ TEST(CountNodesTest, SampleTest3)
     const TreeNode one {1};
 
     EXPECT_EQ(1, countNodesFA(&one));
+    EXPECT_EQ(1, countNodesDS1(&one));
 }
