@@ -266,6 +266,87 @@ static std::vector<int> findOrderDS1(
 
 } // static std::vector<int> findOrderDS1( ...
 
+//! @brief Node indegree discussion solution (Kahn's algorithm in comments)
+//! @param[in] numCourses    Total num of courses to take in [0, numCourses - 1]
+//! @param[in] prerequisites Vector where [a_i, b_i] means must take b_i b4 a_i
+//! @return Ordering of courses to finish all or empty vector if impossible
+static std::vector<int> findOrderDS2(
+    int                                  numCourses,
+    const std::vector<std::vector<int>>& prerequisites)
+{
+    //! @details https://leetcode.com/problems/course-schedule-ii
+    //!
+    //!          Time complexity O(V + E) where V = number of vertices and E =
+    //!          number of edges. Pop each node once from zero_indeg_vertices,
+    //!          which takes O(V). For each vertex, iterate over its adjacency
+    //!          list. In total, iterate over all edges in the graph which gives
+    //!          O(E). Hence, O(V + E).
+    //!          Space complexity O(V + E). The indegree vector takes O(V) space
+    //!          and use an intermediate queue data structure to keep all nodes
+    //!          with 0 in-degree. In the worst case when there aren't any
+    //!          prerequisites, the queue will initially contain all vertices
+    //!          since all will have 0 in-degree for O(V) space. The adjacency
+    //!          list contains all edges for each node and uses O(E).
+
+    std::unordered_map<int, std::vector<int>> adj_list {};
+
+    std::vector<int> indegree(numCourses);
+    std::vector<int> topological_order {};
+
+    //! Create adjacency list representation of the graph
+    for (const auto& relation : prerequisites)
+    {
+        const int dest {relation[0]};
+        const int src {relation[1]};
+
+        adj_list[src].push_back(dest);
+
+        //! Record in-degree of each vertex
+        ++indegree[dest];
+    }
+
+    //! Add all vertices with 0 in-degree to the queue
+    std::queue<int> zero_indeg_vertices {};
+    for (int node = 0; node < numCourses; ++node)
+    {
+        if (indegree[node] == 0)
+        {
+            zero_indeg_vertices.push(node);
+        }
+    }
+
+    //! Process until the queue becomes empty
+    while (!zero_indeg_vertices.empty())
+    {
+        const int node {zero_indeg_vertices.front()};
+        zero_indeg_vertices.pop();
+
+        topological_order.push_back(node);
+
+        //! Reduce the in-degree of each neighbor by 1
+        if (adj_list.contains(node))
+        {
+            for (const int neighbor : adj_list[node])
+            {
+                //! If in-degree of neighbor becomes 0, add it to the queue
+                if (--indegree[neighbor] == 0)
+                {
+                    zero_indeg_vertices.push(neighbor);
+                }
+            }
+        }
+    }
+
+    //! Check to see if topological sort is possible or not
+    if (static_cast<int>(std::ssize(topological_order)) == numCourses)
+    {
+        return topological_order;
+    }
+
+    return {};
+
+} // static std::vector<int> findOrderDS2( ...
+
 TEST(FindOrderTest, SampleTest1)
 {
     constexpr int numCourses {2};
@@ -276,6 +357,7 @@ TEST(FindOrderTest, SampleTest1)
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
     EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS2(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest2)
@@ -289,6 +371,7 @@ TEST(FindOrderTest, SampleTest2)
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
     EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS2(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest3)
@@ -301,6 +384,7 @@ TEST(FindOrderTest, SampleTest3)
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
     EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS2(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest4)
@@ -313,6 +397,7 @@ TEST(FindOrderTest, SampleTest4)
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
     EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS2(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest5)
@@ -327,4 +412,5 @@ TEST(FindOrderTest, SampleTest5)
     EXPECT_EQ(incorrect_output, findOrderFA(numCourses, prerequisites));
     EXPECT_NE(expected_output, findOrderFA(numCourses, prerequisites));
     EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS2(numCourses, prerequisites));
 }
