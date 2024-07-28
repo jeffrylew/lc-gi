@@ -15,9 +15,12 @@ static int countNodesFA(TreeNode* root)
     //!
     //!          Time complexity O(2 ^ H) where H = height of tree. Process
     //!          each node before last level, which is the height.
+    //!          Since H = log N where N = number of nodes in the tree, the
+    //!          complexity is O(N).
     //!          Space complexity O(2 ^ H). The worst case is processing the row
     //!          before the last where the last row is complete. The second-to-
     //!          last row will store 2 ^ H elements in the node_level stack.
+    //!          Similar to the time complexity, O(2 ^ H) = O(N).
 
     if (root == nullptr)
     {
