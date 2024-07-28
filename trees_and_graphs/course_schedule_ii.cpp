@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
 #include <iterator>
 #include <numeric>
 #include <queue>
 #include <set>
 #include <tuple>
+#include <unordered_map>
 #include <vector>
 
 //! @brief First attempt to get ordering of courses to finish all courses
@@ -159,6 +161,111 @@ static std::vector<int> findOrderFA(
 
 } // static std::vector<int> findOrderFA( ...
 
+//! @brief DFS discussion solution
+//! @param[in] numCourses    Total num of courses to take in [0, numCourses - 1]
+//! @param[in] prerequisites Vector where [a_i, b_i] means must take b_i b4 a_i
+//! @return Ordering of courses to finish all or empty vector if impossible
+static std::vector<int> findOrderDS1(
+    int                                  numCourses,
+    const std::vector<std::vector<int>>& prerequisites)
+{
+    //! @details https://leetcode.com/problems/course-schedule-ii
+    //!
+    //!          Time complexity O(V + E) where V = number of vertices and
+    //!          E = number of edges. Iterate through each node and vertex once.
+    //!          Space complexity O(V + E). Use adjacency list to represent
+    //!          graph initially. The space occupied is defined by number of
+    //!          edges, O(E). We apply recursion in our algorithm which incurs
+    //!          O(E) extra space in the call stack in the worst case. Thus, the
+    //!          overall space complexity is O(V + E).
+
+    enum State
+    {
+        WHITE, // Initial state of vertices
+        GRAY,  // Ongoing recursion
+        BLACK  // Recursion finished
+    };
+
+    //! Becomes false if found a cycle
+    bool is_possible {true};
+
+    //! By default all vertices are WHITE
+    std::vector<int> color(numCourses, State::WHITE);
+
+    std::vector<int> topological_order {};
+
+    std::unordered_map<int, std::vector<int>> adj_list {};
+
+    //! Create adjacency list representation of the graph
+    for (const auto& relation : prerequisites)
+    {
+        const int dest {relation[0]};
+        const int src {relation[1]};
+
+        adj_list[src].push_back(dest);
+    }
+
+    std::function<void(int)> dfs = [&](int node) {
+        //! Don't recurse further if we found a cycle already
+        if (!is_possible)
+        {
+            return;
+        }
+
+        //! Start the recursion
+        color[node] = State::GRAY;
+
+        //! Traverse on neighboring vertices
+        for (const int neighbor : adj_list[node])
+        {
+            if (color[neighbor] == State::WHITE)
+            {
+                dfs(neighbor);
+            }
+            else if (color[neighbor] == State::GRAY)
+            {
+                //! An edge to a GRAY vertex represents a cycle
+                is_possible = false;
+            }
+        }
+
+        //! Recursion ends, make node as black
+        color[node] = State::BLACK;
+        topological_order.push_back(node);
+
+    }; // std::function<void(int)> dfs = ...
+
+    //! If the node is unprocessed then call dfs on it
+    for (int node = 0; node < numCourses; ++node)
+    {
+        if (color[node] == State::WHITE && is_possible)
+        {
+            dfs(node);
+        }
+    }
+
+    std::vector<int> order {};
+    if (is_possible)
+    {
+        order.resize(numCourses);
+
+        for (int node = 0; node < numCourses; ++node)
+        {
+            order[node] = topological_order[numCourses - node - 1];
+        }
+
+        /*
+         * Alternatively:
+         *
+        std::reverse(topological_order.begin(), topological_order.end());
+        return topological_order;
+         */
+    }
+
+    return order;
+
+} // static std::vector<int> findOrderDS1( ...
+
 TEST(FindOrderTest, SampleTest1)
 {
     constexpr int numCourses {2};
@@ -168,6 +275,7 @@ TEST(FindOrderTest, SampleTest1)
     const std::vector<int> expected_output {0, 1};
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest2)
@@ -180,6 +288,7 @@ TEST(FindOrderTest, SampleTest2)
     const std::vector<int> expected_output {0, 2, 1, 3};
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest3)
@@ -191,6 +300,7 @@ TEST(FindOrderTest, SampleTest3)
     const std::vector<int> expected_output {0};
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest4)
@@ -202,6 +312,7 @@ TEST(FindOrderTest, SampleTest4)
     const std::vector<int> expected_output {0, 2, 1};
 
     EXPECT_EQ(expected_output, findOrderFA(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
 }
 
 TEST(FindOrderTest, SampleTest5)
@@ -215,4 +326,5 @@ TEST(FindOrderTest, SampleTest5)
 
     EXPECT_EQ(incorrect_output, findOrderFA(numCourses, prerequisites));
     EXPECT_NE(expected_output, findOrderFA(numCourses, prerequisites));
+    EXPECT_EQ(expected_output, findOrderDS1(numCourses, prerequisites));
 }
