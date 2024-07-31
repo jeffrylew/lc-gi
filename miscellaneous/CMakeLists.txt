@@ -6,6 +6,7 @@ set (
     "intersection_of_two_arrays_ii"
     "lucky_numbers_in_a_matrix"
     "merge_nodes_in_between_zeros"
+    "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "pass_the_pillow"
     "reverse_substrings_between_each_pair_of_parentheses"
