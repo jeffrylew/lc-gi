@@ -117,6 +117,7 @@ static int countNodesDS2(TreeNode* root)
         return 0;
     }
 
+    //! Return tree height in O(depth) time
     const auto compute_height = [](TreeNode* node) -> int {
         int height {};
 
@@ -137,6 +138,7 @@ static int countNodesDS2(TreeNode* root)
     }
 
     //! @brief Check if last level node with index idx exists
+    //! @details Binary search with O(depth) complexity
     //! @param[in] idx  Index of node in last level to check if it exists
     //! @param[in] node Pointer to TreeNode in first level to search from
     //! @return True if the last level node at index idx exists, else false
