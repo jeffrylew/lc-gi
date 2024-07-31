@@ -56,12 +56,59 @@ static int minimumDeletionsDS1(std::string s)
 
 } // static int minimumDeletionsDS1( ...
 
+//! @brief Combined pass discussion solution
+//! @param[in] s std::string containing 'a' or 'b'
+//! @return Min number of deletions to make s balanced
+static int minimumDeletionsDS2(std::string s)
+{
+    //! @details https://leetcode.com/problems
+    //!          /minimum-deletions-to-make-string-balanced
+    //!
+    //!          Time complexity O(N) where N = s.size(). The algorithm performs
+    //!          two linear passes over the string.
+    //!          Space complexity O(N). Use one vector of size N to store counts
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    std::vector<int> count_a(s_len, 0);
+
+    //! First pass: Compute count_a, which stores the number
+    //! of 'a' characters to the right of the current position
+    int a_count {};
+    for (int idx = s_len - 1; idx >= 0; --idx)
+    {
+        count_a[idx] = a_count;
+        if (s[idx] == 'a')
+        {
+            ++a_count;
+        }
+    }
+
+    //! Second pass: Compute minimum deletions on the fly
+    int min_deletions {s_len};
+    int b_count {};
+    for (int idx = 0; idx < s_len; ++idx)
+    {
+        min_deletions = std::min(min_deletions, count_a[idx] + b_count);
+
+        if (s[idx] == 'b')
+        {
+            ++b_count;
+        }
+    }
+
+    return min_deletions;
+
+} // static int minimumDeletionsDS2( ...
+
 TEST(MinimumDeletionsTest, SampleTest1)
 {
     EXPECT_EQ(2, minimumDeletionsDS1("aababbab"));
+    EXPECT_EQ(2, minimumDeletionsDS2("aababbab"));
 }
 
 TEST(MinimumDeletionsTest, SampleTest2)
 {
     EXPECT_EQ(2, minimumDeletionsDS1("bbaaaaabbb"));
+    EXPECT_EQ(2, minimumDeletionsDS2("bbaaaaabbb"));
 }
