@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <stack>
 #include <string>
 #include <vector>
 
@@ -140,11 +141,52 @@ static int minimumDeletionsDS3(std::string s)
 
 } // static int minimumDeletionsDS3( ...
 
+//! @brief Stack (one pass) discussion solution
+//! @param[in] s std::string containing 'a' or 'b'
+//! @return Min number of deletions to make s balanced
+static int minimumDeletionsDS4(std::string s)
+{
+    //! @details https://leetcode.com/problems
+    //!          /minimum-deletions-to-make-string-balanced
+    //!
+    //!          Time complexity O(N) where N = s.size(). The algorithm performs
+    //!          a single linear pass over the string with push and pop in O(1).
+    //!          Space complexity O(N). The algorithm uses a stack that may grow
+    //!          up to the size of the string in the worst case when no
+    //!          deletions are needed.
+
+    std::stack<char> char_stack {};
+    int              delete_count {};
+
+    //! Iterate through each character in the string
+    for (const char curr_char : s)
+    {
+        //! If top of stack is 'b' and current char is 'a'
+        if (!char_stack.empty() && char_stack.top() == 'b' && curr_char == 'a')
+        {
+            //! Remove 'b' from stack
+            char_stack.pop();
+
+            //! Increment deletion count
+            ++delete_count;
+        }
+        else
+        {
+            //! Push current character onto stack
+            char_stack.push(curr_char);
+        }
+    }
+
+    return delete_count;
+
+} // static int minimumDeletionsDS4( ...
+
 TEST(MinimumDeletionsTest, SampleTest1)
 {
     EXPECT_EQ(2, minimumDeletionsDS1("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS2("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS3("aababbab"));
+    EXPECT_EQ(2, minimumDeletionsDS4("aababbab"));
 }
 
 TEST(MinimumDeletionsTest, SampleTest2)
@@ -152,4 +194,5 @@ TEST(MinimumDeletionsTest, SampleTest2)
     EXPECT_EQ(2, minimumDeletionsDS1("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS2("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS3("bbaaaaabbb"));
+    EXPECT_EQ(2, minimumDeletionsDS4("bbaaaaabbb"));
 }
