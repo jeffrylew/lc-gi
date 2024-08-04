@@ -198,7 +198,8 @@ static int minimumDeletionsDS5(std::string s)
     std::vector<int> dp(s_len + 1, 0);
     int              b_count {};
 
-    //! Let dp[i] be num deletions to balance the substring s[0, i)
+    //! Let dp[i] be min number of deletions to balance the substring s[0, i)
+    //! While traversing string, update dp based on current char and prior state
     for (int idx = 0; idx < s_len; ++idx)
     {
         if (s[idx] == 'b')
@@ -209,6 +210,14 @@ static int minimumDeletionsDS5(std::string s)
         else
         {
             //! Two cases: Remove 'a' or keep 'a'
+            //!   Remove 'a': dp[idx] + 1. If choose to delete current 'a', need
+            //!               one more deletion than what was required for prior
+            //!               substring dp[idx]. We are reducing num 'a's to
+            //!               match num existing 'b's.
+            //!   Keep 'a': Keep current 'a' and remove all 'b's that came prior
+            //!             The number of 'b's seen so far is b_count, which is
+            //!             the number of deletions needed to keep this 'a'. We
+            //!             are ensuring all 'a's come before 'b's.
             dp[idx + 1] = std::min(dp[idx] + 1, b_count);
         }
     }
