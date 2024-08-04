@@ -181,12 +181,49 @@ static int minimumDeletionsDS4(std::string s)
 
 } // static int minimumDeletionsDS4( ...
 
+//! @brief Dynamic programming (one pass) discussion solution
+//! @param[in] s std::string containing 'a' or 'b'
+//! @return Min number of deletions to make s balanced
+static int minimumDeletionsDS5(std::string s)
+{
+    //! @details https://leetcode.com/problems
+    //!          /minimum-deletions-to-make-string-balanced
+    //!
+    //!          Time complexity O(N) where N = s.size(). THe algorithm performs
+    //!          a single linear pass over the string with updates to dp vector.
+    //!          Space complexity O(N). The algorithm requires space for dp.
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    std::vector<int> dp(s_len + 1, 0);
+    int              b_count {};
+
+    //! Let dp[i] be num deletions to balance the substring s[0, i)
+    for (int idx = 0; idx < s_len; ++idx)
+    {
+        if (s[idx] == 'b')
+        {
+            dp[idx + 1] = dp[idx];
+            ++b_count;
+        }
+        else
+        {
+            //! Two cases: Remove 'a' or keep 'a'
+            dp[idx + 1] = std::min(dp[idx] + 1, b_count);
+        }
+    }
+
+    return dp[s_len];
+
+} // static int minimumDeletionsDS5( ...
+
 TEST(MinimumDeletionsTest, SampleTest1)
 {
     EXPECT_EQ(2, minimumDeletionsDS1("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS2("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS3("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS4("aababbab"));
+    EXPECT_EQ(2, minimumDeletionsDS5("aababbab"));
 }
 
 TEST(MinimumDeletionsTest, SampleTest2)
@@ -195,4 +232,5 @@ TEST(MinimumDeletionsTest, SampleTest2)
     EXPECT_EQ(2, minimumDeletionsDS2("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS3("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS4("bbaaaaabbb"));
+    EXPECT_EQ(2, minimumDeletionsDS5("bbaaaaabbb"));
 }
