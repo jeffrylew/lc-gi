@@ -189,14 +189,16 @@ static int minimumDeletionsDS5(std::string s)
     //! @details https://leetcode.com/problems
     //!          /minimum-deletions-to-make-string-balanced
     //!
-    //!          Time complexity O(N) where N = s.size(). THe algorithm performs
+    //!          Time complexity O(N) where N = s.size(). The algorithm performs
     //!          a single linear pass over the string with updates to dp vector.
     //!          Space complexity O(N). The algorithm requires space for dp.
 
     const auto s_len = static_cast<int>(std::ssize(s));
 
     std::vector<int> dp(s_len + 1, 0);
-    int              b_count {};
+
+    //! b_count stores number of 'b's before each position
+    int b_count {};
 
     //! Let dp[i] be min number of deletions to balance the substring s[0, i)
     //! While traversing string, update dp based on current char and prior state
@@ -226,6 +228,42 @@ static int minimumDeletionsDS5(std::string s)
 
 } // static int minimumDeletionsDS5( ...
 
+//! @brief Optimized dynamic programming discussion solution
+//! @param[in] s std::string containing 'a' or 'b'
+//! @return Min number of deletions to make s balanced
+static int minimumDeletionsDS6(std::string s)
+{
+    //! @details https://leetcode.com/problems
+    //!          /minimum-deletions-to-make-string-balanced
+    //!
+    //!          Time complexity O(N) where N = s.size(). The algorithm performs
+    //!          a single linear pass over the string.
+    //!          Space complexity O(1). The algorithm uses a constant amount of
+    //!          additional space for min_deletions and b_count.
+
+    //! min_deletions represents dp[i], min num deletions to balance s[0:i - 1]
+    int min_deletions {};
+
+    //! b_count stores number of 'b's before each position
+    int b_count {};
+
+    for (const char letter : s)
+    {
+        if (letter == 'b')
+        {
+            ++b_count;
+        }
+        else
+        {
+            //! Two cases: Remove 'a' or keep 'a'
+            min_deletions = std::min(min_deletions + 1, b_count);
+        }
+    }
+
+    return min_deletions;
+
+} // static int minimumDeletionsDS6( ...
+
 TEST(MinimumDeletionsTest, SampleTest1)
 {
     EXPECT_EQ(2, minimumDeletionsDS1("aababbab"));
@@ -233,6 +271,7 @@ TEST(MinimumDeletionsTest, SampleTest1)
     EXPECT_EQ(2, minimumDeletionsDS3("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS4("aababbab"));
     EXPECT_EQ(2, minimumDeletionsDS5("aababbab"));
+    EXPECT_EQ(2, minimumDeletionsDS6("aababbab"));
 }
 
 TEST(MinimumDeletionsTest, SampleTest2)
@@ -242,4 +281,5 @@ TEST(MinimumDeletionsTest, SampleTest2)
     EXPECT_EQ(2, minimumDeletionsDS3("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS4("bbaaaaabbb"));
     EXPECT_EQ(2, minimumDeletionsDS5("bbaaaaabbb"));
+    EXPECT_EQ(2, minimumDeletionsDS6("bbaaaaabbb"));
 }
