@@ -2,6 +2,7 @@
 
 #include <string>
 #include <unordered_map>
+#include <unordered_set>
 #include <vector>
 
 //! @brief First attempt to get kth distinct string in arr
@@ -88,12 +89,71 @@ static std::string kthDistinctDS1(const std::vector<std::string>& arr, int k)
 
 } // static std::string kthDistinctDS1( ...
 
+//! @brief Hash set discussion solution
+//! @param[in] arr Vector of strings
+//! @param[in] k   Number of distinct string to retrieve
+//! @return kth distinct string in arr or empty string if fewer than k distinct
+static std::string kthDistinctDS2(const std::vector<std::string>& arr, int k)
+{
+    //! @details https://leetcode.com/problems/kth-distinct-string-in-an-array
+    //!
+    //!          Time complexity O(N) where N = arr.size(). The algorithm makes
+    //!          two passes through arr.
+    //!          Space complexity O(N). In the worst case, one of the sets could
+    //!          store all N strings in arr (e.g. all strings are distinct).
+
+    std::unordered_set<std::string> distinct_strings;
+    std::unordered_set<std::string> duplicate_strings;
+
+    //! First pass: Identify distinct and duplicate strings
+    for (const auto& str : arr)
+    {
+        //! If str already in duplicate_strings, skip further processing
+        if (duplicate_strings.contains(str))
+        {
+            continue;
+        }
+
+        //! If str in distinct_strings, means we have seen it before so move it
+        //! to duplicate_strings
+        if (distinct_strings.contains(str))
+        {
+            distinct_strings.erase(str);
+            duplicate_strings.insert(str);
+        }
+        else
+        {
+            distinct_strings.insert(str);
+        }
+    }
+
+    //! Second pass: Find kth distinct string
+    for (const auto& str : arr)
+    {
+        if (!duplicate_strings.contains(str))
+        {
+            //! Decrement k for each distinct string encountered
+            --k;
+        }
+
+        //! When k reaches 0, we have found the kth distinct string
+        if (k == 0)
+        {
+            return str;
+        }
+    }
+
+    return {};
+
+} // static std::string kthDistinctDS2( ...
+
 TEST(KthDistinctTest, SampleTest1)
 {
     const std::vector<std::string> arr {"d", "b", "c", "b", "c", "a"};
 
     EXPECT_EQ("a", kthDistinctFA(arr, 2));
     EXPECT_EQ("a", kthDistinctDS1(arr, 2));
+    EXPECT_EQ("a", kthDistinctDS2(arr, 2));
 }
 
 TEST(KthDistinctTest, SampleTest2)
@@ -102,6 +162,7 @@ TEST(KthDistinctTest, SampleTest2)
 
     EXPECT_EQ("aaa", kthDistinctFA(arr, 1));
     EXPECT_EQ("aaa", kthDistinctDS1(arr, 1));
+    EXPECT_EQ("aaa", kthDistinctDS2(arr, 1));
 }
 
 TEST(KthDistinctTest, SampleTest1)
@@ -110,4 +171,5 @@ TEST(KthDistinctTest, SampleTest1)
 
     EXPECT_TRUE(kthDistinctFA(arr, 3).empty());
     EXPECT_TRUE(kthDistinctDS1(arr, 3).empty());
+    EXPECT_TRUE(kthDistinctDS2(arr, 3).empty());
 }
