@@ -147,6 +147,47 @@ static std::string kthDistinctDS2(const std::vector<std::string>& arr, int k)
 
 } // static std::string kthDistinctDS2( ...
 
+//! @brief Hash map discussion solution
+//! @param[in] arr Vector of strings
+//! @param[in] k   Number of distinct string to retrieve
+//! @return kth distinct string in arr or empty string if fewer than k distinct
+static std::string kthDistinctDS3(const std::vector<std::string>& arr, int k)
+{
+    //! @details https://leetcode.com/problems/kth-distinct-string-in-an-array
+    //!
+    //!          Time complexity O(N) where N = arr.size(). The algorithm
+    //!          iterates over arr twice.
+    //!          Space complexity O(N) for frequency_map. In the worst case,
+    //!          where all strings are distinct, the map will store N pairs.
+
+    std::unordered_map<std::string, int> frequency_map {};
+
+    //! First pass: Populate frequency map
+    for (const auto& str : arr)
+    {
+        ++frequency_map[str];
+    }
+
+    //! Second pass: Find the kth distinct string
+    for (const auto& str : arr)
+    {
+        //! Check if the current string is distinct
+        if (frequency_map[str] == 1)
+        {
+            --k;
+        }
+
+        //! When k reaches 0, we have found the kth distinct string
+        if (k == 0)
+        {
+            return str;
+        }
+    }
+
+    return {};
+
+} // static std::string kthDistinctDS3( ...
+
 TEST(KthDistinctTest, SampleTest1)
 {
     const std::vector<std::string> arr {"d", "b", "c", "b", "c", "a"};
@@ -154,6 +195,7 @@ TEST(KthDistinctTest, SampleTest1)
     EXPECT_EQ("a", kthDistinctFA(arr, 2));
     EXPECT_EQ("a", kthDistinctDS1(arr, 2));
     EXPECT_EQ("a", kthDistinctDS2(arr, 2));
+    EXPECT_EQ("a", kthDistinctDS3(arr, 2));
 }
 
 TEST(KthDistinctTest, SampleTest2)
@@ -163,6 +205,7 @@ TEST(KthDistinctTest, SampleTest2)
     EXPECT_EQ("aaa", kthDistinctFA(arr, 1));
     EXPECT_EQ("aaa", kthDistinctDS1(arr, 1));
     EXPECT_EQ("aaa", kthDistinctDS2(arr, 1));
+    EXPECT_EQ("aaa", kthDistinctDS3(arr, 1));
 }
 
 TEST(KthDistinctTest, SampleTest1)
@@ -172,4 +215,5 @@ TEST(KthDistinctTest, SampleTest1)
     EXPECT_TRUE(kthDistinctFA(arr, 3).empty());
     EXPECT_TRUE(kthDistinctDS1(arr, 3).empty());
     EXPECT_TRUE(kthDistinctDS2(arr, 3).empty());
+    EXPECT_TRUE(kthDistinctDS3(arr, 3).empty());
 }
