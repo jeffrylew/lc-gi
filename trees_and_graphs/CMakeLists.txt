@@ -3,6 +3,7 @@ set (
     "binary_tree_maximum_path_sum"
     "count_complete_tree_nodes"
     "course_schedule_ii"
+    "decode_string"
     "longest_increasing_path_in_matrix"
     "number_of_islands"
 )
