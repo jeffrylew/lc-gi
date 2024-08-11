@@ -220,6 +220,113 @@ static int longestIncreasingPathDS2(const std::vector<std::vector<int>>& matrix)
 
 } // static int longestIncreasingPathDS2( ...
 
+//! @brief Peeling onion discussion solution
+//! @param[in] matrix Reference to 2D vector of m x n ints
+//! @return Length of longest increasing path in matrix
+static int longestIncreasingPathDS3(const std::vector<std::vector<int>>& matrix)
+{
+    //! @details leetcode.com/problems/longest-increasing-path-in-a-matrix
+    //!
+    //!          Time complexity O(M * N). The topological sort is O(V + E) =
+    //!          O(M * N). V is total number of vertices and E is total number
+    //!          of edges. In our problem, O(V) = O(M * N) and O(E) = O(4V) =
+    //!          O(M * N).
+    //!          Space complexity O(M * N). Need to store out degrees and each
+    //!          level of leaves.
+
+    if (matrix.empty())
+    {
+        return 0;
+    }
+
+    auto nrows = static_cast<int>(std::ssize(matrix));
+    auto ncols = static_cast<int>(std::ssize(matrix[0]));
+
+    const std::vector<std::pair<int, int>> dirs {
+        {0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    //! Padding the matrix with zero as boundaries
+    //! Assume all positive integers, else use INT_MIN as boundaries
+    std::vector<std::vector<int>> padded_grid(nrows + 2,
+                                              std::vector<int>(ncols + 2, 0));
+    for (int row = 0; row < nrows; ++row)
+    {
+        std::copy(matrix[row].begin(),
+                  matrix[row].end(),
+                  padded_grid[row + 1].begin() + 1);
+    }
+
+    //! Calculate outdegrees
+    std::vector<std::vector<int>> outdegree(nrows + 2,
+                                            std::vector<int>(ncols + 2, 0));
+    for (int row = 1; row <= nrows; ++row)
+    {
+        for (int col = 1; col <= ncols; ++col)
+        {
+            for (const auto& [drow, dcol] : dirs)
+            {
+                const int next_row {row + drow};
+                const int next_col {col + dcol};
+
+                if (padded_grid[row][col] < padded_grid[next_row][next_col])
+                {
+                    ++outdegree[row][col];
+                }
+            }
+        }
+    }
+
+    nrows += 2;
+    ncols += 2;
+
+    //! Find leaves that have zero out degree as the initial level
+    //! These vertices don't depend on others
+    std::vector<std::pair<int, int>> leaves {};
+    for (int row = 1; row < nrows - 1; ++row)
+    {
+        for (int col = 1; col < ncols - 1; ++col)
+        {
+            if (outdegree[row][col] == 0)
+            {
+                leaves.emplace_back(row, col);
+            }
+        }
+    }
+
+    //! Remove leaves level by level in topological order as if peeling an onion
+    //! Want the longest path in the DAG, which is the number of layers in onion
+    int num_layers {};
+    while (!leaves.empty())
+    {
+        ++num_layers;
+
+        std::vector<std::pair<int, int>> new_leaves {};
+
+        for (const auto& [leaf_row, leaf_col] : leaves)
+        {
+            for (const auto& [drow, dcol] : dirs)
+            {
+                const int next_row {leaf_row + drow};
+                const int next_col {leaf_col + dcol};
+
+                if (padded_grid[leaf_row][leaf_col]
+                    > padded_grid[next_row][next_col])
+                {
+                    if (--outdegree[next_row][next_col] == 0)
+                    {
+                        new_leaves.emplace_back(next_row, next_col);
+                    }
+                }
+            }
+        }
+
+        leaves = std::move(new_leaves);
+    }
+
+    return num_layers;
+
+} // static int longestIncreasingPathDS3( ...
+
 TEST(LongestIncreasingPathTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -228,6 +335,7 @@ TEST(LongestIncreasingPathTest, SampleTest1)
     EXPECT_EQ(4, longestIncreasingPathFA(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS1(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS2(matrix));
+    EXPECT_EQ(4, longestIncreasingPathDS3(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest2)
@@ -238,6 +346,7 @@ TEST(LongestIncreasingPathTest, SampleTest2)
     EXPECT_EQ(4, longestIncreasingPathFA(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS1(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS2(matrix));
+    EXPECT_EQ(4, longestIncreasingPathDS3(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest3)
@@ -247,6 +356,7 @@ TEST(LongestIncreasingPathTest, SampleTest3)
     EXPECT_EQ(1, longestIncreasingPathFA(matrix));
     EXPECT_EQ(1, longestIncreasingPathDS1(matrix));
     EXPECT_EQ(1, longestIncreasingPathDS2(matrix));
+    EXPECT_EQ(1, longestIncreasingPathDS3(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest4)
@@ -258,4 +368,5 @@ TEST(LongestIncreasingPathTest, SampleTest4)
     EXPECT_NE(6, longestIncreasingPathFA(matrix));
     EXPECT_EQ(6, longestIncreasingPathDS1(matrix));
     EXPECT_EQ(6, longestIncreasingPathDS2(matrix));
+    EXPECT_EQ(6, longestIncreasingPathDS3(matrix));
 }
