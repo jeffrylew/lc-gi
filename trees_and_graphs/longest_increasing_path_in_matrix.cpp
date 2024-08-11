@@ -136,6 +136,8 @@ static int longestIncreasingPathDS1(const std::vector<std::vector<int>>& matrix)
             }
         }
 
+        //! If grid were 1 x 1, we'd expect path = 1. dfs processes single node
+        //! so at minimum, need to evaluate path length of 1 for given node.
         return ++longest_path;
     };
 
@@ -153,6 +155,71 @@ static int longestIncreasingPathDS1(const std::vector<std::vector<int>>& matrix)
 
 } // static int longestIncreasingPathDS1( ...
 
+//! @brief DFS with memoization discussion solution
+//! @param[in] matrix Reference to 2D vector of m x n ints
+//! @return Length of longest increasing path in matrix
+static int longestIncreasingPathDS2(const std::vector<std::vector<int>>& matrix)
+{
+    //! @details leetcode.com/problems/longest-increasing-path-in-a-matrix
+    //!
+    //!          Time complexity O(M * N). Each cell is calculated once and each
+    //!          edge is visited once. Total time complexity is O(V + E) where
+    //!          V = total number of vertices and E = total number of edges. In
+    //!          this problem, O(V) = O(M * N) and O(E) = O(4V) = O(M * N).
+    //!          Space complexity O(M * N). cache dominates space complexity.
+
+    if (matrix.empty())
+    {
+        return 0;
+    }
+
+    const auto nrows = static_cast<int>(std::ssize(matrix));
+    const auto ncols = static_cast<int>(std::ssize(matrix[0]));
+
+    const std::vector<std::pair<int, int>> dirs {
+        {0, 1}, {1, 0}, {0, -1}, {-1, 0}};
+
+    std::vector<std::vector<int>> cache(nrows, std::vector<int>(ncols, 0));
+
+    std::function<int(int, int)> dfs = [&](int row_in, int col_in) {
+        if (cache[row_in][col_in] != 0)
+        {
+            return cache[row_in][col_in];
+        }
+
+        for (const auto& [drow, dcol] : dirs)
+        {
+            const int next_row {row_in + drow};
+            const int next_col {col_in + dcol};
+
+            if (0 <= next_row
+                && next_row < nrows
+                && 0 <= next_col
+                && next_col < ncols
+                && matrix[next_row][next_col] > matrix[row_in][col_in])
+            {
+                cache[row_in][col_in] = std::max(cache[row_in][col_in],
+                                                 dfs(next_row, next_col));
+            }
+        }
+
+        return ++cache[row_in][col_in];
+    };
+
+    int longest_increasing_path {};
+    for (int row = 0; row < nrows; ++row)
+    {
+        for (int col = 0; col < ncols; ++col)
+        {
+            longest_increasing_path = std::max(longest_increasing_path,
+                                               dfs(row, col));
+        }
+    }
+
+    return longest_increasing_path;
+
+} // static int longestIncreasingPathDS2( ...
+
 TEST(LongestIncreasingPathTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -160,6 +227,7 @@ TEST(LongestIncreasingPathTest, SampleTest1)
 
     EXPECT_EQ(4, longestIncreasingPathFA(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS1(matrix));
+    EXPECT_EQ(4, longestIncreasingPathDS2(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest2)
@@ -169,6 +237,7 @@ TEST(LongestIncreasingPathTest, SampleTest2)
 
     EXPECT_EQ(4, longestIncreasingPathFA(matrix));
     EXPECT_EQ(4, longestIncreasingPathDS1(matrix));
+    EXPECT_EQ(4, longestIncreasingPathDS2(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest3)
@@ -177,6 +246,7 @@ TEST(LongestIncreasingPathTest, SampleTest3)
 
     EXPECT_EQ(1, longestIncreasingPathFA(matrix));
     EXPECT_EQ(1, longestIncreasingPathDS1(matrix));
+    EXPECT_EQ(1, longestIncreasingPathDS2(matrix));
 }
 
 TEST(LongestIncreasingPathTest, SampleTest4)
@@ -187,4 +257,5 @@ TEST(LongestIncreasingPathTest, SampleTest4)
     EXPECT_EQ(4, longestIncreasingPathFA(matrix));
     EXPECT_NE(6, longestIncreasingPathFA(matrix));
     EXPECT_EQ(6, longestIncreasingPathDS1(matrix));
+    EXPECT_EQ(6, longestIncreasingPathDS2(matrix));
 }
