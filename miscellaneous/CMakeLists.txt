@@ -5,6 +5,7 @@ set (
     "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
     "intersection_of_two_arrays_ii"
     "kth_distinct_string_in_an_array"
+    "lemonade_change"
     "lucky_numbers_in_a_matrix"
     "merge_nodes_in_between_zeros"
     "minimum_deletions_to_make_string_balanced"
