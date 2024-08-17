@@ -46,17 +46,104 @@ static std::string decodeStringFA(std::string s)
 
 } // static std::string decodeStringFA( ...
 
+//! @brief Using stack discussion solution to get decoded string
+//! @param[in] s String where k[encoded_string] has encoded_string repeated k
+//! @return Decoded string
+static std::string decodeStringDS1(std::string s)
+{
+    //! @details https://leetcode.com/problems/decode-string/editorial/
+    //!
+    //!          Time complexity O(maxK ^ countK * n) where maxK is max value of
+    //!          k, countK is the count of nested k values, and n is max length
+    //!          of encoded string. For example, for s = 20[a10[bc]], maxK = 20,
+    //!          countK = 2 since there are two nested k values (20 and 10), and
+    //!          n = 2 which is max length of encoded string between a and bc.
+    //!          Worst case scenario is when there are multiple nested patterns.
+    //!          Space complexity O(sum(maxK ^ countK * n)) where maxK is max
+    //!          value of k, countK is the count of nested k values, and n is
+    //!          the max length of encoded string. The max stack size is the sum
+    //!          of all decoded strings in the form maxK[nmaxK[n]].
+
+    std::stack<char> stack {};
+
+    for (const char ele : s)
+    {
+        if (ele != ']')
+        {
+            //! Push current character to stack
+            stack.push(ele);
+            continue;
+        }
+
+        // ele == ']'
+        std::string decoded_string {};
+
+        //! Get encoded string
+        while (stack.top() != '[')
+        {
+            decoded_string += stack.top();
+            stack.pop();
+        }
+
+        //! Pop [ from stack
+        stack.pop();
+
+        int base {1};
+        int k {};
+
+        //! Get the number k
+        while (!stack.empty()
+               && std::isdigit(static_cast<unsigned char>(stack.top())))
+        {
+            k += static_cast<int>(stack.top() - '0') * base;
+            stack.pop();
+            base *= 10;
+        }
+
+        //! Decode k[decoded_string] by pushing decoded_string k times on stack
+        while (k != 0)
+        {
+            for (int idx = static_cast<int>(std::ssize(decoded_string)) - 1;
+                 idx >= 0;
+                 --idx)
+            {
+                stack.push(decoded_string[idx]);
+            }
+
+            --k;
+        }
+
+    } // for (const char ele : s)
+
+    //! Get result from stack
+    const auto  stack_size = static_cast<int>(std::ssize(stack));
+    std::string result {};
+    result.reserve(stack_size);
+
+    for (int idx = stack_size - 1; idx >= 0; --idx)
+    {
+        result = stack.top() + result;
+        stack.pop();
+    }
+
+    return result;
+
+} // static std::string decodeStringDS1( ...
+
 TEST(DecodeStringTest, SampleTest1)
 {
     EXPECT_EQ("aaabcbc", decodeStringFA("3[a]2[bc]"));
+    EXPECT_EQ("aaabcbc", decodeStringDS1("3[a]2[bc]"));
 }
 
 TEST(DecodeStringTest, SampleTest2)
 {
     EXPECT_EQ("accaccacc", decodeStringFA("3[a2[c]]"));
+    EXPECT_EQ("accaccacc", decodeStringDS1("3[a2[c]]"));
 }
 
 TEST(DecodeStringTest, SampleTest3)
 {
     EXPECT_EQ("abcabccdcdcdef", decodeStringFA("2[abc]3[cd]ef"));
+    EXPECT_EQ("abcabccdcdcdef", decodeStringDS1("2[abc]3[cd]ef"));
 }
