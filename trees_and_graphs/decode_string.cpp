@@ -130,20 +130,94 @@ static std::string decodeStringDS1(std::string s)
 
 } // static std::string decodeStringDS1( ...
 
+//! @brief Using two stacks discussion solution to get decoded string
+//! @param[in] s String where k[encoded_string] has encoded_string repeated k
+//! @return Decoded string
+static std::string decodeStringDS2(std::string s)
+{
+    //! @details https://leetcode.com/problems/decode-string/editorial/
+    //!
+    //!          Time complexity O(maxK * n) where maxK is max value of k and n
+    //!          is s.size(). We traverse string of size n and iterate k times
+    //!          to decode each pattern of form k[string]. Thus, the worst case
+    //!          time complexity is O(maxK * n).
+    //!          Space complexity O(m + n) where m is number of letters a-z and
+    //!          n is the number of digits 0-9 in string s. In the worst case,
+    //!          the max size of string_stack and count_stack are m and n.
+
+    //! Stores all integer k
+    std::stack<int> count_stack {};
+
+    //! Stores all decoded strings
+    std::stack<std::string> string_stack {};
+
+    std::string current_string {};
+    int         k {};
+
+    for (const char ch : s)
+    {
+        if (std::isdigit(static_cast<unsigned int>(ch)))
+        {
+            k = k * 10 + static_cast<int>(ch - '0');
+        }
+        else if (ch == '[')
+        {
+            //! Push k to count_stack
+            count_stack.push(k);
+
+            //! Push current_string to string_stack
+            string_stack.push(std::move(current_string));
+
+            //! Reset current_string and k
+            current_string.clear();
+            k = 0;
+        }
+        else if (ch == ']')
+        {
+            //! Begin decoding process. string_stack contains the previously
+            //! decoded string
+            auto decoded_string = string_stack.top();
+            string_stack.pop();
+
+            //! Append current_string k times to decode curr_k[current_string]
+            //! Update: decoded_string = decoded_string + curr_k[current_string]
+            for (int curr_k = count_stack.top(); curr_k > 0; --curr_k)
+            {
+                decoded_string += current_string;
+            }
+
+            count_stack.pop();
+            current_string = decoded_string;
+        }
+        else
+        {
+            //! Current character is a letter
+            current_string += ch;
+        }
+
+    } // for (const char ch : s)
+
+    return current_string;
+
+} // static std::string decodeStringDS2( ...
+
 TEST(DecodeStringTest, SampleTest1)
 {
     EXPECT_EQ("aaabcbc", decodeStringFA("3[a]2[bc]"));
     EXPECT_EQ("aaabcbc", decodeStringDS1("3[a]2[bc]"));
+    EXPECT_EQ("aaabcbc", decodeStringDS2("3[a]2[bc]"));
 }
 
 TEST(DecodeStringTest, SampleTest2)
 {
     EXPECT_EQ("accaccacc", decodeStringFA("3[a2[c]]"));
     EXPECT_EQ("accaccacc", decodeStringDS1("3[a2[c]]"));
+    EXPECT_EQ("accaccacc", decodeStringDS2("3[a2[c]]"));
 }
 
 TEST(DecodeStringTest, SampleTest3)
 {
     EXPECT_EQ("abcabccdcdcdef", decodeStringFA("2[abc]3[cd]ef"));
     EXPECT_EQ("abcabccdcdcdef", decodeStringDS1("2[abc]3[cd]ef"));
+    EXPECT_EQ("abcabccdcdcdef", decodeStringDS2("2[abc]3[cd]ef"));
 }
