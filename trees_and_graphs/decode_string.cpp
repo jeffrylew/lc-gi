@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <cctype>
+#include <functional>
 #include <stack>
 #include <string>
 #include <utility>
@@ -201,11 +202,69 @@ static std::string decodeStringDS2(std::string s)
 
 } // static std::string decodeStringDS2( ...
 
+//! @brief Recursive discussion solution to get decoded string
+//! @param[in] s String where k[encoded_string] has encoded_string repeated k
+//! @return Decoded string
+static std::string decodeStringDS3(std::string s)
+{
+    //! @details https://leetcode.com/problems/decode-string/editorial/
+    //!
+    //!          Time complexity O(maxK * n) where n = s.size() as in DS2.
+    //!          Space complexity O(n). This is the space used to store internal
+    //!          call stack used for recursion. Since we are recursively
+    //!          decoding each nested pattern, the max depth of the recursive
+    //!          call stack is not more than n.
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    int index {};
+
+    std::function<std::string(int&)> decode_string = [&](int& idx) {
+        std::string result {};
+
+        while (idx < s_len && s[idx] != ']')
+        {
+            if (!std::isdigit(static_cast<unsigned char>(s[idx])))
+            {
+                result += s[idx++];
+                continue;
+            }
+
+            int k {};
+
+            //! Build k while next character is a digit
+            while (idx < s_len
+                   && std::isdigit(static_cast<unsigned char>(s[idx])))
+            {
+                k = k * 10 + static_cast<int>(s[idx++] - '0');
+            }
+
+            //! Ignore the opening bracket '['
+            ++idx;
+            auto decoded_string = decode_string(idx);
+
+            //! Ignore the closing bracket ']'
+            ++idx;
+            while (k-- > 0)
+            {
+                result += decoded_string;
+            }
+
+        } // while (idx < s_len && ...
+
+        return result;
+    };
+
+    return decode_string(index);
+
+} // static std::string decodeStringDS3( ...
+
 TEST(DecodeStringTest, SampleTest1)
 {
     EXPECT_EQ("aaabcbc", decodeStringFA("3[a]2[bc]"));
     EXPECT_EQ("aaabcbc", decodeStringDS1("3[a]2[bc]"));
     EXPECT_EQ("aaabcbc", decodeStringDS2("3[a]2[bc]"));
+    EXPECT_EQ("aaabcbc", decodeStringDS3("3[a]2[bc]"));
 }
 
 TEST(DecodeStringTest, SampleTest2)
@@ -213,6 +272,7 @@ TEST(DecodeStringTest, SampleTest2)
     EXPECT_EQ("accaccacc", decodeStringFA("3[a2[c]]"));
     EXPECT_EQ("accaccacc", decodeStringDS1("3[a2[c]]"));
     EXPECT_EQ("accaccacc", decodeStringDS2("3[a2[c]]"));
+    EXPECT_EQ("accaccacc", decodeStringDS3("3[a2[c]]"));
 }
 
 TEST(DecodeStringTest, SampleTest3)
@@ -220,4 +280,5 @@ TEST(DecodeStringTest, SampleTest3)
     EXPECT_EQ("abcabccdcdcdef", decodeStringFA("2[abc]3[cd]ef"));
     EXPECT_EQ("abcabccdcdcdef", decodeStringDS1("2[abc]3[cd]ef"));
     EXPECT_EQ("abcabccdcdcdef", decodeStringDS2("2[abc]3[cd]ef"));
+    EXPECT_EQ("abcabccdcdcdef", decodeStringDS3("2[abc]3[cd]ef"));
 }
