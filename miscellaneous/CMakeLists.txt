@@ -8,6 +8,7 @@ set (
     "lemonade_change"
     "lucky_numbers_in_a_matrix"
     "merge_nodes_in_between_zeros"
+    "merge_two_lists"
     "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "palindrome_number"
