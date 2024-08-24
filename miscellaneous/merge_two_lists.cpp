@@ -80,6 +80,51 @@ static ListNode* mergeTwoListsFA(ListNode* list1, ListNode* list2)
 
 } // static ListNode* mergeTwoListsFA( ...
 
+//! @brief Recursive discussion solution
+//! @param[in] list1 Head of first sorted linked list
+//! @param[in] list2 Head of second sorted linked list
+//! @return Head of the merged linked list
+static ListNode* mergeTwoListsDS1(ListNode* list1, ListNode* list2)
+{
+    //! @details https://leetcode.com/problems/merge-two-sorted-lists
+    //!
+    //!          Recursively define merge as following (ignore empty list cases)
+    //!          list1[0] + merge(list1[1:], list2) for list1[0] < list2[0]
+    //!          list2[0] + merge(list1, list2[1:]) otherwise
+    //!
+    //!          Time complexity O(N + M) where N = number of nodes in list1 and
+    //!          M = number of nodes in list2. Each recursive call increments
+    //!          the pointer to list1 or list2 by one so there will be exactly
+    //!          one call to mergeTwoLists per element in each list.
+    //!          Space complexity O(N + M). The first call to mergeTwoLists does
+    //!          not return until the ends of both list1 and list2 have been
+    //!          reached so N + M stack frames use O(N + M) space.
+
+    if (list1 == nullptr)
+    {
+        return list2;
+    }
+
+    if (list2 == nullptr)
+    {
+        return list1;
+    }
+
+    //! Determine which of list1 or list2 has a smaller head and recursively set
+    //! the next value of that head to the next merge result. Both lists are
+    //! null-terminated so the recursion will eventually terminate
+
+    if (list1->val < list2->val)
+    {
+        list1->next = mergeTwoListsDS1(list1->next, list2);
+        return list1;
+    }
+
+    list2->next = mergeTwoLists(list1, list2->next);
+    return list2;
+
+} // static ListNode* mergeTwoListsDS1( ...
+
 TEST(MergeTwoListsTest, SampleTest1)
 {
     ListNode four_1 {4};
@@ -111,6 +156,7 @@ TEST(MergeTwoListsTest, SampleTest1)
 TEST(MergeTwoListsTest, SampleTest2)
 {
     EXPECT_EQ(nullptr, mergeTwoListsFA(nullptr, nullptr));
+    EXPECT_EQ(nullptr, mergeTwoListsDS1(nullptr, nullptr));
 }
 
 TEST(MergeTwoListsTest, SampleTest3)
@@ -118,4 +164,5 @@ TEST(MergeTwoListsTest, SampleTest3)
     const ListNode zero {0};
 
     EXPECT_EQ(zero->val, mergeTwoListsFA(nullptr, &zero)->val);
+    EXPECT_EQ(zero->val, mergeTwoListsDS1(nullptr, &zero)->val);
 }
