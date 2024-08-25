@@ -125,6 +125,47 @@ static ListNode* mergeTwoListsDS1(ListNode* list1, ListNode* list2)
 
 } // static ListNode* mergeTwoListsDS1( ...
 
+//! @brief Iterative discussion solution
+//! @param[in] list1 Head of first sorted linked list
+//! @param[in] list2 Head of second sorted linked list
+//! @return Head of the merged linked list
+static ListNode* mergeTwoListsDS2(ListNode* list1, ListNode* list2)
+{
+    //! @details https://leetcode.com/problems/merge-two-sorted-lists
+    //!
+    //!          Time complexity O(N + M). Exactly one of l1 and l2 is
+    //!          incremented on each loop iteration so the while loop runs for
+    //!          a number of iterations equal to sum of lengths of two lists.
+    //!          All other work is constant.
+    //!          Space complexity O(1). The iterative approach only allocates a
+    //!          few pointers.
+
+    //! Maintain an unchanging reference to node ahead of return node
+    ListNode prehead {-1};
+    auto*    prev = &prehead;
+
+    while (l1 != nullptr && l2 != nullptr)
+    {
+        if (l1->val <= l2->val)
+        {
+            prev->next = l1;
+            l1         = l1->next;
+        }
+        else
+        {
+            prev->next = l2;
+            l2         = l2->next;
+        }
+
+        prev = prev->next;
+    }
+
+    //! l1 or l2 can still have nodes so connect non-null list to end of merge
+    prev->next = l1 == nullptr ? l2 : l1;
+    return prehead.next;
+
+} // static ListNode* mergeTwoListsDS2( ...
+
 TEST(MergeTwoListsTest, SampleTest1)
 {
     ListNode four_1 {4};
@@ -157,6 +198,7 @@ TEST(MergeTwoListsTest, SampleTest2)
 {
     EXPECT_EQ(nullptr, mergeTwoListsFA(nullptr, nullptr));
     EXPECT_EQ(nullptr, mergeTwoListsDS1(nullptr, nullptr));
+    EXPECT_EQ(nullptr, mergeTwoListsDS2(nullptr, nullptr));
 }
 
 TEST(MergeTwoListsTest, SampleTest3)
@@ -165,4 +207,5 @@ TEST(MergeTwoListsTest, SampleTest3)
 
     EXPECT_EQ(zero->val, mergeTwoListsFA(nullptr, &zero)->val);
     EXPECT_EQ(zero->val, mergeTwoListsDS1(nullptr, &zero)->val);
+    EXPECT_EQ(zero->val, mergeTwoListsDS2(nullptr, &zero)->val);
 }
