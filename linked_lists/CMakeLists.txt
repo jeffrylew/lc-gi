@@ -2,6 +2,7 @@ set (
     cpp_files
     "add_two_numbers"
     "merge_two_lists"
+    "remove_nth_node_from_end_of_list"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
