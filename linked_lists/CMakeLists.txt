@@ -1,6 +1,7 @@
 set (
     cpp_files
     "add_two_numbers"
+    "merge_two_lists"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
