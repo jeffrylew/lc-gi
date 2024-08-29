@@ -62,6 +62,11 @@ static ListNode* removeNthFromEndFA(ListNode* head, int n)
 static ListNode* removeNthFromEndDS1(ListNode* head, int n)
 {
     //! @details https://leetcode.com/problems/remove-nth-node-from-end-of-list
+    //!
+    //!          Time complexity O(L). Algorithm makes two traversals of the
+    //!          list. First to calculate its length L and second to find the
+    //!          (L - n)th node. There are 2L - n operations.
+    //!          Space complexity O(1)
 
     ListNode dummy {0};
     dummy.next = head;
