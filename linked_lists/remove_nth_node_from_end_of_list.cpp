@@ -55,11 +55,46 @@ static ListNode* removeNthFromEndFA(ListNode* head, int n)
 
 } // static ListNode* removeNthFromEndFA( ...
 
+//! @brief Two pass algorithm discussion solution
+//! @param[in] head Pointer to head of linked list
+//! @param[in] n    Number of node from end to remove
+//! @return Pointer to head of list after removal
+static ListNode* removeNthFromEndDS1(ListNode* head, int n)
+{
+    //! @details https://leetcode.com/problems/remove-nth-node-from-end-of-list
+
+    ListNode dummy {0};
+    dummy.next = head;
+
+    int   length {};
+    auto* first = head;
+
+    while (first != nullptr)
+    {
+        ++length;
+        first = first->next;
+    }
+
+    lenth -= n;
+    first = &dummy;
+
+    while (length > 0)
+    {
+        --length;
+        first = first->next;
+    }
+
+    first->next = first->next->next;
+    return dummy->next;
+
+} // static ListNode* removeNthFromEndDS1( ...
+
 TEST(RemoveNthFromEndTest, SampleTest2)
 {
     ListNode one {1};
 
     EXPECT_EQ(nullptr, removeNthFromEndFA(&one, 1));
+    EXPECT_EQ(nullptr, removeNthFromEndDS1(&one, 1));
 }
 
 TEST(RemoveNthFromEndTest, SampleTest3)
@@ -70,4 +105,5 @@ TEST(RemoveNthFromEndTest, SampleTest3)
     ListNode expected_one {1};
 
     EXPECT_EQ(expected_one->val, removeNthFromEndFA(&one, 1)->val);
+    EXPECT_EQ(expected_one->val, removeNthFromEndDS1(&one, 1)->val);
 }
