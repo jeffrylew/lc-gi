@@ -111,8 +111,9 @@ static ListNode* removeNthFromEndDS2(ListNode* head, int n)
     auto* first  = &dummy;
     auto* second = &dummy;
 
-    //! Advance first point so gap between first and second is n nodes
-    for (int pos = 1; pos < n + 1; ++pos)
+    //! Advance first pointer so gap between first and second is n nodes
+    //! Assume first is not nullptr for these iterations
+    for (int pos = 1; pos <= n + 1; ++pos)
     {
         first = first->next;
     }
