@@ -1,6 +1,7 @@
 set (
     cpp_files
     "add_two_numbers"
+    "copy_list_with_random_pointer"
     "merge_two_lists"
     "remove_nth_node_from_end_of_list"
 )
