@@ -94,12 +94,48 @@ static ListNode* removeNthFromEndDS1(ListNode* head, int n)
 
 } // static ListNode* removeNthFromEndDS1( ...
 
+//! @brief One pass algorithm discussion solution
+//! @param[in] head Pointer to head of linked list
+//! @param[in] n    Number of node from end to remove
+//! @return Pointer to head of list after removal
+static ListNode* removeNthFromEndDS2(ListNode* head, int n)
+{
+    //! @details https://leetcode.com/problems/remove-nth-node-from-end-of-list
+    //!
+    //!          Time complexity O(L). The algorithm makes one traversal of the
+    //!          list of L nodes.
+    //!          Space complexity O(1)
+
+    ListNode dummy {0, head};
+
+    auto* first  = &dummy;
+    auto* second = &dummy;
+
+    //! Advance first point so gap between first and second is n nodes
+    for (int pos = 1; pos < n + 1; ++pos)
+    {
+        first = first->next;
+    }
+
+    //! Move first to the end, maintaining the gap
+    while (first != nullptr)
+    {
+        first  = first->next;
+        second = second->next;
+    }
+
+    second->next = second->next->next;
+    return dummy.next;
+
+} // static ListNode* removeNthFromEndDS2( ...
+
 TEST(RemoveNthFromEndTest, SampleTest2)
 {
     ListNode one {1};
 
     EXPECT_EQ(nullptr, removeNthFromEndFA(&one, 1));
     EXPECT_EQ(nullptr, removeNthFromEndDS1(&one, 1));
+    EXPECT_EQ(nullptr, removeNthFromEndDS2(&one, 1));
 }
 
 TEST(RemoveNthFromEndTest, SampleTest3)
@@ -111,4 +147,5 @@ TEST(RemoveNthFromEndTest, SampleTest3)
 
     EXPECT_EQ(expected_one->val, removeNthFromEndFA(&one, 1)->val);
     EXPECT_EQ(expected_one->val, removeNthFromEndDS1(&one, 1)->val);
+    EXPECT_EQ(expected_one->val, removeNthFromEndDS2(&one, 1)->val);
 }
