@@ -36,7 +36,7 @@ static Node* copyRandomListDS1(Node* head)
     //! Map holds old nodes as keys and new nodes as its values
     std::unordered_map<Node*, Node*> visited_nodes {};
 
-    std::function<Node*(Node*)> copyRandomList = [&](Node* curr) {
+    std::function<Node*(Node*)> copyRandomList = [&](Node* curr) -> Node* {
         if (curr == nullptr)
         {
             return nullptr;
