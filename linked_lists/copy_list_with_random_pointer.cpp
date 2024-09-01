@@ -76,12 +76,12 @@ static Node* copyRandomListDS2(Node* head)
 {
     //! @details https://leetcode.com/problems/copy-list-with-random-pointer
     //!
-    //!          Time complexity O(N) where N is the number of nodes in list. We
-    //!          make one pass over the original linked list.
+    //!          Time complexity O(N) where N is the number of nodes in list.
+    //!          We make one pass over the original linked list.
     //!          Space complexity O(N). We have a dictionary containing mapping
     //!          from old nodes to new nodes. There are N nodes for O(N) space.
 
-    //! Visited directionary holds old node as key and new node as value
+    //! Visited dictionary holds old node as key and new node as value
     std::unordered_map<Node*, Node*> visited_nodes {}; 
 
     std::function<Node*(Node*)> getClonedNode = [&](Node* old_node) {
@@ -127,7 +127,7 @@ static Node* copyRandomListDS2(Node* head)
 
     return visited_nodes[head];
 
-} //static Node* copyRandomListDS2( ...
+} // static Node* copyRandomListDS2( ...
 
 TEST(CopyRandomListTest, SampleTest2)
 {
