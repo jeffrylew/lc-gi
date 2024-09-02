@@ -129,6 +129,67 @@ static Node* copyRandomListDS2(Node* head)
 
 } // static Node* copyRandomListDS2( ...
 
+//! @brief Iterative discussion solution with O(1) space
+//! @param[in] head Pointer to head of list where each node has a random pointer
+//! @return Pointer to head of copied linked list
+static Node* copyRandomListDS3(Node* head)
+{
+    //! @details https://leetcode.com/problems/copy-list-with-random-pointer
+    //!
+    //!          Time complexity O(N)
+    //!          Space complexity O(1). Note this modifies the original list.
+
+    if (head == nullptr)
+    {
+        return nullptr;
+    }
+
+    //! Create new weaved list of original and copied nodes
+    Node* ptr = head;
+    while (ptr != nullptr)
+    {
+        //! Cloned node
+        Node* new_node = new Node(ptr->val);
+
+        //! Insert cloned node adjacent to original node. If A->B->C is original
+        //! list then list after weaving cloned nodes is A->A'->B->B'->C->C'
+        new_node->next = ptr->next;
+        ptr->next      = new_node;
+        ptr            = new_node->next;
+    }
+
+    ptr = head;
+
+    //! Now link random pointers of new nodes created. Iterate newly created
+    //! list and assign random pointers of cloned nodes to those analogous to
+    //! random nodes of original nodes.
+    while (ptr != nullptr)
+    {
+        ptr->next->random =
+            (ptr->random != nullptr) ? ptr->random->next : nullptr;
+        ptr = ptr->next->next;
+    }
+
+    //! Unweave linked list to get original list and cloned list
+    Node* ptr_old_list = head;       // A->B->C
+    Node* ptr_new_list = head->next; // A'->B'->C'
+    Node* head_new     = head->next;
+
+    while (ptr_old_list != nullptr)
+    {
+        ptr_old_list->next = ptr_old_list->next->next;
+        ptr_new_list->next = (ptr_new_list->next != nullptr)
+                                 ? ptr_new_list->next->next
+                                 : nullptr;
+
+        ptr_old_list = ptr_old_list->next;
+        ptr_new_list = ptr_new_list->next;
+    }
+
+    return head_new;
+
+} // static Node* copyRandomListDS3( ...
+
 TEST(CopyRandomListTest, SampleTest2)
 {
     Node two {2};
@@ -141,6 +202,7 @@ TEST(CopyRandomListTest, SampleTest2)
     //! @note These result in memory leaks, no "delete" present
     auto* result_DS1 = copyRandomListDS1(&one);
     auto* result_DS2 = copyRandomListDS2(&one);
+    auto* result_DS3 = copyRandomListDS3(&one);
 
     EXPECT_EQ(result_DS1->val, one.val);
     EXPECT_EQ(result_DS1->next->val, one.next->val);
@@ -149,4 +211,8 @@ TEST(CopyRandomListTest, SampleTest2)
     EXPECT_EQ(result_DS2->val, one.val);
     EXPECT_EQ(result_DS2->next->val, one.next->val);
     EXPECT_EQ(result_DS2->random->val, one.random->val);
+
+    EXPECT_EQ(result_DS3->val, one.val);
+    EXPECT_EQ(result_DS3->next->val, one.next->val);
+    EXPECT_EQ(result_DS3->random->val, one.random->val);
 }
