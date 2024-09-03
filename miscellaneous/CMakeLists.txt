@@ -14,6 +14,7 @@ set (
     "pass_the_pillow"
     "reverse_substrings_between_each_pair_of_parentheses"
     "sort_the_people"
+    "sum_of_digits_of_string_after_convert"
     "three_consecutive_odds"
     "valid_parentheses"
     "water_bottles"
