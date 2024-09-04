@@ -12,18 +12,18 @@ static int getLuckyFA(std::string s, int k)
     //!
     //!          Time complexity O(N) where N = s.size()
     //!          Space complexity O(1)
-    //!
-    //!          First attempt solution does not pass SampleTest4
 
     std::uint64_t result {};
 
     for (const char letter : s)
     {
         const auto next_digits = 1ULL + static_cast<std::uint64_t>(letter - 'a');
-        result = result * (next_digits < 10 ? 10ULL : 100ULL) + next_digits;
+
+        result += next_digits % 10ULL;
+        result += next_digits < 10 ? 0ULL : next_digits / 10ULL;
     }
 
-    for (int num_ops = 0; num_ops < k; ++num_ops)
+    for (int num_ops = 1; num_ops < k; ++num_ops)
     {
         std::uint64_t transform {};
 
@@ -57,6 +57,5 @@ TEST(GetLuckyTest, SampleTest3)
 
 TEST(GetLuckyTest, SampleTest4)
 {
-    EXPECT_NE(8, getLuckyFA("fleyctuuajsr", 5));
-    EXPECT_EQ(5, getLuckyFA("fleyctuuajsr", 5));
+    EXPECT_EQ(8, getLuckyFA("fleyctuuajsr", 5));
 }
