@@ -40,12 +40,43 @@ static int maxAreaFA(std::vector<int> height)
 
 } // static int maxAreaFA( ...
 
+//! @brief Brute force discussion solution
+//! @param[in] height Vector of heights of length 
+static int maxAreaDS1(std::vector<int> height)
+{
+    //! @details https://leetcode.com/problems/container-with-most-water
+    //!
+    //!          Time complexity O(N ^ 2) where N = height.size(). Calculate
+    //!          area for all N(N - 1) / 2 height pairs
+    //!          Space complexity O(1), constant extra space is used.
+
+    const auto num_heights = static_cast<int>(std::ssize(height));
+
+    int max_area {};
+
+    for (int left = 0; left < num_heights; ++left)
+    {
+        for (int right = left + 1; right < num_heights; ++right)
+        {
+            const int width {right - left};
+            const int smaller_height {std::min(height[left], height[right])};
+
+            max_area = std::max(max_area, smaller_height * width);
+        }
+    }
+
+    return max_area;
+
+} // static int maxAreaDS1( ...
+
 TEST(MaxAreaTest, SampleTest1)
 {
     EXPECT_EQ(49, maxAreaFA({1, 8, 6, 2, 5, 4, 8, 3, 7}));
+    EXPECT_EQ(49, maxAreaDS1({1, 8, 6, 2, 5, 4, 8, 3, 7}));
 }
 
 TEST(MaxAreaTest, SampleTest2)
 {
     EXPECT_EQ(1, maxAreaFA({1, 1}));
+    EXPECT_EQ(1, maxAreaDS1({1, 1}));
 }
