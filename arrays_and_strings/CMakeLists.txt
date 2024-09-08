@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "container_with_most_water"
     "longest_substring_without_repeating_characters"
 )
 
