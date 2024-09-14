@@ -160,20 +160,24 @@ static std::vector<std::vector<int>> threeSumDS2(std::vector<int> nums)
     const auto two_sum = [&](int idx_in) {
         std::unordered_set<int> seen {};
 
+        //! Analyze elements to right of pivot at idx_in
         for (int j = idx_in + 1; j < nums_size; ++j)
         {
             const int complement {-nums[idx_in] - nums[j]};
 
+            //! Check if a complement is in hash set
             if (seen.contains(complement))
             {
                 res.push_back({nums[idx_in], complement, nums[j]});
 
+                //! Increment j while the next value is same to avoid duplicates
                 while (j + 1 < nums_size && nums[j] == nums[j + 1])
                 {
                     ++j;
                 }
             }
 
+            //! Add nums[j] to hashset so it can be used as a complement
             seen.insert(nums[j]);
         }
     };
@@ -182,9 +186,11 @@ static std::vector<std::vector<int>> threeSumDS2(std::vector<int> nums)
     {
         if (nums[idx] > 0)
         {
+            //! Remaining values cannot sum to zero since nums is sorted
             break;
         }
 
+        //! If current value is same as the one before, skip it
         if (idx == 0 || nums[idx - 1] != nums[idx])
         {
             two_sum(idx);
