@@ -201,6 +201,56 @@ static std::vector<std::vector<int>> threeSumDS2(std::vector<int> nums)
 
 } // static std::vector<std::vector<int>> threeSumDS2( ...
 
+//! @brief No sort discussion solution
+//! @param[in] nums Vector of integers of size in [3, 3000]
+//! @return Vector of unique triplets with zero sum
+static std::vector<std::vector<int>> threeSumDS3(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems/3sum/description/
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    std::set<std::vector<int>> res {};
+
+    //! Hashset used to skip duplicates in outer loop
+    std::unordered_set<int> duplicates {};
+
+    //! Values in hashmap indicate whether have encountered element in current
+    //! iteration of inner loop
+    std::unordered_map<int, int> seen {};
+
+    for (int pos = 0; pos < nums_size; ++pos)
+    {
+        //! Use hashset to skip duplicates in outer loop
+        if (!duplicates.insert(nums[pos]).second)
+        {
+            continue;
+        }
+
+        for (int j = pos + 1; j < nums_size; ++j)
+        {
+            const int complement {-nums[pos] - nums[j]};
+
+            auto seen_it = seen.find(complement);
+            if (seen_it != seen.end() && seen_it->second == pos)
+            {
+                std::vector<int> triplet {nums[pos], nums[j], complement};
+
+                //! Sort values in triple and add to set to avoid duplicates
+                std::sort(triplet.begin(), triplet.end());
+                res.insert(std::move(triplet));
+            }
+
+            //! Indicate can use nums[j] as a complement for nums[pos] and
+            //! indicates whether have encounterd element in current iteration
+            seen[nums[j]] = pos;
+        }
+    }
+
+    return std::vector<std::vector<int>>(res.begin(), res.end());
+
+} // static std::vector<std::vector<int>> threeSumDS3( ...
+
 TEST(ThreeSumTest, SampleTest1)
 {
     const std::vector<std::vector<int>> expected_output {
@@ -209,6 +259,7 @@ TEST(ThreeSumTest, SampleTest1)
     EXPECT_EQ(expected_output, threeSumFA({-1, 0, 1, 2, -1, -4}));
     EXPECT_EQ(expected_output, threeSumDS1({-1, 0, 1, 2, -1, -4}));
     EXPECT_EQ(expected_output, threeSumDS2({-1, 0, 1, 2, -1, -4}));
+    EXPECT_EQ(expected_output, threeSumDS3({-1, 0, 1, 2, -1, -4}));
 }
 
 TEST(ThreeSumTest, SampleTest2)
@@ -218,6 +269,7 @@ TEST(ThreeSumTest, SampleTest2)
     EXPECT_EQ(expected_output, threeSumFA({0, 1, 1}));
     EXPECT_EQ(expected_output, threeSumDS1({0, 1, 1}));
     EXPECT_EQ(expected_output, threeSumDS2({0, 1, 1}));
+    EXPECT_EQ(expected_output, threeSumDS3({0, 1, 1}));
 }
 
 TEST(ThreeSumTest, SampleTest3)
@@ -227,6 +279,7 @@ TEST(ThreeSumTest, SampleTest3)
     EXPECT_EQ(expected_output, threeSumFA({0, 0, 0}));
     EXPECT_EQ(expected_output, threeSumDS1({0, 0, 0}));
     EXPECT_EQ(expected_output, threeSumDS2({0, 0, 0}));
+    EXPECT_EQ(expected_output, threeSumDS3({0, 0, 0}));
 }
 
 TEST(ThreeSumTest, SampleTest4)
@@ -255,4 +308,5 @@ TEST(ThreeSumTest, SampleTest4)
     EXPECT_EQ(first_attempt_output, threeSumFA(nums));
     EXPECT_EQ(expected_output, threeSumDS1(nums));
     EXPECT_EQ(expected_output, threeSumDS2(nums));
+    EXPECT_EQ(expected_output, threeSumDS3(nums));
 }
