@@ -207,6 +207,10 @@ static std::vector<std::vector<int>> threeSumDS2(std::vector<int> nums)
 static std::vector<std::vector<int>> threeSumDS3(std::vector<int> nums)
 {
     //! @details https://leetcode.com/problems/3sum/description/
+    //!
+    //!          Time complexity O(N ^ 2). We have outer and inner loops, each
+    //!          going through N elements.
+    //!          Space complexity O(N) for the hashset/hashmap.
 
     const auto nums_size = static_cast<int>(std::ssize(nums));
 
