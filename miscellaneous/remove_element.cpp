@@ -46,11 +46,42 @@ static int removeElementDS1(std::vector<int>& nums, int val)
     return slow_idx;
 }
 
+//! @brief Two pointers for rare element removal discussion solution
+//! @param[in, out] nums Reference to vector of ints to modify
+//! @param[in]      val  Int to remove from nums
+//! @return Number of elements in nums that are not equal to val
+static int removeElementDS2(std::vector<int>& nums, int val)
+{
+    //! @details https://leetcode.com/problems/remove-element/editorial/
+
+    auto num_steps = static_cast<int>(std::ssize(nums));
+
+    int idx {};
+
+    while (idx < num_steps)
+    {
+        if (nums[idx] == val)
+        {
+            nums[idx] = nums[num_steps - 1];
+
+            //! Reduce vector size by one
+            --num_steps;
+        }
+        else
+        {
+            ++idx;
+        }
+    }
+
+    return num_steps;
+}
+
 TEST(RemoveElementTest, SampleTest1)
 {
     std::vector<int> numsFA {3, 2, 2, 3};
 
     auto numsDS1 = numsFA;
+    auto numsDS2 = numsFA;
 
     EXPECT_EQ(2, removeElementFA(numsFA, 3));
     EXPECT_EQ(2, numsFA[0]);
@@ -59,6 +90,10 @@ TEST(RemoveElementTest, SampleTest1)
     EXPECT_EQ(2, removeElementDS1(numsDS1, 3));
     EXPECT_EQ(2, numsDS1[0]);
     EXPECT_EQ(2, numsDS1[1]);
+
+    EXPECT_EQ(2, removeElementDS2(numsDS2, 3));
+    EXPECT_EQ(2, numsDS2[0]);
+    EXPECT_EQ(2, numsDS2[1]);
 }
 
 TEST(RemoveElementTest, SampleTest2)
@@ -66,6 +101,7 @@ TEST(RemoveElementTest, SampleTest2)
     std::vector<int> numsFA {0, 1, 2, 2, 3, 0, 4, 2};
 
     auto numsDS1 = numsFA;
+    auto numsDS2 = numsFA;
 
     EXPECT_EQ(5, removeElementFA(numsFA, 2));
     EXPECT_EQ(0, numsFA[0]);
@@ -74,10 +110,17 @@ TEST(RemoveElementTest, SampleTest2)
     EXPECT_EQ(0, numsFA[3]);
     EXPECT_EQ(4, numsFA[4]);
 
-    EXPECT_EQ(5, removeElementFA(numsDS1, 2));
+    EXPECT_EQ(5, removeElementDS1(numsDS1, 2));
     EXPECT_EQ(0, numsDS1[0]);
     EXPECT_EQ(1, numsDS1[1]);
     EXPECT_EQ(3, numsDS1[2]);
     EXPECT_EQ(0, numsDS1[3]);
     EXPECT_EQ(4, numsDS1[4]);
+
+    EXPECT_EQ(5, removeElementDS2(numsDS2, 2));
+    EXPECT_EQ(0, numsDS2[0]);
+    EXPECT_EQ(1, numsDS2[1]);
+    EXPECT_EQ(3, numsDS2[2]);
+    EXPECT_EQ(0, numsDS2[3]);
+    EXPECT_EQ(4, numsDS2[4]);
 }
