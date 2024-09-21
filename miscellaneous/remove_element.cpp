@@ -53,6 +53,12 @@ static int removeElementDS1(std::vector<int>& nums, int val)
 static int removeElementDS2(std::vector<int>& nums, int val)
 {
     //! @details https://leetcode.com/problems/remove-element/editorial/
+    //!
+    //!          Time complexity O(N), where N = nums.size(). Both idx and
+    //!          num_steps traverse at most N steps. The number of assignment
+    //!          operations is equal to the number of elements to remove so it
+    //!          is more efficient if elements to remove are rare.
+    //!          Space complexity O(1)
 
     auto num_steps = static_cast<int>(std::ssize(nums));
 
@@ -62,6 +68,9 @@ static int removeElementDS2(std::vector<int>& nums, int val)
     {
         if (nums[idx] == val)
         {
+            //! Swap current element with the last one and dispose the last one
+            //! In the next iteration, will check if this last element is the
+            //! value we want to remove
             nums[idx] = nums[num_steps - 1];
 
             //! Reduce vector size by one
