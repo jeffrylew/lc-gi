@@ -59,6 +59,7 @@ static void nextPermutationDS(std::vector<int>& nums)
         --pivot;
     }
 
+    /*
     if (pivot != 0)
     {
         int next_bigger_num_idx {nums_size - 1};
@@ -76,6 +77,20 @@ static void nextPermutationDS(std::vector<int>& nums)
         //! Swap so correct number is at index pivot - 1. This does not change
         //! the descending order of the subarray to the right of pivot - 1
         std::swap(nums[pivot - 1], nums[next_bigger_num_idx]);
+    }
+     */
+
+    //! Optimization of above commented-out if statement using binary search
+    //! Runtime is 3ms (beats 62.15%) vs. above if statement 0ms (beats 100%)
+    //! but memory usage is 14.6 MB (beats 96.54%) vs. 14.8 MB (beats 83.30%)
+    if (pivot != 0)
+    {
+        const int arr_len {nums_size - pivot};
+        auto      next_bigger_num_it = std::upper_bound(nums.rbegin(),
+                                                        nums.rbegin() + arr_len,
+                                                        nums[pivot - 1]);
+
+        std::swap(nums[pivot - 1], *next_bigger_num_it);
     }
 
     //! Reverse sequence after (pivot - 1) until the end to minimize value and
