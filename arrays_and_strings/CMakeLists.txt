@@ -3,6 +3,7 @@ set (
     "3sum"
     "container_with_most_water"
     "longest_substring_without_repeating_characters"
+    "multiply_strings"
     "next_permutation"
 )
 
