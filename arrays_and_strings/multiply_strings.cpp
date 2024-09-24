@@ -34,6 +34,11 @@ static std::string multiplyFA(std::string num1, std::string num2)
             carryover      = prod / 10;
         }
 
+        if (carryover > 0)
+        {
+            out.front() = static_cast<char>(carryover);
+        }
+
         return out.front() == '0' ? out.erase(0, 1) : out;
     };
 
@@ -75,6 +80,11 @@ static std::string multiplyFA(std::string num1, std::string num2)
 
             out[out_idx--] = static_cast<char>(sum % 10);
             carryover      = sum / 10;
+        }
+
+        if (carryover > 0)
+        {
+            out.front() = static_cast<char>(carryover);
         }
 
         return out.front() == '0' ? out.erase(0, 1) : out;
