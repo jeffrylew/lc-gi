@@ -10,6 +10,11 @@
 //! @return Product of num1 and num2 as a std::string
 static std::string multiplyFA(std::string num1, std::string num2)
 {
+    //! @details https://leetcode.com/problems/multiply-strings/description/
+    //!
+    //!          Time complexity O(M * N) where M = num1.size(), N = num2.size()
+    //!          Space complexity O(max(M, N))
+
     if (num1 == "0" || num2 == "0")
     {
         return "0";
@@ -30,13 +35,13 @@ static std::string multiplyFA(std::string num1, std::string num2)
             int prod {static_cast<int>(num[num_idx] - '0') * int_digit};
             prod += carryover;
 
-            out[out_idx--] = static_cast<char>(prod % 10);
+            out[out_idx--] = static_cast<char>('0' + prod % 10);
             carryover      = prod / 10;
         }
 
         if (carryover > 0)
         {
-            out.front() = static_cast<char>(carryover);
+            out.front() = static_cast<char>('0' + carryover);
         }
 
         return out.front() == '0' ? out.erase(0, 1) : out;
@@ -60,7 +65,7 @@ static std::string multiplyFA(std::string num1, std::string num2)
             const auto digit2 = static_cast<int>(prod2[idx2--] - '0');
             const int  sum {digit1 + digit2 + carryover};
 
-            out[out_idx--] = static_cast<char>(sum % 10);
+            out[out_idx--] = static_cast<char>('0' + sum % 10);
             carryover      = sum / 10;
         }
 
@@ -69,7 +74,7 @@ static std::string multiplyFA(std::string num1, std::string num2)
             const auto digit1 = static_cast<int>(prod1[idx1--] - '0');
             const int  sum {digit1 + carryover};
 
-            out[out_idx--] = static_cast<char>(sum % 10);
+            out[out_idx--] = static_cast<char>('0' + sum % 10);
             carryover      = sum / 10;
         }
 
@@ -78,16 +83,16 @@ static std::string multiplyFA(std::string num1, std::string num2)
             const auto digit2 = static_cast<int>(prod2[idx2--] - '0');
             const int  sum {digit2 + carryover};
 
-            out[out_idx--] = static_cast<char>(sum % 10);
+            out[out_idx--] = static_cast<char>('0' + sum % 10);
             carryover      = sum / 10;
         }
 
         if (carryover > 0)
         {
-            out.front() = static_cast<char>(carryover);
+            out.front() = static_cast<char>('0' + carryover);
         }
 
-        return out.front() == '0' ? out.erase(0, 1) : out;
+        return out.front() == '\0' ? out.erase(0, 1) : out;
     };
 
     std::string product {};
