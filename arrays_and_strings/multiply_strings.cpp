@@ -128,6 +128,24 @@ static std::string multiplyFA(std::string num1, std::string num2)
 static std::string multiplyDS1(std::string num1, std::string num2)
 {
     //! @details https://leetcode.com/problems/multiply-strings/editorial/
+    //!
+    //!          Time complexity O(M ^ 2 + M * N) where N = num1.size() and
+    //!          M = num2.size(). During multiplication, we perform N operations
+    //!          for each of the M digits of the second number in O(M * N). Then
+    //!          we add each of the M multiplication results of length O(N + M)
+    //!          to the answer string, requiring O(M * (M + N)) time. When
+    //!          multiplying a number with one digit, the max length can be one
+    //!          more than the number's length. There can be at most M - 1 zeros
+    //!          appended to the result. Hence, each result is O(N + M).
+    //!          Summing the results requires iterating over the length of the
+    //!          current answer for each result. The length of two numbers
+    //!          multiplied together cannot be longer than sum of the lengths of
+    //!          two numbers so iterating over each digit takes O(M + N) time.
+    //!          Do this M - 1 times so this step takes O(M * (M + N)). Finally,
+    //!          reversing the answer takes O(M + N).
+    //!          Space complexity O(M ^ 2 + M * N). Store each multiplication
+    //!          result in the results vector. Each result can have N + M length
+    //!          max and there are M results.
 
     if (num1 == "0" || num2 == "0")
     {
