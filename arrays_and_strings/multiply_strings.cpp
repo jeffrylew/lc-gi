@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <string>
 #include <string_view>
+#include <vector>
 
 //! @brief Return product of num1 and num2 as a string
 //! @param[in] num1 std::string containing first non-negative integer
@@ -120,12 +121,126 @@ static std::string multiplyFA(std::string num1, std::string num2)
 
 } // static std::string multiplyFA( ...
 
+//! @brief Elementary math discussion solution
+//! @param[in] num1 std::string containing first non-negative integer
+//! @param[in] num2 std::string containing second non-negative integer
+//! @return Product of num1 and num2 as a std::string
+static std::string multiplyDS1(std::string num1, std::string num2)
+{
+    //! @details https://leetcode.com/problems/multiply-strings/editorial/
+
+    if (num1 == "0" || num2 == "0")
+    {
+        return "0";
+    }
+
+    //! Reverse both numbers
+    std::reverse(num1.begin(), num1.end());
+    std::reverse(num2.begin(), num2.end());
+
+    //! Multiply current digit of num2 with num1
+    const auto multiply_one_digit =
+        [](std::string_view first_num, char second_num_digit, int num_zeros) {
+            //! Insert zeros at the beginning based on current digit's place
+            std::vector<int> current_result(num_zeros, 0);
+
+            int carry {};
+
+            //! Multiply num1 with the current digit of num2
+            for (const char first_num_digit : first_num)
+            {
+                const int multiplication {
+                    (second_num_digit - '0') * (first_num_digit - '0') + carry};
+
+                //! Set carry equal to the tens place digit of multiplication
+                carry = multiplication / 10;
+
+                //! Append last digit to the current result
+                current_result.push_back(multiplication % 10);
+            }
+
+            if (carry > 0)
+            {
+                current_result.push_back(carry);
+            }
+
+            return current_result;
+        };
+
+    //! For each digit in num2, multiply the digit by num1 and
+    //! store the multiplication result (reversed) in results
+    std::vector<std::vector<int>> results {};
+    for (int idx = 0; idx < std::ssize(num2); ++idx)
+    {
+        results.push_back(multiply_one_digit(num1, num2[idx], idx));
+    }
+
+    //! Calculate sum of all results from multiply_one_digit
+    const auto sum_results = [&results]() {
+        //! Initialize answer as a number from results
+        auto             answer = results.back();
+        std::vector<int> new_answer {};
+        results.pop_back();
+
+        //! Sum each digit from answer and result
+        for (const auto& result : results)
+        {
+            new_answer.clear();
+            int carry = 0;
+
+            for (int idx = 0;
+                 idx < std::ssize(answer) || idx < std::ssize(result);
+                 ++idx)
+            {
+                //! If answer is shorter than result or vice versa,
+                //! use 0 as the current digit
+                const int digit1 {idx < std::ssize(result) ? result[idx] : 0};
+                const int digit2 {idx < std::ssize(answer) ? answer[idx] : 0};
+
+                //! Add current digits of both numbers
+                const int sum {digit1 + digit2 + carry};
+
+                //! Set carry equal to the tens place digit of sum
+                carry = sum / 10;
+
+                //! Append the ones place digit of sum to answer
+                new_answer.push_back(sum % 10);
+            }
+
+            if (carry > 0)
+            {
+                new_answer.push_back(carry);
+            }
+            answer = new_answer;
+        }
+
+        //! Convert answer to a string
+        std::string final_answer {};
+        for (const int digit : answer)
+        {
+            final_answer.push_back(digit + '0');
+        }
+
+        return final_answer;
+    };
+
+    //! Add all results in results vector and store sum in answer string
+    auto answer = sum_results();
+
+    //! Reverse answer to get final answer
+    std::reverse(answer.begin(), answer.end());
+    return answer;
+
+} // static std::string multiplyDS1( ...
+
 TEST(MultiplyTest, SampleTest1)
 {
     EXPECT_EQ("6", multiplyFA("2", "3"));
+    EXPECT_EQ("6", multiplyDS1("2", "3"));
 }
 
 TEST(MultiplyTest, SampleTest2)
 {
     EXPECT_EQ("56088", multiplyFA("123", "456"));
+    EXPECT_EQ("56088", multiplyDS1("123", "456"));
 }
