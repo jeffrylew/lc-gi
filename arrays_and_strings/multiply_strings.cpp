@@ -251,14 +251,122 @@ static std::string multiplyDS1(std::string num1, std::string num2)
 
 } // static std::string multiplyDS1( ...
 
+//! @brief Elementary math using less space discussion solution
+//! @param[in] num1 std::string containing first non-negative integer
+//! @param[in] num2 std::string containing second non-negative integer
+//! @return Product of num1 and num2 as a std::string
+static std::string multiplyDS2(std::string num1, std::string num2)
+{
+    //! @details https://leetcode.com/problems/multiply-strings/editorial/
+    //!
+    //!          Time complexity O(M ^ 2 + M * N) where N = num1.size() and
+    //!          M = num2.size(). Multiplication performs N operations for each
+    //!          of the M digits of num2 and requires O(M * N). We add the
+    //!          multiplication result to the ans vector that has length N + M.
+    //!          There are M additions for each digit in num2 for O(M * (N + M))
+    //!          Space complexity O(N + M). The answer string and multiplication
+    //!          results will have at most N + M length.
+
+    if (num1 == "0" || num2 == "0")
+    {
+        return "0";
+    }
+
+    //! Reverse both numbers
+    std::reverse(num1.begin(), num1.end());
+    std::reverse(num2.begin(), num2.end());
+
+    const auto num1_size = static_cast<int>(std::ssize(num1));
+    const auto num2_size = static_cast<int>(std::ssize(num2));
+
+    //! Vector stores multiplication result of each digit of num2 with num1
+    std::vector<int> ans(num1_size + num2_size, 0);
+
+    //! Multiply current digit of num2 with num1
+    const auto multiply_one_digit =
+        [](std::string_view first_num, char second_num_digit, int num_zeros) {
+            //! Insert zeros at the beginning based on current digit's place
+            std::vector<int> current_result(num_zeros, 0);
+
+            int carry {};
+
+            //! Multiply num1 with the current digit of num2
+            for (const char first_num_digit : first_num)
+            {
+                const int multiplication {
+                    (second_num_digit - '0') * (first_num_digit - '0') + carry};
+
+                //! Set carry equal to the tens place digit of multiplication
+                carry = multiplication / 10;
+
+                //! Append last digit to the current result
+                current_result.push_back(multiplication % 10);
+            }
+
+            if (carry > 0)
+            {
+                current_result.push_back(carry);
+            }
+
+            return current_result;
+        };
+
+    //! Add num to ans vector
+    const auto add_to_ans = [&](std::vector<int> num) {
+        int carry {};
+
+        for (int ans_idx = 0; ans_idx < std::ssize(ans); ++ans_idx)
+        {
+            //! If num is shorter than ans, use 0 as the current digit
+            const int num_digit {ans_idx < std::ssize(num) ? num[ans_idx] : 0};
+
+            //! Add digits of ans and num
+            const int sum {ans[ans_idx] + num_digit + carry};
+
+            //! Set carry equal to the tens place digit of sum
+            carry = sum / 10;
+
+            //! Set digit in ans to ones place digit of sum
+            ans[ans_idx] = sum % 10;
+        }
+    };
+
+    //! For each digit in num2, multiply the digit by num1
+    //! and add multiplication result to ans
+    for (int num2_idx = 0; num2_idx < num2_size; ++num2_idx)
+    {
+        //! Add current result to final ans
+        add_to_ans(multiply_one_digit(num1, num2[num2_idx], num2_idx));
+    }
+
+    //! Pop the excess 0 from the back of ans
+    if (ans.back() == 0)
+    {
+        ans.pop_back();
+    }
+
+    //! ans is in the reversed order
+    //! Copy it in the reverse order
+    std::string answer;
+    for (int idx = std::ssize(ans) - 1; idx > -1; --idx)
+    {
+        answer.push_back(ans[idx] + '0');
+    }
+
+    return answer;
+
+} // static std::string multiplyDS2( ...
+
 TEST(MultiplyTest, SampleTest1)
 {
     EXPECT_EQ("6", multiplyFA("2", "3"));
     EXPECT_EQ("6", multiplyDS1("2", "3"));
+    EXPECT_EQ("6", multiplyDS2("2", "3"));
 }
 
 TEST(MultiplyTest, SampleTest2)
 {
     EXPECT_EQ("56088", multiplyFA("123", "456"));
     EXPECT_EQ("56088", multiplyDS1("123", "456"));
+    EXPECT_EQ("56088", multiplyDS2("123", "456"));
 }
