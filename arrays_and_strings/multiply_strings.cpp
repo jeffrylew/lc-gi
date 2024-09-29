@@ -357,11 +357,82 @@ static std::string multiplyDS2(std::string num1, std::string num2)
 
 } // static std::string multiplyDS2( ...
 
+//! @brief Sum products from all pairs of digits discussion solution
+//! @param[in] num1 std::string containing first non-negative integer
+//! @param[in] num2 std::string containing second non-negative integer
+//! @return Product of num1 and num2 as a std::string
+static std::string multiplyDS3(std::string num1, std::string num2)
+{
+    //! @details https://leetcode.com/problems/multiply-strings/editorial/
+    //!
+    //!          Time complexity O(M * N) where N = num1.size() and
+    //!          M = num2.size(). During multiplication we perform N operations
+    //!          for each of the M digits of num2.
+    //!          Space complexity O(1), space used to store the output is not
+    //!          included. Note strings are immutable in Python, Java, and
+    //!          JavaScript so a temporary data structure using O(M + N) space
+    //!          is required to store the answer while it is updated.
+
+    if (num1 == "0" || num2 == "0")
+    {
+        return "0";
+    }
+
+    //! Reverse num1 and num2
+    std::reverse(num1.begin(), num1.end());
+    std::reverse(num2.begin(), num2.end());
+
+    //! Initialize answer as a string of zeros of length ans_size
+    const auto  num1_size = static_cast<int>(std::ssize(num1));
+    const auto  num2_size = static_cast<int>(std::ssize(num2));
+    const auto  ans_size  = num1_size + num2_size;
+    std::string answer(ans_size, '0');
+
+    for (int place2 = 0; place2 < num2_size; ++place2)
+    {
+        const auto digit2 = static_cast<int>(num2[place2] - '0');
+
+        //! For each digit in num2, multiply it by all digits in num1
+        for (int place1 = 0; place1 < num1_size; ++place1)
+        {
+            const auto digit1 = static_cast<int>(num1[place1] - '0');
+
+            //! The number of zeros depends on the place of digit2
+            //! in num2 and the place of digit1 in num1
+            const int num_zeros {place1 + place2};
+
+            //! The digit currently at position num_zeros in the answer
+            //! string is carried over and summed with the current result
+            const auto carry = static_cast<int>(answer[num_zeros] - '0');
+            const int  multiplication {digit1 * digit2 + carry};
+
+            //! Set the ones place of the multiplication result
+            answer[num_zeros] = (multiplication % 10) + '0';
+
+            //! Carry the tens place of the multiplication result by
+            //! adding it to the next position in the answer string
+            answer[num_zeros + 1] += (multiplication / 10);
+
+        } // for (int place1 = 0; ...
+
+    } // for (int place2 = 0; ...
+
+    if (answer.back() == '0')
+    {
+        answer.pop_back();
+    }
+
+    std::reverse(answer.begin(), answer.end());
+    return answer;
+
+} // static std::string multiplyDS3( ...
+
 TEST(MultiplyTest, SampleTest1)
 {
     EXPECT_EQ("6", multiplyFA("2", "3"));
     EXPECT_EQ("6", multiplyDS1("2", "3"));
     EXPECT_EQ("6", multiplyDS2("2", "3"));
+    EXPECT_EQ("6", multiplyDS3("2", "3"));
 }
 
 TEST(MultiplyTest, SampleTest2)
@@ -369,4 +440,5 @@ TEST(MultiplyTest, SampleTest2)
     EXPECT_EQ("56088", multiplyFA("123", "456"));
     EXPECT_EQ("56088", multiplyDS1("123", "456"));
     EXPECT_EQ("56088", multiplyDS2("123", "456"));
+    EXPECT_EQ("56088", multiplyDS3("123", "456"));
 }
