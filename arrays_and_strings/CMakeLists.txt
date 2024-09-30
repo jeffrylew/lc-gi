@@ -5,6 +5,7 @@ set (
     "longest_substring_without_repeating_characters"
     "multiply_strings"
     "next_permutation"
+    "rotate_image"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
