@@ -20,6 +20,16 @@ static int strStrDS1(std::string haystack, std::string needle)
 {
     //! @details https://leetcode.com/problems
     //!          /find-the-index-of-the-first-occurrence-in-a-string
+    //!
+    //!          Time complexity O(N * M) where N = haystack.size() and
+    //!          M = needle.size(). For every winow_start, we have to iterate at
+    //!          most M times. There are N - M + 1 such window_starts. Thus, we
+    //!          have O((N - M + 1) * M), which is O(N * M). An example of the
+    //!          worst case is when needle is "aaaaab" and haystack is all a's
+    //!          (e.g. "aaaaaaaaaa"). We always have to check the last character
+    //!          of needle to conclude the current M-substring is not equal to
+    //!          needle. Thus, have to iterate M times for every window_start.
+    //!          Space complexity O(1) for a handful of constant space variables
 
     const auto haystack_size = static_cast<int>(std::ssize(haystack));
     const auto needle_size   = static_cast<int>(std::ssize(needle));
