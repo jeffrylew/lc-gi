@@ -2,6 +2,7 @@ set (
     cpp_files
     "3sum"
     "container_with_most_water"
+    "jump_game"
     "longest_substring_without_repeating_characters"
     "multiply_strings"
     "next_permutation"
