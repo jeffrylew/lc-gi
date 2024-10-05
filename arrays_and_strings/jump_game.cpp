@@ -89,14 +89,69 @@ static bool canJumpDS1(std::vector<int> nums)
 
 } // static bool canJumpDS1( ...
 
+//! @brief Top down dynamic programming discussion solution
+//! @param[in] nums Vector of max jump lengths
+//! @return True if can reach the last index, else false
+static bool canJumpDS2(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems/jump-game/description/
+    //!
+    //!          Time complexity O(N ^ 2) where N = nums.size(). For every
+    //!          element in nums, we look at all elements to its right to find a
+    //!          GOOD index.
+    //!          Space complexity O(2 * N) = O(N). First N originates from
+    //!          recursion and the second N comes from the memo vector.
+
+    enums class Index
+    {
+        UNKNOWN,
+        GOOD,
+        BAD
+    };
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    std::vector<Index> memo(nums.size());
+    memo.back() = Index::GOOD;
+
+    const std::function<bool(int)> can_jump_from_position = [&](int position) {
+        if (memo[position] != Index::UNKNOWN)
+        {
+            return memo[position] == Index::GOOD ? true : false;
+        }
+
+        const int furthest_jump {
+            std::min(position + nums[position], nums_size - 1)};
+
+        for (int next_position = position + 1;
+             next_position <= furthest_jump;
+             ++next_position)
+        {
+            if (can_jump_from_position(next_position))
+            {
+                memo[position] = Index::GOOD;
+                return true;
+            }
+        }
+
+        memo[position] = Index::BAD;
+        return false;
+    };
+
+    return can_jump_from_position(0);
+
+} // static bool canJumpDS2( ...
+
 TEST(CanJumpTest, SampleTest1)
 {
     EXPECT_TRUE(canJumpFA({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS1({2, 3, 1, 1, 4}));
+    EXPECT_TRUE(canJumpDS2({2, 3, 1, 1, 4}));
 }
 
 TEST(CanJumpTest, SampleTest2)
 {
     EXPECT_FALSE(canJumpFA({3, 2, 1, 0, 4}));
     EXPECT_FALSE(canJumpDS1({3, 2, 1, 0, 4}));
+    EXPECT_FALSE(canJumpDS2({3, 2, 1, 0, 4}));
 }
