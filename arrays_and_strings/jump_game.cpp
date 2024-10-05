@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
 #include <vector>
 
 //! @brief First attempt to see if can reach last index
@@ -35,14 +36,67 @@ static bool canJumpFA(std::vector<int> nums)
     }
 
     return nums[nums_size - 2] >= (nums_size - 1);
-}
+
+} // static bool canJumpFA( ...
+
+//! @brief Backtracking discussion solution (not accepted: TLE)
+//! @param[in] nums Vector of max jump lengths
+//! @return True if can reach the last index, else false
+static bool canJumpDS1(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems/jump-game/description/
+    //!
+    //!          Time complexity O(2 ^ N) where N = nums.size(). There are 2 ^ N
+    //!          (upper bound) ways of jumping from the first position to last.
+    //!          Space complexity O(N). Recursion requires memory for stack.
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    //! Try every jump pattern from first position to the last
+    const std::function<bool(int)> can_jump_from_position = [&](int position) {
+        if (position == nums_size - 1)
+        {
+            return true;
+        }
+
+        const int furthest_jump {
+            std::min(position + nums[position], nums_size - 1)};
+
+        /*
+         * Optimization: Check next_position from right to left - i.e. try to
+         * make the biggest jump to reach the end as soon as possible.
+         * The theoretical worst case performance is the same though. If last
+         * index is unreachable, all combinations will be tried.
+         *
+        for (int next_position = position + 1;
+             next_position <= furthest_jump;
+             ++next_position)
+         */
+        for (int next_position = furthest_jump;
+             next_position > position;
+             --next_position)
+        {
+            if (can_jump_from_position(next_position))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    };
+
+    return can_jump_from_position(0);
+
+} // static bool canJumpDS1( ...
 
 TEST(CanJumpTest, SampleTest1)
 {
     EXPECT_TRUE(canJumpFA({2, 3, 1, 1, 4}));
+    EXPECT_TRUE(canJumpDS1({2, 3, 1, 1, 4}));
 }
 
 TEST(CanJumpTest, SampleTest2)
 {
     EXPECT_FALSE(canJumpFA({3, 2, 1, 0, 4}));
+    EXPECT_FALSE(canJumpDS1({3, 2, 1, 0, 4}));
 }
