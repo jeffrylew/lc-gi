@@ -185,12 +185,40 @@ static bool canJumpDS3(std::vector<int> nums)
 
 } // static bool canJumpDS3( ...
 
+//! @brief Greedy discussion solution
+//! @param[in] nums Vector of max jump lengths
+//! @return True if can reach the last index, else false
+static bool canJumpDS4(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems/jump-game/description/
+    //!
+    //!          Time complexity O(N) where N = nums.size(). We do a single pass
+    //!          through nums.
+    //!          Space complexity O(1)
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    int last_pos {nums_size - 1};
+
+    for (int idx = nums_size - 1; idx >= 0; --idx)
+    {
+        if (idx + nums[idx] >= last_pos)
+        {
+            last_pos = idx;
+        }
+    }
+
+    return last_pos == 0;
+
+} // static bool canJumpDS4( ...
+
 TEST(CanJumpTest, SampleTest1)
 {
     EXPECT_TRUE(canJumpFA({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS1({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS2({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS3({2, 3, 1, 1, 4}));
+    EXPECT_TRUE(canJumpDS4({2, 3, 1, 1, 4}));
 }
 
 TEST(CanJumpTest, SampleTest2)
@@ -199,4 +227,5 @@ TEST(CanJumpTest, SampleTest2)
     EXPECT_FALSE(canJumpDS1({3, 2, 1, 0, 4}));
     EXPECT_FALSE(canJumpDS2({3, 2, 1, 0, 4}));
     EXPECT_FALSE(canJumpDS3({3, 2, 1, 0, 4}));
+    EXPECT_FALSE(canJumpDS4({3, 2, 1, 0, 4}));
 }
