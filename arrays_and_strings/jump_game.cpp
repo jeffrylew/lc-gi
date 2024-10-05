@@ -97,8 +97,8 @@ static bool canJumpDS2(std::vector<int> nums)
     //! @details https://leetcode.com/problems/jump-game/description/
     //!
     //!          Time complexity O(N ^ 2) where N = nums.size(). For every
-    //!          element in nums, we look at all elements to its right to find a
-    //!          GOOD index.
+    //!          element in nums, we look at nums[i] elements to its right to
+    //!          find a GOOD index. nums[i] can be at most N.
     //!          Space complexity O(2 * N) = O(N). First N originates from
     //!          recursion and the second N comes from the memo vector.
 
@@ -142,11 +142,55 @@ static bool canJumpDS2(std::vector<int> nums)
 
 } // static bool canJumpDS2( ...
 
+//! @brief Bottom up dynamic programming discussion solution
+//! @param[in] nums Vector of max jump lengths
+//! @return True if can reach the last index, else false
+static bool canJumpDS3(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems/jump-game/description/
+    //!
+    //!          Time complexity O(N ^ 2) where N = nums.size(). For every
+    //!          element in nums, we look at nums[i] elements to its right to
+    //!          find a GOOD index. nums[i] can be at most N.
+    //!          Space complexity O(N) for usage of memo vector
+
+    enum class Index
+    {
+        UNKNOWN,
+        GOOD,
+        BAD
+    };
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    std::vector<Index> memo(nums.size());
+    memo.back() = Index::GOOD;
+
+    for (int curr_idx = nums_size - 2; curr_idx >= 0; --curr_idx)
+    {
+        const int furthest_jump {
+            std::min(curr_idx + nums[curr_idx], nums_size - 1)};
+
+        for (int next_idx = curr_idx + 1; next_idx <= furthest_jump; ++next_idx)
+        {
+            if (memo[next_idx] == Index::GOOD)
+            {
+                memo[curr_idx] = Index::GOOD;
+                break;
+            }
+        }
+    }
+
+    return memo[0] == Index::GOOD;
+
+} // static bool canJumpDS3( ...
+
 TEST(CanJumpTest, SampleTest1)
 {
     EXPECT_TRUE(canJumpFA({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS1({2, 3, 1, 1, 4}));
     EXPECT_TRUE(canJumpDS2({2, 3, 1, 1, 4}));
+    EXPECT_TRUE(canJumpDS3({2, 3, 1, 1, 4}));
 }
 
 TEST(CanJumpTest, SampleTest2)
@@ -154,4 +198,5 @@ TEST(CanJumpTest, SampleTest2)
     EXPECT_FALSE(canJumpFA({3, 2, 1, 0, 4}));
     EXPECT_FALSE(canJumpDS1({3, 2, 1, 0, 4}));
     EXPECT_FALSE(canJumpDS2({3, 2, 1, 0, 4}));
+    EXPECT_FALSE(canJumpDS3({3, 2, 1, 0, 4}));
 }
