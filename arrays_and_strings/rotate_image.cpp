@@ -121,11 +121,45 @@ static void rotateDS1(std::vector<std::vector<int>>& matrix)
 
 } // static void rotateDS1( ...
 
+//! @brief Reverse on diagonal then reverse left to right discussion solution
+//! @param[in, out] matrix Reference to n x n 2D matrix representing an image
+static void rotateDS2(std::vector<std::vector<int>>& matrix)
+{
+    //! @details https://leetcode.com/problems/rotate-image/description/
+
+    const auto N = static_cast<int>(std::ssize(matrix));
+
+    const auto transpose = [&] {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = i + 1; j < N; ++j)
+            {
+                std::swap(matrix[j][i], matrix[i][j]);
+            }
+        }
+    };
+
+    const auto reflect = [&] {
+        for (int i = 0; i < N; ++i)
+        {
+            for (int j = 0; j < N / 2; ++j)
+            {
+                std::swap(matrix[i][j], matrix[i][N - j - 1]);
+            }
+        }
+    };
+
+    transpose(matrix);
+    reflect(matrix);
+
+} // static void rotateDS2( ...
+
 TEST(RotateTest, SampleTest1)
 {
     std::vector<std::vector<int>> matrixFA {{1, 2, 3}, {4, 5, 6}, {7, 8, 9}};
 
     auto matrixDS1 = matrixFA;
+    auto matrixDS2 = matrixFA;
 
     const std::vector<std::vector<int>> expected_output {
         {7, 4, 1}, {8, 5, 2}, {9, 6, 3}};
@@ -135,6 +169,9 @@ TEST(RotateTest, SampleTest1)
 
     rotateDS1(matrixDS1);
     EXPECT_EQ(expected_output, matrixDS1);
+
+    rotateDS2(matrixDS2);
+    EXPECT_EQ(expected_output, matrixDS2);
 }
 
 TEST(RotateTest, SampleTest2)
@@ -143,6 +180,7 @@ TEST(RotateTest, SampleTest2)
         {5, 1, 9, 11}, {2, 4, 8, 10}, {13, 3, 6, 7}, {15, 14, 12, 16}};
 
     auto matrixDS1 = matrixFA;
+    auto matrixDS2 = matrixFA;
 
     const std::vector<std::vector<int>> expected_output {
         {15, 13, 2, 5}, {14, 3, 4, 1}, {12, 6, 8, 9}, {16, 7, 10, 11}};
@@ -152,4 +190,7 @@ TEST(RotateTest, SampleTest2)
 
     rotateDS1(matrixDS1);
     EXPECT_EQ(expected_output, matrixDS1);
+
+    rotateDS2(matrixDS2);
+    EXPECT_EQ(expected_output, matrixDS2);
 }
