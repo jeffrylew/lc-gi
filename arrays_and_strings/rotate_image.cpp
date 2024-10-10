@@ -126,6 +126,12 @@ static void rotateDS1(std::vector<std::vector<int>>& matrix)
 static void rotateDS2(std::vector<std::vector<int>>& matrix)
 {
     //! @details https://leetcode.com/problems/rotate-image/description/
+    //!
+    //!          Time complexity O(M) where M = number of cells in the grid.
+    //!          Transposing the matrix takes O(M) since we move the value of
+    //!          each cell once. Reversing each row has a cost of O(M) since we
+    //!          move the value of each cell once.
+    //!          Space complexity O(1)
 
     const auto N = static_cast<int>(std::ssize(matrix));
 
