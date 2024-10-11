@@ -6,6 +6,7 @@ set (
     "longest_substring_without_repeating_characters"
     "multiply_strings"
     "next_permutation"
+    "plus_one"
     "rotate_image"
 )
 
