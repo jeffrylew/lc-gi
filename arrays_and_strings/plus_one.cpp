@@ -7,7 +7,35 @@
 //! @return Resulting vector of digits after incrementing by one
 static std::vector<int> plusOneFA(std::vector<int> digits)
 {
-    //! @todo
+    //! @details https://leetcode.com/problems/plus-one/description/
+    //!
+    //!          Time complexity O(N) where N = digits.size()
+    //!          Space complexity O(N) in the worst case where a "1" is inserted
+    //!          at the beginning
+
+    if (digits.back() != 9)
+    {
+        digits.back() += 1;
+        return digits;
+    }
+
+    auto rit = digits.rbegin();
+    while (rit != digits.rend() && *rit == 9)
+    {
+        *rit = 0;
+        ++rit;
+    }
+
+    if (rit != digits.rend())
+    {
+        *rit += 1;
+    }
+    else
+    {
+        digits.insert(digits.begin(), 1);
+    }
+
+    return digits;
 
 } // static std::vector<int> plusOneFA( ...
 
