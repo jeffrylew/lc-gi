@@ -4,6 +4,7 @@ set (
     "container_with_most_water"
     "jump_game"
     "longest_substring_without_repeating_characters"
+    "minimum_window_substring"
     "multiply_strings"
     "next_permutation"
     "plus_one"
