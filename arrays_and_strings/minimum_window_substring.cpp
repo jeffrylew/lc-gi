@@ -116,28 +116,129 @@ static std::string minWindowFA(std::string s, std::string t)
 
 } // static std::string minWindowFA( ...
 
+//! @brief Sliding window discussion solution
+//! @param[in] s String to get min window substring from
+//! @param[in] t String where every character including duplicates is in window
+//! @return Min window substring of s or empty string if no such window
+static std::string minWindowDS1(std::string s, std::string t)
+{
+    //! @details https://leetcode.com/problems/minimum-window-substring
+    //!
+    //!          Time complexity O(S + T) where S = s.size() and T = t.size().
+    //!          In the worst case, might visit every element of s twice, once
+    //!          by left and once by right. Need O(T) to build t_char_count map.
+    //!          Space complexity O(S + T). Need O(S) when window size is equal
+    //!          to entire string s. Need O(T) when t only has unique chars.
+
+    if (s.empty() || t.empty())
+    {
+        return {};
+    }
+
+    const auto s_size = static_cast<int>(std::ssize(s));
+    const auto t_size = static_cast<int>(std::ssize(t));
+
+    //! unordered_map keeps count of all unique chars in t
+    std::unordered_map<char, int> t_char_count {};
+    for (const char letter : t)
+    {
+        ++t_char_count[letter];
+    }
+
+    //! Number of unique chars in t that need to be present in desired window
+    const auto required = static_cast<int>(std::ssize(t_char_count));
+
+    //! left index of current window
+    int left {};
+
+    //! formed keeps track of how many unique chars from t are in current window
+    //! taking into account the desired frequency
+    int formed {};
+
+    //! Map keeps count of all unique chars in current window
+    std::unordered_map<char, int> window_counts {};
+
+    //! Properties of min window substring
+    int ans_window_size {-1};
+    int ans_left {};
+    int ans_right {};
+
+    //! Keep expanding the window
+    for (int right = 0; right < s_size; ++right)
+    {
+        //! Add one char from right to window
+        char ch {s[right]};
+        ++window_counts[ch];
+
+        //! If frequency of current char added equals to
+        //! desired count in t then increment formed count
+        if (t_char_count.contains(ch) && window_counts[ch] == t_char_count[ch])
+        {
+            ++formed;
+        }
+
+        //! Contract window until it is no longer desirable
+        while (left <= right && formed == required)
+        {
+            ch = s[left];
+
+            //! Save smallest window until now
+            const int current_window_size {right - left + 1};
+            if (ans_window_size == -1 || current_window_size < ans_window_size)
+            {
+                ans_window_size = current_window_size;
+                ans_left        = left;
+                ans_right       = right;
+            }
+
+            //! Char at left index is no longer a part of window
+            --window_counts[ch];
+            if (t_char_count.contains(ch)
+                && window_counts[ch] < t_char_count[ch])
+            {
+                --formed;
+            }
+
+            //! Increment left point to look for a new window
+            ++left;
+
+        } // while (left <= right && ...
+
+    } // for (int right = 0; ...
+
+    return ans_window_size == -1
+        ? std::string {}
+        : s.substr(ans_left, ans_right - ans_left + 1);
+
+} // static std::string minWindowDS1( ...
+
 TEST(MinWindowTest, SampleTest1)
 {
     EXPECT_EQ("BANC", minWindowFA("ADOBECODEBANC", "ABC"));
+    EXPECT_EQ("BANC", minWindowDS1("ADOBECODEBANC", "ABC"));
 }
 
 TEST(MinWindowTest, SampleTest2)
 {
     EXPECT_EQ("a", minWindowFA("a", "a"));
+    EXPECT_EQ("a", minWindowDS1("a", "a"));
 }
 
 TEST(MinWindowTest, SampleTest3)
 {
     EXPECT_TRUE(minWindowFA("a", "aa").empty());
+    EXPECT_TRUE(minWindowDS1("a", "aa").empty());
 }
 
 TEST(MinWindowTest, SampleTest4)
 {
     EXPECT_TRUE(minWindowFA("a", "b").empty());
+    EXPECT_TRUE(minWindowDS1("a", "b").empty());
 }
 
 TEST(MinWindowTest, SampleTest5)
 {
     EXPECT_NE("baca", minWindowFA("acbbaca", "aba"));
     EXPECT_EQ("acbba", minWindowFA("acbbaca", "aba"));
+    EXPECT_EQ("baca", minWindowDS1("acbbaca", "aba"));
 }
