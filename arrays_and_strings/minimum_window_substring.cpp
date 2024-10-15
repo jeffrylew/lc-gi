@@ -127,6 +127,7 @@ static std::string minWindowDS1(std::string s, std::string t)
     //!          Time complexity O(S + T) where S = s.size() and T = t.size().
     //!          In the worst case, might visit every element of s twice, once
     //!          by left and once by right. Need O(T) to build t_char_count map.
+    //!          Number of iterations is O(2 * S + T).
     //!          Space complexity O(S + T). Need O(S) when window size is equal
     //!          to entire string s. Need O(T) when t only has unique chars.
 
@@ -199,7 +200,7 @@ static std::string minWindowDS1(std::string s, std::string t)
                 --formed;
             }
 
-            //! Increment left point to look for a new window
+            //! Increment left index to look for a new window
             ++left;
 
         } // while (left <= right && ...
@@ -208,32 +209,149 @@ static std::string minWindowDS1(std::string s, std::string t)
 
     return ans_window_size == -1
         ? std::string {}
-        : s.substr(ans_left, ans_right - ans_left + 1);
+        : s.substr(ans_left, ans_window_size);
 
 } // static std::string minWindowDS1( ...
+
+//! @brief Optimized sliding window discussion solution
+//! @param[in] s String to get min window substring from
+//! @param[in] t String where every character including duplicates is in window
+//! @return Min window substring of s or empty string if no such window
+static std::string minWindowDS2(std::string s, std::string t)
+{
+    //! @details https://leetcode.com/problems/minimum-window-substring
+    //!
+    //!          Time complexity O(S + T) where S = s.size() and T = t.size().
+    //!          The complexity is the same as the previous approach. But when
+    //!          filtered_s.size() <<< s.size(), the number of iterations is
+    //!          2 * filtered_s.size() + S + T, reduced from O(2 * S + T).
+    //!          This case occurs when T <<< S and s has many chars not in t.
+
+    if (s.empty() || t.empty())
+    {
+        return {};
+    }
+
+    const auto s_size = static_cast<int>(std::ssize(s));
+    const auto t_size = static_cast<int>(std::ssize(t));
+
+    //! unordered_map keeps count of all unique chars in t
+    std::unordered_map<char, int> t_char_count {};
+    for (const char letter : t)
+    {
+        ++t_char_count[letter];
+    }
+
+    //! Number of unique chars in t that need to be present in desired window
+    const auto required = static_cast<int>(std::ssize(t_char_count));
+
+    //! ch_val is at index idx in s. Each element has a char present in t
+    struct element
+    {
+        int  idx {};
+        char ch_val {};
+    };
+
+    //! filtered_s is string formed from s by removing all elements not in t
+    std::vector<element> filtered_s {};
+    for (int idx = 0; idx < s_size; ++idx)
+    {
+        if (t_char_count.contains(s[idx]))
+        {
+            filtered_s.emplace_back(idx, s[idx]);
+        }
+    }
+
+    //! left index of current window
+    int left {};
+
+    //! formed keeps track of how many unique chars from t are in current window
+    //! taking into account the desired frequency
+    int formed {};
+
+    //! Map keeps count of all unique chars in current window
+    std::unordered_map<char, int> window_counts {};
+
+    //! Properties of min window substring
+    int ans_window_size {-1};
+    int ans_left {};
+    int ans_right {};
+
+    //! Keep expanding the window while iterating filtered_s
+    for (int right = 0; right < std::ssize(filtered_s); ++right)
+    {
+        //! Add one char from right to window. ch will be a char in t
+        char ch {filtered_s[right].ch_val};
+        ++window_counts[ch];
+
+        //! If frequency of current char added equals to
+        //! desired count in t then increment formed count
+        if (window_counts[ch] == t_char_count[ch])
+        {
+            ++formed;
+        }
+
+        //! Contract window until it is no longer desirable
+        while (left <= right && formed == required)
+        {
+            ch = filtered_s[left].ch_val;
+
+            //! Save smallest window until now
+            const int current_window_size {
+                filtered_s[right].idx - filtered_s[left].idx + 1};
+            if (ans_window_size == -1 || current_window_size < ans_window_size)
+            {
+                ans_window_size = current_window_size;
+                ans_left        = filtered_s[left].idx;
+                ans_right       = filtered_s[right].idx;
+            }
+
+            //! Char at left index is no longer a part of window
+            --window_counts[ch];
+            if (window_counts[ch] < t_char_count[ch])
+            {
+                --formed;
+            }
+
+            //! Increment left index to look for a new window
+            ++left;
+
+        } // while (left <= right && ...
+
+    } // for (int right = 0; ...
+
+    return ans_window_size == -1
+        ? std::string {}
+        : s.substr(ans_left, ans_window_size);
+
+} // static std::string minWindowDS2( ...
 
 TEST(MinWindowTest, SampleTest1)
 {
     EXPECT_EQ("BANC", minWindowFA("ADOBECODEBANC", "ABC"));
     EXPECT_EQ("BANC", minWindowDS1("ADOBECODEBANC", "ABC"));
+    EXPECT_EQ("BANC", minWindowDS2("ADOBECODEBANC", "ABC"));
 }
 
 TEST(MinWindowTest, SampleTest2)
 {
     EXPECT_EQ("a", minWindowFA("a", "a"));
     EXPECT_EQ("a", minWindowDS1("a", "a"));
+    EXPECT_EQ("a", minWindowDS2("a", "a"));
 }
 
 TEST(MinWindowTest, SampleTest3)
 {
     EXPECT_TRUE(minWindowFA("a", "aa").empty());
     EXPECT_TRUE(minWindowDS1("a", "aa").empty());
+    EXPECT_TRUE(minWindowDS2("a", "aa").empty());
 }
 
 TEST(MinWindowTest, SampleTest4)
 {
     EXPECT_TRUE(minWindowFA("a", "b").empty());
     EXPECT_TRUE(minWindowDS1("a", "b").empty());
+    EXPECT_TRUE(minWindowDS2("a", "b").empty());
 }
 
 TEST(MinWindowTest, SampleTest5)
@@ -241,4 +359,5 @@ TEST(MinWindowTest, SampleTest5)
     EXPECT_NE("baca", minWindowFA("acbbaca", "aba"));
     EXPECT_EQ("acbba", minWindowFA("acbbaca", "aba"));
     EXPECT_EQ("baca", minWindowDS1("acbbaca", "aba"));
+    EXPECT_EQ("baca", minWindowDS2("acbbaca", "aba"));
 }
