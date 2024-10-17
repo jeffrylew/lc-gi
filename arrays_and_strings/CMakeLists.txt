@@ -8,6 +8,7 @@ set (
     "multiply_strings"
     "next_permutation"
     "plus_one"
+    "read_N_characters_given_read4_ii"
     "rotate_image"
 )
 
