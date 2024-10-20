@@ -77,3 +77,17 @@ private:
     std::queue<char> char_queue {};
 
 }; // class SolutionFA
+
+TEST(ReadTest, SampleTest1)
+{
+    SolutionFA sol;
+    char       buf[3] {};
+    EXPECT_EQ(1, sol.read(buf, 1));
+    EXPECT_EQ('a', buf[0]);
+
+    EXPECT_EQ(2, sol.read(buf, 2));
+    EXPECT_EQ('b', buf[0]);
+    EXPECT_EQ('c', buf[1]);
+
+    EXPECT_EQ(0, sol.read(buf, 1));
+}
