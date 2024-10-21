@@ -12,8 +12,14 @@ public:
     //! @return The number of actual characters read
     int read(char* buf, int n)
     {
+        //! @details https://leetcode.com/explore/interview/card/google/59
+        //!          /array-and-strings/436
+
         //! Total number of chars read during this function call
         int total_chars_read {};
+
+        //! Position in buf to start writing at. Resets every call to read.
+        int buf_offset {};
 
         //! If there are chars available in char_queue, write them to buf
         while (!char_queue.empty() && total_chars_read < n)
@@ -55,7 +61,7 @@ public:
         } // while (remaining_chars > 0)
 
         //! Write chars from char_queue
-        while (!char_queue.empty() && total_chars_read < missing_chars)
+        while (!char_queue.empty() && total_chars_read < n)
         {
             *(buf + buf_offset) = char_queue.front();
             char_queue.pop();
@@ -67,9 +73,6 @@ public:
     }
 
 private:
-    //! Position in buf to start writing at
-    int buf_offset {};
-
     //! Intermediate buffer to store result of read4
     char buf4[4] {};
 
@@ -80,6 +83,7 @@ private:
 
 TEST(ReadTest, SampleTest1)
 {
+    //! file = "abc"
     SolutionFA sol;
     char       buf[3] {};
     EXPECT_EQ(1, sol.read(buf, 1));
@@ -88,6 +92,19 @@ TEST(ReadTest, SampleTest1)
     EXPECT_EQ(2, sol.read(buf, 2));
     EXPECT_EQ('b', buf[0]);
     EXPECT_EQ('c', buf[1]);
+
+    EXPECT_EQ(0, sol.read(buf, 1));
+}
+
+TEST(ReadTest, SampleTest2)
+{
+    //! file = "abc"
+    SolutionFA sol;
+    char       buf[3] {};
+    EXPECT_EQ(3, sol.read(buf, 4));
+    EXPECT_EQ('a', buf[0]);
+    EXPECT_EQ('b', buf[1]);
+    EXPECT_EQ('c', buf[2]);
 
     EXPECT_EQ(0, sol.read(buf, 1));
 }
