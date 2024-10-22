@@ -81,6 +81,54 @@ private:
 
 }; // class SolutionFA
 
+class SolutionDS1
+{
+public:
+    //! @brief Discussion solution (Java) to read n chars from file into buf
+    //! @param[out] buf Destination buffer
+    //! @param[in]  n   Number of characters to read
+    //! @return The number of actual characters read
+    int read(char* buf, int n)
+    {
+        //! @details https://leetcode.com/explore/interview/card/google/59
+        //!          /array-and-strings/436/discuss/49598/A-simple-Java-code
+
+        int ptr {};
+
+        while (ptr < n)
+        {
+            if (buff_ptr == 0)
+            {
+                buff_cnt = read4(buff);
+            }
+
+            if (buff_cnt == 0)
+            {
+                break;
+            }
+
+            while (ptr < n && buff_ptr < buff_cnt)
+            {
+                buf[ptr++] = buff[buff_ptr++];
+            }
+
+            if (buff_ptr >= buff_cnt)
+            {
+                buff_ptr = 0;
+            }
+        }
+
+        return ptr;
+    }
+
+private:
+    int buff_ptr {};
+    int buff_cnt {};
+
+    char buff[4] {};
+
+}; // class SolutionDS1
+
 TEST(ReadTest, SampleTest1)
 {
     //! file = "abc"
