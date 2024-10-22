@@ -93,6 +93,7 @@ public:
         //! @details https://leetcode.com/explore/interview/card/google/59
         //!          /array-and-strings/436/discuss/49598/A-simple-Java-code
 
+        //! Index in output buf to write to
         int ptr {};
 
         while (ptr < n)
@@ -112,6 +113,7 @@ public:
                 buf[ptr++] = buff[buff_ptr++];
             }
 
+            //! If buff_ptr reaches current buff_cnt, set to 0 to read new data
             if (buff_ptr >= buff_cnt)
             {
                 buff_ptr = 0;
@@ -122,6 +124,7 @@ public:
     }
 
 private:
+    //! Store data received in previous calls. buff_ptr is index in buff
     int buff_ptr {};
     int buff_cnt {};
 
@@ -142,6 +145,17 @@ TEST(ReadTest, SampleTest1)
     EXPECT_EQ('c', buf[1]);
 
     EXPECT_EQ(0, sol.read(buf, 1));
+
+    SolutionDS1 sol_ds1;
+    char        buf_ds1[3] {};
+    EXPECT_EQ(1, sol_ds1.read(buf_ds1, 1));
+    EXPECT_EQ('a', buf_ds1[0]);
+
+    EXPECT_EQ(2, sol_ds1.read(buf_ds1, 2));
+    EXPECT_EQ('b', buf_ds1[0]);
+    EXPECT_EQ('c', buf_ds1[1]);
+
+    EXPECT_EQ(0, sol_ds1.read(buf_ds1, 1));
 }
 
 TEST(ReadTest, SampleTest2)
@@ -155,4 +169,11 @@ TEST(ReadTest, SampleTest2)
     EXPECT_EQ('c', buf[2]);
 
     EXPECT_EQ(0, sol.read(buf, 1));
+
+    SolutionDS1 sol_ds1;
+    char        buf_ds1[3] {};
+    EXPECT_EQ(3, sol_ds1.read(buf_ds1, 4));
+    EXPECT_EQ('a', buf_ds1[0]);
+    EXPECT_EQ('b', buf_ds1[1]);
+    EXPECT_EQ('c', buf_ds1[2]);
 }
