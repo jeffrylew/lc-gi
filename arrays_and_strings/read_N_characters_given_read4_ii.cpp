@@ -132,6 +132,66 @@ private:
 
 }; // class SolutionDS1
 
+class SolutionDS2
+{
+public:
+    //! @brief Discussion solution follow up to speed up copy
+    //! @param[out] buf Destination buffer
+    //! @param[in]  n   Number of characters to read
+    //! @return The number of actual characters read
+    int read(char* buf, int n)
+    {
+        //! @details https://leetcode.com/explore/interview/card/google/59
+        //!          /array-and-strings/436/discuss/188293
+        //!          /Google-follow-up-question.-Speed-up-the-copy.
+        //!
+        //! @todo Refactor with better variable names
+
+        int i {};
+
+        while (i < n)
+        {
+            //! Read from buf4 first if it has something
+            if (i4 < n4)
+            {
+                buf[i++] = buf4[i4++];
+                continue;
+            }
+
+            //! If there is enough space in buf
+            if (n - i >= 4)
+            {
+                const int rlen {read4(buf + i)};
+                i += rlen;
+
+                if (rlen == 0)
+                {
+                    return i;
+                }
+            }
+            else
+            {
+                n4 = read4(buf4);
+                i4 = 0;
+
+                if (n4 == 0)
+                {
+                    return i;
+                }
+            }
+        }
+
+        return i;
+    }
+
+private:
+    int n4 {};
+    int i4 {};
+
+    char buf4[4] {};
+
+}; // class SolutionDS2
+
 TEST(ReadTest, SampleTest1)
 {
     //! file = "abc"
@@ -156,6 +216,17 @@ TEST(ReadTest, SampleTest1)
     EXPECT_EQ('c', buf_ds1[1]);
 
     EXPECT_EQ(0, sol_ds1.read(buf_ds1, 1));
+
+    SolutionDS2 sol_ds2;
+    char        buf_ds2[3] {};
+    EXPECT_EQ(1, sol_ds2.read(buf_ds2, 1));
+    EXPECT_EQ('a', buf_ds2[0]);
+
+    EXPECT_EQ(2, sol_ds2.read(buf_ds2, 2));
+    EXPECT_EQ('b', buf_ds2[0]);
+    EXPECT_EQ('c', buf_ds2[1]);
+
+    EXPECT_EQ(0, sol_ds2.read(buf_ds2, 1));
 }
 
 TEST(ReadTest, SampleTest2)
@@ -176,4 +247,11 @@ TEST(ReadTest, SampleTest2)
     EXPECT_EQ('a', buf_ds1[0]);
     EXPECT_EQ('b', buf_ds1[1]);
     EXPECT_EQ('c', buf_ds1[2]);
+
+    SolutionDS2 sol_ds2;
+    char        buf_ds2[3] {};
+    EXPECT_EQ(3, sol_ds2.read(buf_ds2, 4));
+    EXPECT_EQ('a', buf_ds2[0]);
+    EXPECT_EQ('b', buf_ds2[1]);
+    EXPECT_EQ('c', buf_ds2[2]);
 }
