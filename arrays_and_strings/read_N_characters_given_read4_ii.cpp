@@ -144,51 +144,52 @@ public:
         //! @details https://leetcode.com/explore/interview/card/google/59
         //!          /array-and-strings/436/discuss/188293
         //!          /Google-follow-up-question.-Speed-up-the-copy.
-        //!
-        //! @todo Refactor with better variable names
 
-        int i {};
+        //! Index in output buf to write to
+        int ptr {};
 
-        while (i < n)
+        while (ptr < n)
         {
             //! Read from buf4 first if it has something
-            if (i4 < n4)
+            if (buff_ptr < buff_cnt)
             {
-                buf[i++] = buf4[i4++];
+                buf[ptr++] = buff[buff_ptr++];
                 continue;
             }
 
             //! If there is enough space in buf
-            if (n - i >= 4)
+            if (n - ptr >= 4)
             {
-                const int rlen {read4(buf + i)};
-                i += rlen;
+                const int chars_read {read4(buf + ptr)};
+                ptr += chars_read;
 
-                if (rlen == 0)
+                if (chars_read == 0)
                 {
-                    return i;
+                    return ptr;
                 }
             }
             else
             {
-                n4 = read4(buf4);
-                i4 = 0;
+                //! n - ptr < 4
+                buff_cnt = read4(buff);
+                buff_ptr = 0;
 
-                if (n4 == 0)
+                if (buff_cnt == 0)
                 {
-                    return i;
+                    return ptr;
                 }
             }
         }
 
-        return i;
+        return ptr;
     }
 
 private:
-    int n4 {};
-    int i4 {};
+    //! Store data received in previous calls. buff_ptr is index in buff
+    int buff_ptr {};
+    int buff_cnt {};
 
-    char buf4[4] {};
+    char buff[4] {};
 
 }; // class SolutionDS2
 
