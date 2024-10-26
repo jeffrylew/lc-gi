@@ -193,6 +193,53 @@ private:
 
 }; // class SolutionDS2
 
+class SolutionDS3
+{
+public:
+    //! @brief Another discussion solution from Java
+    //! @param[out] buf Destination buffer
+    //! @param[in]  n   Number of characters to read
+    //! @return The number of actual characters read
+    int read(char* buf, int n)
+    {
+        //! @details https://leetcode.com/explore/interview/card/google/59
+        //!          /array-and-strings/436/discuss/49615/Clean-solution-in-Java
+
+        int counter {};
+
+        while (counter < n)
+        {
+            if (prev_idx < prev_size)
+            {
+                buf[counter++] = prev_buf[prev_idx++];
+                continue;
+            }
+
+            prev_size = read4(prev_buf);
+            prev_idx  = 0;
+
+            if (prev_size == 0)
+            {
+                //! No more data to consume from stream
+                break;
+            }
+        }
+
+        return counter;
+    }
+
+private:
+    //! Track actual size of prev_buf
+    int prev_size {};
+
+    //! Index of next char to read from prev_buf
+    int prev_idx {};
+
+    //! Stores chars from read4
+    char prev_buf[4] {};
+
+}; // class SolutionDS3
+
 TEST(ReadTest, SampleTest1)
 {
     //! file = "abc"
