@@ -275,6 +275,17 @@ TEST(ReadTest, SampleTest1)
     EXPECT_EQ('c', buf_ds2[1]);
 
     EXPECT_EQ(0, sol_ds2.read(buf_ds2, 1));
+
+    SolutionDS3 sol_ds3;
+    char        buf_ds3[3] {};
+    EXPECT_EQ(1, sol_ds3.read(buf_ds3, 1));
+    EXPECT_EQ('a', buf_ds3[0]);
+
+    EXPECT_EQ(2, sol_ds3.read(buf_ds3, 2));
+    EXPECT_EQ('b', buf_ds3[0]);
+    EXPECT_EQ('c', buf_ds3[1]);
+
+    EXPECT_EQ(0, sol_ds3.read(buf_ds3, 1));
 }
 
 TEST(ReadTest, SampleTest2)
@@ -302,4 +313,11 @@ TEST(ReadTest, SampleTest2)
     EXPECT_EQ('a', buf_ds2[0]);
     EXPECT_EQ('b', buf_ds2[1]);
     EXPECT_EQ('c', buf_ds2[2]);
+
+    SolutionDS2 sol_ds3;
+    char        buf_ds3[3] {};
+    EXPECT_EQ(3, sol_ds3.read(buf_ds3, 4));
+    EXPECT_EQ('a', buf_ds3[0]);
+    EXPECT_EQ('b', buf_ds3[1]);
+    EXPECT_EQ('c', buf_ds3[2]);
 }
