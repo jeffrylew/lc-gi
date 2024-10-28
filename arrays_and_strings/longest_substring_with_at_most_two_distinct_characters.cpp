@@ -42,6 +42,8 @@ static int lengthOfLongestSubstringTwoDistinctFA(std::string s)
 
                 if (earliest_idx > left)
                 {
+                    //! left = earliest_idx + 1 fails "ababaccccc"
+                    //! Outputs 9 instead of 7
                     left = right - 1;
                     break;
                 }
