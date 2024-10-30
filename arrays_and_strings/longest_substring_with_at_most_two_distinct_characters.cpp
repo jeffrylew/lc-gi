@@ -70,6 +70,10 @@ static int lengthOfLongestSubstringTwoDistinctDS(std::string s)
 {
     //! @details https://leetcode.com/problems
     //!          /longest-substring-with-at-most-two-distinct-characters
+    //!
+    //!          Time complexity O(N) where N = number of chars in input string
+    //!          Space complexity O(1) since additional space is used only for a
+    //!          hashmap with at most 3 elements
 
     const auto s_len = static_cast<int>(std::ssize(s));
     if (s_len < 3)
