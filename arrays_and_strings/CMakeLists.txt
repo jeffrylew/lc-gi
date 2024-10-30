@@ -6,6 +6,7 @@ set (
     "longest_substring_without_repeating_characters"
     "longest_substring_with_at_most_two_distinct_characters"
     "minimum_window_substring"
+    "missing_ranges"
     "multiply_strings"
     "next_permutation"
     "plus_one"
