@@ -10,7 +10,7 @@
 static std::vector<std::vector<int>>
     findMissingRangesFA(const std::vector<int>& nums, int lower, int upper)
 {
-    //! @details First attempt solution does not pass SampleTest6
+    //! @details https://leetcode.com/problems/missing-ranges
 
     if (nums.empty())
     {
@@ -19,12 +19,13 @@ static std::vector<std::vector<int>>
 
     std::vector<std::vector<int>> missing_ranges {};
 
+    int prev {lower};
+
     if (nums.front() - lower != 0)
     {
-        missing_ranges.push_back({lower, lower});
+        missing_ranges.push_back({lower, nums.front() - 1});
+        prev = nums.front();
     }
-
-    int prev {lower};
 
     for (const int curr : nums)
     {
@@ -108,9 +109,6 @@ TEST(FindMissingRangesTest, SampleTest6)
     constexpr int          upper {9};
 
     const std::vector<std::vector<int>> expected_output {{0, 1}, {3, 9}};
-    const std::vector<std::vector<int>> incorrect_output {
-        {0, 0}, {1, 1}, {3, 9}};
 
-    EXPECT_NE(expected_output, findMissingRangesFA(nums, lower, upper));
-    EXPECT_EQ(incorrect_output, findMissingRangesFA(nums, lower, upper));
+    EXPECT_EQ(expected_output, findMissingRangesFA(nums, lower, upper));
 }
