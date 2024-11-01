@@ -11,6 +11,9 @@ static std::vector<std::vector<int>>
     findMissingRangesFA(const std::vector<int>& nums, int lower, int upper)
 {
     //! @details https://leetcode.com/problems/missing-ranges
+    //!
+    //!          Time complexity O(N) where N = nums.size()
+    //!          Space complexity O(1) excluding output vector
 
     if (nums.empty())
     {
