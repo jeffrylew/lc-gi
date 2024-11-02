@@ -7,6 +7,7 @@ set (
     "intersection_of_two_arrays_ii"
     "kth_distinct_string_in_an_array"
     "lemonade_change"
+    "longest_substring_with_at_most_k_distinct_characters"
     "lucky_numbers_in_a_matrix"
     "merge_nodes_in_between_zeros"
     "minimum_deletions_to_make_string_balanced"
