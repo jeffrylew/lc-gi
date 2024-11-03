@@ -92,7 +92,7 @@ static int lengthOfLongestSubstringTwoDistinctDS(std::string s)
     for (int right = 0; right < s_len; ++right)
     {
         //! Sliding window contains less than 3 chars
-        char_pos[s[right]] = right++;
+        char_pos[s[right]] = right;
 
         //! Sliding window contains 3 chars
         if (std::ssize(char_pos) == 3)
@@ -109,7 +109,7 @@ static int lengthOfLongestSubstringTwoDistinctDS(std::string s)
             left = del_idx + 1;
         }
 
-        max_len = std::max(max_len, right - left);
+        max_len = std::max(max_len, right - left + 1);
     }
 
     return max_len;
