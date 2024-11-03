@@ -97,6 +97,9 @@ static int lengthOfLongestSubstringTwoDistinctDS(std::string s)
         //! Sliding window contains 3 chars
         if (std::ssize(char_pos) == 3)
         {
+            /*
+             * Alternative implementation using std::min_element further below
+             *
             int del_idx {std::numeric_limits<int>::max()};
 
             for (const auto& char_idx : char_pos)
@@ -107,6 +110,18 @@ static int lengthOfLongestSubstringTwoDistinctDS(std::string s)
             //! Delete leftmost character
             char_pos.erase(s[del_idx]);
             left = del_idx + 1;
+             */
+
+            auto del_it =
+                std::min_element(char_pos.begin(),
+                                 char_pos.end(),
+                                 [](const auto& lhs, const auto& rhs) {
+                                    return lhs.second < rhs.second;
+                                 });
+
+            //! Update left boundary and delete leftmost character
+            left = del_it->second + 1;
+            char_pos.erase(del_it);
         }
 
         max_len = std::max(max_len, right - left + 1);
