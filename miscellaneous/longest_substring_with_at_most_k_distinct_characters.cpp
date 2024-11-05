@@ -67,12 +67,27 @@ static int lengthOfLongestSubstringKDistinctFA(std::string s, int k)
 
 } // static int lengthOfLongestSubstringKDistinctFA( ...
 
+//! @brief Binary Search + Fixed Size Sliding Window discussion solution
+//! @param[in] s std::string to search for longest substring in
+//! @param[in] k Number of distinct chars at most that substring can have
+//! @return Length of longest substring that contains at most k distinct chars
+static int lengthOfLongestSubstringKDistinctDS1(std::string s, int k)
+{
+    //! @details https://leetcode.com/problems
+    //!          /longest-substring-with-at-most-k-distinct-characters/editorial
+
+    //! @todo
+
+} // static int lengthOfLongestSubstringKDistinctDS1( ...
+
 TEST(LengthOfLongestSubstringKDistinctTest, SampleTest1)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctFA("eceba", 2));
+    EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS1("eceba", 2));
 }
 
 TEST(LengthOfLongestSubstringDistinctTest, SampleTest2)
 {
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctFA("aa", 1));
+    EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS1("aa", 1));
 }
