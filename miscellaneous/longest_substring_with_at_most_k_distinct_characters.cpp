@@ -151,14 +151,61 @@ static int lengthOfLongestSubstringKDistinctDS1(std::string s, int k)
 
 } // static int lengthOfLongestSubstringKDistinctDS1( ...
 
+//! @brief Sliding Window discussion solution
+//! @param[in] s std::string to search for longest substring in
+//! @param[in] k Number of distinct chars at most that substring can have
+//! @return Length of longest substring that contains at most k distinct chars
+static int lengthOfLongestSubstringKDistinctDS2(std::string s, int k)
+{
+    //! @details https://leetcode.com/problems
+    //!          /longest-substring-with-at-most-k-distinct-characters/editorial
+    //!
+    //!          Time complexity O(N) where N = s.size(). The right boundary
+    //!          iterates from 0 to N - 1. The left boundary stays to the left
+    //!          of right and moves at most N - 1 times.
+    //!          Space complexity O(k) where k = max number of distinct chars.
+    //!          Need to record occurrence of each distint char in the valid
+    //!          window. During the iteration, there might be at most O(k + 1)
+    //!          unique chars in the window.
+
+    int       max_size {};
+    const int s_len = static_cast<int>(std::ssize(s));
+
+    std::unordered_map<char, int> char_count_in_substr {};
+
+    int left {};
+    for (int right = 0; right < s_len; ++right)
+    {
+        ++char_count_in_substr[s[right]];
+
+        while (std::ssize(char_count_in_substr) > k)
+        {
+            const char left_char {s[left]};
+            if (--char_count_in_substr[left_char] == 0)
+            {
+                char_count_in_substr.erase(left_char);
+            }
+
+            ++left;
+        }
+
+        max_size = std::max(max_size, right - left + 1);
+    }
+
+    reurn max_size;
+
+} // static int lengthOfLongestSubstringKDistinctDS2( ...
+
 TEST(LengthOfLongestSubstringKDistinctTest, SampleTest1)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctFA("eceba", 2));
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS1("eceba", 2));
+    EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS2("eceba", 2));
 }
 
 TEST(LengthOfLongestSubstringDistinctTest, SampleTest2)
 {
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctFA("aa", 1));
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS1("aa", 1));
+    EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS2("aa", 1));
 }
