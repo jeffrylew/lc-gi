@@ -196,11 +196,47 @@ static int lengthOfLongestSubstringKDistinctDS2(std::string s, int k)
 
 } // static int lengthOfLongestSubstringKDistinctDS2( ...
 
+//! @brief Sliding Window II discussion solution
+//! @param[in] s std::string to search for longest substring in
+//! @param[in] k Number of distinct chars at most that substring can have
+//! @return Length of longest substring that contains at most k distinct chars
+static int lengthOfLongestSubstringKDistinctDS3(std::string s, int k)
+{
+    //! @details https://leetcode.com/problems
+    //!          /longest-substring-with-at-most-k-distinct-characters/editorial
+
+    int        max_len {};
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    std::unordered_map<char, int> char_count_in_substr {};
+
+    for (int right = 0; right < s_len; ++right)
+    {
+        ++char_count_in_substr[s[right]];
+
+        if (std::ssize(char_count_in_substr) <= k)
+        {
+            ++max_len;
+            continue;
+        }
+
+        const char left_char {s[right - max_len]};
+        if (--char_count_in_substr[left_char] == 0)
+        {
+            char_count_in_substr.erase(left_char);
+        }
+    }
+
+    return max_len;
+
+} // static int lengthOfLongestSubstringKDistinctDS3( ...
+
 TEST(LengthOfLongestSubstringKDistinctTest, SampleTest1)
 {
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctFA("eceba", 2));
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS1("eceba", 2));
     EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS2("eceba", 2));
+    EXPECT_EQ(3, lengthOfLongestSubstringKDistinctDS3("eceba", 2));
 }
 
 TEST(LengthOfLongestSubstringDistinctTest, SampleTest2)
@@ -208,4 +244,5 @@ TEST(LengthOfLongestSubstringDistinctTest, SampleTest2)
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctFA("aa", 1));
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS1("aa", 1));
     EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS2("aa", 1));
+    EXPECT_EQ(2, lengthOfLongestSubstringKDistinctDS3("aa", 1));
 }
