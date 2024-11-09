@@ -204,6 +204,14 @@ static int lengthOfLongestSubstringKDistinctDS3(std::string s, int k)
 {
     //! @details https://leetcode.com/problems
     //!          /longest-substring-with-at-most-k-distinct-characters/editorial
+    //!
+    //!          Time complexity O(N) where N = s.size(). We shift right from 0
+    //!          to N - 1. At each step, we update the count of s[right] and/or
+    //!          s[right - max_len] in char_count_in_substr, which takes O(1).
+    //!          Space complexity O(N). We do not shrink the window so it can
+    //!          accumulate chars as it moves along the string. In the worst
+    //!          case, the space can be O(N) for a long substring with many
+    //!          distinct chars.
 
     int        max_len {};
     const auto s_len = static_cast<int>(std::ssize(s));
