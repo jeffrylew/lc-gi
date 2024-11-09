@@ -4,6 +4,7 @@ set (
     "create_binary_tree_from_descriptions"
     "find_the_index_of_the_first_occurrence_in_a_string"
     "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
+    "fruits_into_baskets"
     "intersection_of_two_arrays_ii"
     "kth_distinct_string_in_an_array"
     "lemonade_change"
