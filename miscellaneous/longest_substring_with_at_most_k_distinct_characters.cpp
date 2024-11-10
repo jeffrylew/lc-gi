@@ -164,7 +164,7 @@ static int lengthOfLongestSubstringKDistinctDS2(std::string s, int k)
     //!          iterates from 0 to N - 1. The left boundary stays to the left
     //!          of right and moves at most N - 1 times.
     //!          Space complexity O(k) where k = max number of distinct chars.
-    //!          Need to record occurrence of each distint char in the valid
+    //!          Need to record occurrence of each distinct char in the valid
     //!          window. During the iteration, there might be at most O(k + 1)
     //!          unique chars in the window.
 
@@ -211,7 +211,10 @@ static int lengthOfLongestSubstringKDistinctDS3(std::string s, int k)
     //!          Space complexity O(N). We do not shrink the window so it can
     //!          accumulate chars as it moves along the string. In the worst
     //!          case, the space can be O(N) for a long substring with many
-    //!          distinct chars.
+    //!          distinct chars. For example, if s = [a, a, a, a, b, c, d, e]
+    //           then char_count_in_substr.size() == 1 for indices 0 through 3
+    //!          for all a chars. For indices 4 through 7, char_count_in_substr
+    //!          grows to a size of O(N / 2). 
 
     int        max_len {};
     const auto s_len = static_cast<int>(std::ssize(s));
