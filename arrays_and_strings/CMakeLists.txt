@@ -8,6 +8,7 @@ set (
     "minimum_window_substring"
     "missing_ranges"
     "multiply_strings"
+    "next_closest_time"
     "next_permutation"
     "plus_one"
     "read_N_characters_given_read4_ii"
