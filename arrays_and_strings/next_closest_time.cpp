@@ -129,22 +129,106 @@ static std::string nextClosestTimeDS1(std::string time)
 
 } // static std::string nextClosestTimeDS1( ...
 
+//! @brief Build from allowed digits discussion solution
+//! @param[in] time std::string containing a time in the format "HH:MM"
+//! @return st::string containing the next closest time by reusing digits
+static std::string nextClosestTimeDS2(std::string time)
+{
+    //! @details https://leetcode.com/problems/next-closest-time/editorial/
+    //!
+    //!          Time complexity O(1). We explore up to 4 ^ 4 possible times and
+    //!          return the best one.
+    //!          Space complexity O(1) for allowed_digits set of size up to 4.
+
+    const int curr_time_in_minutes {
+        std::stoi(time.substr(0, 2)) * 60 + std::stoi(time.substr(3))};
+
+    std::unordered_set<int> allowed_digits {};
+
+    for (const char ch : time)
+    {
+        if (ch == ':')
+        {
+            continue;
+        }
+
+        allowed_digits.insert(static_cast<int>(ch - '0'));
+    }
+
+    int minimum_time_in_minutes {curr_time_in_minutes};
+    int minimum_delta_minutes {24 * 60};
+
+    for (const int h1 : allowed_digits)
+    {
+        for (const int h2 : allowed_digits)
+        {
+            if (10 * h1 + h2 >= 24)
+            {
+                continue;
+            }
+
+            for (const int m1 : allowed_digits)
+            {
+                for (const int m2 : allowed_digits)
+                {
+                    if (10 * m1 + m2 >= 60)
+                    {
+                        continue;
+                    }
+
+                    const int next_time_in_minutes {
+                        60 * (10 * h1 + h2) + (10 * m1 + m2)};
+
+                    //! delta_minutes cannot be >= 24 * 60 = 1440 mins since the
+                    //! max value of next_time_in_minutes is 23:59 = 1439 mins.
+                    //! delta_minutes cannot be <= -24 * 60 = -1440 mins since
+                    //! the min value of next_time_in_minutes is 00:00 and the
+                    //! max value of curr_time_in_minutes is 23:59 = 1439 mins.
+                    int delta_minutes {
+                        next_time_in_minutes - curr_time_in_minutes};
+
+                    //! Ensures 0 < delta_minutes < 1440 minutes
+                    if (delta_minutes < 0)
+                    {
+                        delta_minutes += 24 * 60;
+                    }
+
+                    if (0 < delta_minutes
+                        && delta_minutes < minimum_delta_minutes)
+                    {
+                        minimum_time_in_minutes = next_time_in_minutes;
+                        minimum_delta_minutes   = delta_minutes;
+                    }
+                }
+            }
+        }
+    }
+
+    return std::format("{:02d}:{:02d}",
+                       minimum_time_in_minutes / 60,
+                       minimum_time_in_minutes % 60);
+
+} // static std::string nextClosestTimeDS2( ...
+
 TEST(NextClosestTimeTest, SampleTest1)
 {
     EXPECT_EQ("19:39", nextClosestTimeFA("19:34"));
     EXPECT_EQ("19:39", nextClosestTimeDS1("19:34"));
+    EXPECT_EQ("19:39", nextClosestTimeDS2("19:34"));
 }
 
 TEST(NextClosestTimeTest, SampleTest2)
 {
     EXPECT_EQ("22:22", nextClosestTimeFA("23:59"));
     EXPECT_EQ("22:22", nextClosestTimeDS1("23:59"));
+    EXPECT_EQ("22:22", nextClosestTimeDS2("23:59"));
 }
 
 TEST(NextClosestTimeTest, SampleTest3)
 {
     EXPECT_EQ("15:11", nextClosestTimeFA("13:55"));
     EXPECT_EQ("15:11", nextClosestTimeDS1("13:55"));
+    EXPECT_EQ("15:11", nextClosestTimeDS2("13:55"));
 }
 
 TEST(NextClosestTimeTest, SampleTest4)
@@ -152,4 +236,5 @@ TEST(NextClosestTimeTest, SampleTest4)
     EXPECT_NE("22:32", nextClosestTimeFA("22:23"));
     EXPECT_EQ("22:22", nextClosestTimeFA("22:23"));
     EXPECT_EQ("22:32", nextClosestTimeDS1("22:23"));
+    EXPECT_EQ("22:32", nextClosestTimeDS2("22:23"));
 }
