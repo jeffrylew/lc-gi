@@ -17,7 +17,9 @@ static int expressiveWordsFA(std::string s, std::vector<std::string> words)
     //!
     //!          First attempt solution does not pass SampleTest1
 
-    const auto is_stretchy = [&s](std::string_view word) {
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    const auto is_stretchy = [&](std::string_view word) {
         int s_idx {};
         int word_idx {};
 
@@ -35,18 +37,21 @@ static int expressiveWordsFA(std::string s, std::vector<std::string> words)
                 return false;
             }
 
-            if (std::ssize(s) < s_idx + 3)
+            if (s_len < s_idx + 3)
             {
                 return false;
             }
 
-            if (std::all_of(s.begin() + s_idx,
-                            s.begin() + s_idx + 4,
+            if (std::all_of(s.begin() + s_idx - 1,
+                            s.begin() + s_idx + 2,
                             [&](char ch) {
                                 return ch == word[word_idx - 1];
                             }))
             {
-                s_idx += 4;
+                while (s[s_idx] == word[word_idx - 1])
+                {
+                    ++s_idx;
+                }
             }
             else
             {
@@ -54,7 +59,7 @@ static int expressiveWordsFA(std::string s, std::vector<std::string> words)
             }
         }
 
-        return true;
+        return s_idx == s_len;
     };
 
     int num_stretchy_strings {};
