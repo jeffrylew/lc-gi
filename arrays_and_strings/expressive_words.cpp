@@ -95,6 +95,9 @@ static int expressiveWordsDS1(std::string s, std::vector<std::string> words)
     //! @details https://leetcode.com/explore/interview/card/google/59
     //!          /array-and-strings/3056/discuss/121706
     //!          /Java-Solution-using-Two-Pointers-with-Detailed-Explanation
+    //!
+    //!          https://leetcode.com/problems/expressive-words/solutions/732975
+    //!          /How-to-explain-to-interviewer-809.-Expressive-Words/
 
     if (s.empty() || words.empty())
     {
@@ -135,6 +138,7 @@ static int expressiveWordsDS1(std::string s, std::vector<std::string> words)
             const int s_substr_len {get_repeated_length(s, s_idx)};
             const int word_substr_len {get_repeated_length(word, word_idx)};
 
+            /*
             //! If s_substr_len < 3 then the letter cannot be extended, so
             //! s_substr_len must equal word_substr_len to have a stretchy word.
             //! If s_substr_len >= 3 then s_substr_len >= word_substr_len must
@@ -144,6 +148,17 @@ static int expressiveWordsDS1(std::string s, std::vector<std::string> words)
                 && s_substr_len != word_substr_len
                 || s_substr_len >= 3
                 && s_substr_len < word_substr_len)
+            {
+                return false;
+            }
+             */
+
+            //! For each distinct character in word and s, the number of
+            //! consecutive repeated chars must fulfill:
+            //!   (word_substr_len < s_substr_len && s_substr_len >= 3)
+            //!   || word_substr_len == s_substr_len
+            if ((word_substr_len >= s_substr_len || s_substr_len < 3)
+                && word_substr_len != s_substr_len)
             {
                 return false;
             }
