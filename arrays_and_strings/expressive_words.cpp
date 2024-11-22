@@ -86,14 +86,100 @@ static int expressiveWordsFA(std::string s, std::vector<std::string> words)
 
 } // static int expressiveWordsFA( ...
 
+//! @brief Discussion solution based on Java Solution using Two Pointers
+//! @param[in] s     std::string to check query against
+//! @param[in] words Vector of query strings to check stretchiness of
+//! @return Number of query strings that are stretchy
+static int expressiveWordsDS1(std::string s, std::vector<std::string> words)
+{
+    //! @details https://leetcode.com/explore/interview/card/google/59
+    //!          /array-and-strings/3056/discuss/121706
+    //!          /Java-Solution-using-Two-Pointers-with-Detailed-Explanation
+
+    if (s.empty() || words.empty())
+    {
+        return 0;
+    }
+
+    //! Get length of substring containing repeated chars of the letter at left
+    const auto get_repeated_length = [](std::string_view str, int left) {
+        int right {left};
+
+        while (right < std::ssize(str) && str[right] == str[left])
+        {
+            ++right;
+        }
+
+        return right - left;
+    };
+
+    const auto s_len       = static_cast<int>(std::ssize(s));
+    const auto is_stretchy = [&](std::string_view word) {
+        if (word.empty())
+        {
+            return false;
+        }
+
+        int        s_idx {};
+        int        word_idx {};
+        const auto word_len = static_cast<int>(std::ssize(word));
+
+        while (s_idx < s_len && word_idx < word_len)
+        {
+            if (s[s_idx] != word[word_idx])
+            {
+                return false;
+            }
+
+            //! Letters pointed at by s_idx and word_idx must be eual
+            const int s_substr_len {get_repeated_length(s, s_idx)};
+            const int word_substr_len {get_repeated_length(word, word_idx)};
+
+            //! If s_substr_len < 3 then the letter cannot be extended, so
+            //! s_substr_len must equal word_substr_len to have a stretchy word.
+            //! If s_substr_len >= 3 then s_substr_len >= word_substr_len must
+            //! be true, otherwise there are not enough letters in s to match
+            //! those in word
+            if (s_substr_len < 3
+                && s_substr_len != word_substr_len
+                || s_substr_len >= 3
+                && s_substr_len < word_substr_len)
+            {
+                return false;
+            }
+
+            s_idx += s_substr_len;
+            word_idx += word_substr_len;
+        }
+
+        //! If word is stretchy, need to check if scanned entire string
+        return s_idx == s_len && word_idx == word_len;
+    };
+
+    int num_stretchy_strings {};
+
+    for (const auto& word : words)
+    {
+        if (is_stretchy(word))
+        {
+            ++num_stretchy_strings;
+        }
+    }
+
+    return num_stretchy_strings;
+
+} // static int expressiveWordsDS1( ...
+
 TEST(ExpressiveWordsTest, SampleTest1)
 {
     EXPECT_EQ(1, expressiveWordsFA("heeellooo", {"hello", "hi", "helo"}));
+    EXPECT_EQ(1, expressiveWordsDS1("heeellooo", {"hello", "hi", "helo"}));
 }
 
 TEST(ExpressiveWordsTest, SampleTest2)
 {
     EXPECT_EQ(3, expressiveWordsFA("zzzzzyyyyy", {"zzyy", "zy", "zyy"}));
+    EXPECT_EQ(3, expressiveWordsDS1("zzzzzyyyyy", {"zzyy", "zy", "zyy"}));
 }
 
 TEST(ExpressiveWordsTest, SampleTest3)
@@ -206,4 +292,5 @@ TEST(ExpressiveWordsTest, SampleTest3)
 
     EXPECT_NE(2, expressiveWordsFA(s, words));
     EXPECT_EQ(0, expressiveWordsFA(s, words));
+    EXPECT_EQ(2, expressiveWordsDS1(s, words));
 }
