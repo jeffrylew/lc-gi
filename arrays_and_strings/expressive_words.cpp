@@ -92,12 +92,18 @@ static int expressiveWordsFA(std::string s, std::vector<std::string> words)
 //! @return Number of query strings that are stretchy
 static int expressiveWordsDS1(std::string s, std::vector<std::string> words)
 {
-    //! @details https://leetcode.com/explore/interview/card/google/59
+    //! @details https://leetcode.com/problems/expressive-words/description/
+    //!
+    //!          https://leetcode.com/explore/interview/card/google/59
     //!          /array-and-strings/3056/discuss/121706
     //!          /Java-Solution-using-Two-Pointers-with-Detailed-Explanation
     //!
     //!          https://leetcode.com/problems/expressive-words/solutions/732975
     //!          /How-to-explain-to-interviewer-809.-Expressive-Words/
+    //!
+    //!          Time complexity O(N * max(s.size(), max(word.size() for word in
+    //!          words vector))) where N = words.size().
+    //!          Space complexity O(1)
 
     if (s.empty() || words.empty())
     {
