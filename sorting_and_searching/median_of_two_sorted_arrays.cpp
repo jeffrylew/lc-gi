@@ -147,6 +147,19 @@ static double findMedianSortedArraysDS2(std::vector<int> nums1,
                                         std::vector<int> nums2)
 {
     //! @details leetcode.com/problems/median-of-two-sorted-arrays/editorial
+    //!
+    //!          Time complexity O(log (m * n)) where m = nums1.size() and
+    //!          n = nums2.size(). At each step, cut half from either nums1 or
+    //!          nums2. If one of the vectors is empty, can get the target from
+    //!          the other in constant time. Therefore, the total time spent
+    //!          depends on when one of the vectors is cut into an empty vector.
+    //!          In the worst case, need to cut both vectors before finding the
+    //!          target element. It take logarithmic time to empty a vector and
+    //!          the times to empty two vectors are independent of each other.
+    //!          The time complexity is O(log m + log n) = O(log (m * n)).
+    //!          Space complexity O(log m + log n). The recursion depends on the
+    //!          number of iterations to cut a vector into an empty vector. In
+    //!          the worst case, we need O(log m + log n) steps.
 
     const auto nums1_len = static_cast<int>(std::ssize(nums1));
     const auto nums2_len = static_cast<int>(std::ssize(nums2));
@@ -210,7 +223,7 @@ static double findMedianSortedArraysDS2(std::vector<int> nums1,
 
         }; // const std::function<int(int, int, int, int, int)> solve = ...
 
-    if (total_len % 2)
+    if (total_len % 2 == 1)
     {
         return 1.0 * solve(total_len / 2, 0, nums1_len - 1, 0, nums2_len - 1);
     }
