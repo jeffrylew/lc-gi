@@ -148,7 +148,75 @@ static double findMedianSortedArraysDS2(std::vector<int> nums1,
 {
     //! @details leetcode.com/problems/median-of-two-sorted-arrays/editorial
 
-    //! @todo
+    const auto nums1_len = static_cast<int>(std::ssize(nums1));
+    const auto nums2_len = static_cast<int>(std::ssize(nums2));
+    const auto total_len = nums1_len + nums2_len;
+
+    const std::function<int(int, int, int, int, int)> solve =
+        [&](int kth_smallest_idx, int start1, int end1, int start2, int end2) {
+            //! If segment of one vector is empty, have passed all its elements.
+            //! Return corresponding element in other vector.
+            if (end1 < start1)
+            {
+                return nums2[kth_smallest_idx - start1];
+            }
+
+            if (end2 < start2)
+            {
+                return nums1[kth_smallest_idx - start2];
+            }
+
+            //! Get middle indices and values of nums1 and nums2
+            const int mid1_idx {(start1 + end1) / 2};
+            const int mid2_idx {(start2 + end2) / 2};
+            const int mid1_val {nums1[mid1_idx]};
+            const int mid2_val {nums2[mid2_idx]};
+
+            //! If kth_smallest_idx is in the right half of nums1 + nums2 then
+            //! remove the smaller left half
+            if (mid1_idx + mid2_idx < kth_smallest_idx)
+            {
+                if (mid1_val > mid2_val)
+                {
+                    return solve(kth_smallest_idx,
+                                 start1,
+                                 end1,
+                                 mid2_idx + 1,
+                                 end2);
+                }
+
+                return solve(kth_smallest_idx,
+                             mid1_idx + 1,
+                             end1,
+                             start2,
+                             end2);
+            }
+
+            //! Otherwise, remove the larger half
+            if (mid1_val > mid2_val)
+            {
+                return solve(kth_smallest_idx,
+                             start1,
+                             mid1_idx - 1,
+                             start2,
+                             end2);
+            }
+
+            return solve(kth_smallest_idx,
+                         start1,
+                         end1,
+                         start2,
+                         mid2_idx - 1);
+
+        }; // const std::function<int(int, int, int, int, int)> solve = ...
+
+    if (total_len % 2)
+    {
+        return 1.0 * solve(total_len / 2, 0, nums1_len - 1, 0, nums2_len - 1);
+    }
+
+    return (solve(total_len / 2 - 1, 0, nums1_len - 1, 0, nums2_len - 1)
+            + solve(total_len / 2, 0, nums1_len - 1, 0, nums2_len - 1)) * 0.5;
 
 } // static double findMedianSortedArraysDS2( ...
 
