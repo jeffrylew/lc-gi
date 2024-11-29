@@ -233,11 +233,25 @@ static double findMedianSortedArraysDS2(std::vector<int> nums1,
 
 } // static double findMedianSortedArraysDS2( ...
 
+//! @brief A better binary search discussion solution
+//! @param[in] nums1 Sorted vector of size m
+//! @param[in] nums2 Sorted vector of size n
+//! @return Median of sorted vectors in O(log (m + n))
+static double findMedianSortedArraysDS3(std::vector<int> nums1,
+                                        std::vector<int> nums2)
+{
+    //! @details leetcode.com/problems/median-of-two-sorted-arrays/editorial
+
+    //! @todo
+
+} // static double findMedianSortedArraysDS3( ...
+
 TEST(FindMedianSortedArraysTest, SampleTest1)
 {
     EXPECT_EQ(2.0, findMedianSortedArraysFA({1, 3}, {2}));
     EXPECT_EQ(2.0, findMedianSortedArraysDS1({1, 3}, {2}));
     EXPECT_EQ(2.0, findMedianSortedArraysDS2({1, 3}, {2}));
+    EXPECT_EQ(2.0, findMedianSortedArraysDS3({1, 3}, {2}));
 }
 
 TEST(FindMedianSortedArraysTest, SampleTest2)
@@ -245,4 +259,5 @@ TEST(FindMedianSortedArraysTest, SampleTest2)
     EXPECT_EQ(2.5, findMedianSortedArraysFA({1, 2}, {3, 4}));
     EXPECT_EQ(2.5, findMedianSortedArraysDS1({1, 2}, {3, 4}));
     EXPECT_EQ(2.5, findMedianSortedArraysDS2({1, 2}, {3, 4}));
+    EXPECT_EQ(2.5, findMedianSortedArraysDS3({1, 2}, {3, 4}));
 }
