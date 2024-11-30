@@ -1,7 +1,10 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <functional>
+#include <limits>
 #include <queue>
+#include <utility>
 #include <vector>
 
 //! @brief Get median of two sorted vectors of size m and n in O(log (m + n))
@@ -242,7 +245,56 @@ static double findMedianSortedArraysDS3(std::vector<int> nums1,
 {
     //! @details leetcode.com/problems/median-of-two-sorted-arrays/editorial
 
-    //! @todo
+    const auto nums1_len = static_cast<int>(std::ssize(nums1));
+    const auto nums2_len = static_cast<int>(std::ssize(nums2));
+
+    if (nums1_len > nums2_len)
+    {
+        return findMedianSortedArraysDS3(std::move(nums2), std::move(nums1));
+    }
+
+    int left {};
+    int right {nums1_len};
+
+    while (left <= right)
+    {
+        const int partitionA {(left + right) / 2};
+        const int partitionB {(nums1_len + nums2_len + 1) / 2 - partitionA};
+
+        const int maxLeftA {partitionA == 0
+                                ? std::numeric_limits<int>::min()
+                                : nums1[partitionA - 1]};
+        const int minRightA {partitionA == nums1_len
+                                 ? std::numeric_limits<int>::max()
+                                 : nums1[partitionA]};
+        const int maxLeftB {partitionB == 0
+                                ? std::numeric_limits<int>::min()
+                                : nums2[partitionB - 1]};
+        const int minRightB {partitionB == nums2_len
+                                 ? std::numeric_limits<int>::max()
+                                 : nums2[partitionB]};
+
+        if (maxLeftA <= minRightB && maxLeftB <= minRightA)
+        {
+            if ((nums1_len + nums2_len) % 2 == 0)
+            {
+                return 0.5 * (std::max(maxLeftA, maxLeftB)
+                              + std::min(minRightA, minRightB));
+            }
+
+            return std::max(maxLeftA, maxLeftB);
+        }
+        else if (maxLeftA > minRightB)
+        {
+            right = partitionA - 1;
+        }
+        else
+        {
+            left = partitionA + 1;
+        }
+    }
+
+    return 0.0;
 
 } // static double findMedianSortedArraysDS3( ...
 
