@@ -244,6 +244,12 @@ static double findMedianSortedArraysDS3(std::vector<int> nums1,
                                         std::vector<int> nums2)
 {
     //! @details leetcode.com/problems/median-of-two-sorted-arrays/editorial
+    //!
+    //!          Time complexity O(log(min(m, n))) where m = nums1.size() and
+    //!          n = nums2.size(). We perform a binary search over the smaller
+    //!          array of size min(m, n).
+    //!          Space complexity O(1). The algorithm only requires a constant
+    //!          amount of space to store and update a few parameters.
 
     const auto nums1_len = static_cast<int>(std::ssize(nums1));
     const auto nums2_len = static_cast<int>(std::ssize(nums2));
