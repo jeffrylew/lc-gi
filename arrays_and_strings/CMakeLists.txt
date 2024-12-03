@@ -3,6 +3,7 @@ set (
     "3sum"
     "container_with_most_water"
     "expressive_words"
+    "find_and_replace_in_string"
     "jump_game"
     "longest_substring_without_repeating_characters"
     "longest_substring_with_at_most_two_distinct_characters"
