@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <string>
 #include <vector>
 
@@ -8,6 +9,32 @@
 //! @return Longest common prefix. If none, return empty string.
 static std::string longestCommonPrefixFA(std::vector<std::string> strs)
 {
+    //! @details https://leetcode.com/problems/longest-common-prefix/description
+
+    std::string prefix {};
+
+    const auto shortest_str_it =
+        std::min_element(strs.begin(),
+                         strs.end(),
+                         [](const auto& lhs, const auto& rhs) {
+                             return std::ssize(lhs) < std::ssize(rhs);
+                         });
+
+    for (int idx = 0; idx < std::ssize(*shortest_str_it); ++idx)
+    {
+        if (std::any_of(strs.begin(),
+                        strs.end(),
+                        [&](const auto& str) {
+                            return str[idx] != strs.front()[idx];
+                        }))
+        {
+            return prefix;
+        }
+
+        prefix += strs.front()[idx];
+    }
+
+    return prefix;
 
 } // static std::string longestCommonPrefixFA( ...
 
