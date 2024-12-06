@@ -10,6 +10,10 @@
 static std::string longestCommonPrefixFA(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/description
+    //!
+    //!          Time complexity O(M * N) where M = minimum string size in strs
+    //!          and N = strs.size().
+    //!          Space complexity O(1), no extra space needed other than prefix.
 
     std::string prefix {};
 
