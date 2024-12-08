@@ -48,6 +48,12 @@ static std::string longestCommonPrefixFA(std::vector<std::string> strs)
 static std::string longestCommonPrefixDS1(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
+    //!
+    //!          Time complexity O(S) where S = sum of all chars in all strings.
+    //!          In the worst case, all N strings are the same. The algorithm
+    //!          compares S_1 with other strings [S_2, S_N]. There are S char
+    //!          comparisons.
+    //!          Space complexity O(1). Only use constant extra space.
 
     if (strs.empty())
     {
