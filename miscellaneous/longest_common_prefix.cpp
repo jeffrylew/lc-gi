@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <string>
+#include <string_view>
 #include <vector>
 
 //! @brief First attempt to find longest common prefix in vector of strings
@@ -49,7 +50,7 @@ static std::string longestCommonPrefixDS1(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
     //!
-    //!          Time complexity O(S) where S = sum of all chars in all strings.
+    //!          Time complexity O(S) where S = number of chars in all strings.
     //!          In the worst case, all N strings are the same. The algorithm
     //!          compares S_1 with other strings [S_2, S_N]. There are S char
     //!          comparisons.
@@ -86,7 +87,7 @@ static std::string longestCommonPrefixDS2(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
     //!
-    //!          Time complexity O(S) where S = sum of all chars in all strings.
+    //!          Time complexity O(S) where S = number of chars in all strings.
     //!          In the worst case, there will be N equal strings of length M
     //!          and the algorithm performs S = M * N character comparisons. The
     //!          worst case is the same as in DS1 but in the best case there are
@@ -118,11 +119,72 @@ static std::string longestCommonPrefixDS2(std::vector<std::string> strs)
 
 } // static std::string longestCommonPrefixDS2( ...
 
+//! @brief Divide and conquer discussion solution
+//! @param[in] strs Vector of strings to search for longest common prefix in
+//! @return Longest common prefix. If none, return empty string.
+static std::string longestCommonPrefixDS3(std::vector<std::string> strs)
+{
+    //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
+    //!
+    //!          Time complexity O(S) where S = number of chars in all strings.
+    //!          In the worst case, there will be N equal strings of length M
+    //!          and the algorithm performs S = M * N character comparisons. The
+    //!          time complexity is 2 * T(N / 2) + O(M). In the best case the
+    //!          algorithm performs N * min_len comparisons, where min_len is
+    //!          the length of the shortest string in the vector.
+    //!          Space complexity O(M * log N). There is a memory overhead since
+    //!          we store recursive calls in the execution stack. There are
+    //!          log N recursive calls (for N strings) and each need O(M) space
+    //!          to store the result of length M.
+
+    const auto common_prefix =
+        [](std::string_view left, std::string_view right) {
+            const auto min_size =
+                static_cast<int>(std::min(std::ssize(left), std::ssize(right)));
+
+            for (int idx = 0; idx < min_size; ++idx)
+            {
+                if (left[idx] != right[idx])
+                {
+                    return std::string {left.substr(0, idx)};
+                }
+            }
+
+            return std::string {left.substr(0, min_size)};
+        };
+
+    const std::function<std::string(int, int)> longest_common_prefix =
+        [&](int left_idx, int right_idx) {
+            if (left_idx == right_idx)
+            {
+                return strs[left_idx];
+            }
+
+            const int mid_idx {left_idx + (right_idx - left_idx) / 2};
+
+            const std::string lcp_left {
+                longest_common_prefix(left_idx, mid_idx)};
+            const std::string lcp_right {
+                longest_common_prefix(mid_idx + 1, right_idx)};
+
+            return common_prefix(lcp_left, lcp_right);
+        };
+
+    if (strs.empty())
+    {
+        return {};
+    }
+
+    return longest_common_prefix(0, static_cast<int>(std::ssize(strs)) - 1);
+
+} // static std::string longestCommonPrefixDS3( ...
+
 TEST(LongestCommonPrefixTest, SampleTest1)
 {
     EXPECT_EQ("fl", longestCommonPrefixFA({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS1({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS2({"flower", "flow", "flight"}));
+    EXPECT_EQ("fl", longestCommonPrefixDS3({"flower", "flow", "flight"}));
 }
 
 TEST(LongestCommonPrefixTest, SampleTest2)
@@ -130,4 +192,5 @@ TEST(LongestCommonPrefixTest, SampleTest2)
     EXPECT_TRUE(longestCommonPrefixFA({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS1({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS2({"dog", "racecar", "car"}).empty());
+    EXPECT_TRUE(longestCommonPrefixDS3({"dog", "racecar", "car"}).empty());
 }
