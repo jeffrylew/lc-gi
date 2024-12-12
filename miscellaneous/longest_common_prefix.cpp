@@ -187,6 +187,12 @@ static std::string longestCommonPrefixDS3(std::vector<std::string> strs)
 static std::string longestCommonPrefixDS4(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
+    //!
+    //!          Time complexity O(S * log M) where S = number of all characters
+    //!          in all strings. In the worst case, we have N equal strings with
+    //!          length M. The algorithm makes log M iterations and where each
+    //!          has S = M * N comparisons.
+    //!          Space complexity O(1)
 
     if (strs.empty())
     {
