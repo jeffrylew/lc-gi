@@ -241,6 +241,36 @@ static std::string longestCommonPrefixDS4(std::vector<std::string> strs)
 
 } // static std::string longestCommonPrefixDS4( ...
 
+//! @brief Trie discussion solution
+//! @param[in] strs Vector of strings to search for longest common prefix in
+//! @return Longest common prefix. If none, return empty string.
+static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
+                                          std::string              query)
+{
+    //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
+
+    if (strs.empty())
+    {
+        return {};
+    }
+
+    const auto strs_size = static_cast<int>(std::ssize(strs));
+    if (strs_size == 1)
+    {
+        return strs.front()
+    }
+
+    //! @todo Implement Trie
+    Trie trie;
+    for (int idx = 1; idx < strs_size; ++idx)
+    {
+        trie.insert(strs[idx]);
+    }
+
+    return trie.searchLongestPrefix(query);
+
+} // static std::string longestCommonPrefixDS5( ...
+
 TEST(LongestCommonPrefixTest, SampleTest1)
 {
     EXPECT_EQ("fl", longestCommonPrefixFA({"flower", "flow", "flight"}));
