@@ -243,6 +243,11 @@ static std::string longestCommonPrefixDS4(std::vector<std::string> strs)
 
 } // static std::string longestCommonPrefixDS4( ...
 
+constexpr int get_idx(char ch)
+{
+    return static_cast<int>(ch - 'a');
+}
+
 struct TrieNode
 {
     bool is_end {};
@@ -254,22 +259,66 @@ struct TrieNode
 
     void put(char ch, std::unique_ptr<TrieNode>&& node)
     {
-        const auto idx = static_cast<int>(ch - 'a');
-        if (children[idx] == nullptr)
+        if (children[get_idx(ch)] == nullptr)
         {
-            children[idx] = std::move(node);
+            children[get_idx(ch)] = std::move(node);
             ++link_count;
         }
     }
 
     bool contains(char ch) const
     {
-        return children[ch - 'a'] != nullptr;
+        return children[get_idx(ch)] != nullptr;
     }
 
     int getLinks() const
     {
         return link_count;
+    }
+};
+
+class Trie
+{
+    TrieNode root;
+
+public:
+    void insert(std::string_view word)
+    {
+        auto* node = &root;
+
+        for (char ch : word)
+        {
+            if (!node->contains(ch))
+            {
+                node->put(ch, std::make_unique<TrieNode>());
+            }
+            node = node->children[get_idx(ch)].get();
+        }
+
+        node->is_end = true;
+    }
+
+    std::string search_longest_prefix(std::string_view query)
+    {
+        auto*       node = &root;
+        std::string prefix;
+
+        for (char ch : query)
+        {
+            if (node->contains(ch)
+                && node->get_links() == 1
+                && !node->is_end)
+            {
+                prefix += ch;
+                node = node->children[get_idx(ch)].get();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        return prefix;
     }
 };
 
@@ -280,6 +329,14 @@ static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
                                           std::string              query)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
+    //!
+    //!          Time complexity O(S) where S = number of all characters in the
+    //!          vector. In the worst case, query has length M and is equal to
+    //!          all N strings of the vector. Preprocessing takes O(S) and the
+    //!          longest common prefix query takes O(M). Building the trie takes
+    //!          O(S). To find the common prefix of query in the Trie takes O(M)
+    //!          in the worst case.
+    //!          Space complexity O(S). Only used additional S space for trie.
 
     if (strs.empty())
     {
@@ -292,14 +349,14 @@ static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
         return strs.front()
     }
 
-    //! @todo Implement Trie
+    //! First word in strs is used as the query so idx starts at 1
     Trie trie;
     for (int idx = 1; idx < strs_size; ++idx)
     {
         trie.insert(strs[idx]);
     }
 
-    return trie.searchLongestPrefix(query);
+    return trie.search_longest_prefix(query);
 
 } // static std::string longestCommonPrefixDS5( ...
 
@@ -310,6 +367,8 @@ TEST(LongestCommonPrefixTest, SampleTest1)
     EXPECT_EQ("fl", longestCommonPrefixDS2({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS3({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS4({"flower", "flow", "flight"}));
+    EXPECT_EQ("fl", longestCommonPrefixDS5({"flower", "flow", "flight"},
+                                            "flower"));
 }
 
 TEST(LongestCommonPrefixTest, SampleTest2)
@@ -319,4 +378,6 @@ TEST(LongestCommonPrefixTest, SampleTest2)
     EXPECT_TRUE(longestCommonPrefixDS2({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS3({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS4({"dog", "racecar", "car"}).empty());
+    EXPECT_TRUE(longestCommonPrefixDS5({"dog", "racecar", "car"},
+                                        "dog").empty());
 }
