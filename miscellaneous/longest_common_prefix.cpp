@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <array>
 #include <functional>
 #include <limits>
+#include <memory>
 #include <string>
 #include <string_view>
 #include <vector>
@@ -240,6 +242,36 @@ static std::string longestCommonPrefixDS4(std::vector<std::string> strs)
     return strs.front().substr(0, low + (high - low) / 2);
 
 } // static std::string longestCommonPrefixDS4( ...
+
+struct TrieNode
+{
+    bool is_end {};
+
+    //! Count number of children
+    int link_count {};
+
+    std::array<std::unique_ptr<TrieNode>, 26> children {};
+
+    void put(char ch, std::unique_ptr<TrieNode>&& node)
+    {
+        const auto idx = static_cast<int>(ch - 'a');
+        if (children[idx] == nullptr)
+        {
+            children[idx] = std::move(node);
+            ++link_count;
+        }
+    }
+
+    bool contains(char ch) const
+    {
+        return children[ch - 'a'] != nullptr;
+    }
+
+    int getLinks() const
+    {
+        return link_count;
+    }
+};
 
 //! @brief Trie discussion solution
 //! @param[in] strs Vector of strings to search for longest common prefix in
