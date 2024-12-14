@@ -271,7 +271,7 @@ struct TrieNode
         return children[get_idx(ch)] != nullptr;
     }
 
-    int getLinks() const
+    int get_links() const
     {
         return link_count;
     }
@@ -325,8 +325,7 @@ public:
 //! @brief Trie discussion solution
 //! @param[in] strs Vector of strings to search for longest common prefix in
 //! @return Longest common prefix. If none, return empty string.
-static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
-                                          std::string              query)
+static std::string longestCommonPrefixDS5(std::vector<std::string> strs)
 {
     //! @details https://leetcode.com/problems/longest-common-prefix/editorial/
     //!
@@ -336,7 +335,7 @@ static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
     //!          longest common prefix query takes O(M). Building the trie takes
     //!          O(S). To find the common prefix of query in the Trie takes O(M)
     //!          in the worst case.
-    //!          Space complexity O(S). Only used additional S space for trie.
+    //!          Space complexity O(S). Only use additional S space for trie.
 
     if (strs.empty())
     {
@@ -346,7 +345,7 @@ static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
     const auto strs_size = static_cast<int>(std::ssize(strs));
     if (strs_size == 1)
     {
-        return strs.front()
+        return strs.front();
     }
 
     //! First word in strs is used as the query so idx starts at 1
@@ -356,7 +355,7 @@ static std::string longestCommonPrefixDS5(std::vector<std::string> strs,
         trie.insert(strs[idx]);
     }
 
-    return trie.search_longest_prefix(query);
+    return trie.search_longest_prefix(strs.front());
 
 } // static std::string longestCommonPrefixDS5( ...
 
@@ -367,8 +366,7 @@ TEST(LongestCommonPrefixTest, SampleTest1)
     EXPECT_EQ("fl", longestCommonPrefixDS2({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS3({"flower", "flow", "flight"}));
     EXPECT_EQ("fl", longestCommonPrefixDS4({"flower", "flow", "flight"}));
-    EXPECT_EQ("fl", longestCommonPrefixDS5({"flower", "flow", "flight"},
-                                            "flower"));
+    EXPECT_EQ("fl", longestCommonPrefixDS5({"flower", "flow", "flight"}));
 }
 
 TEST(LongestCommonPrefixTest, SampleTest2)
@@ -378,6 +376,5 @@ TEST(LongestCommonPrefixTest, SampleTest2)
     EXPECT_TRUE(longestCommonPrefixDS2({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS3({"dog", "racecar", "car"}).empty());
     EXPECT_TRUE(longestCommonPrefixDS4({"dog", "racecar", "car"}).empty());
-    EXPECT_TRUE(longestCommonPrefixDS5({"dog", "racecar", "car"},
-                                        "dog").empty());
+    EXPECT_TRUE(longestCommonPrefixDS5({"dog", "racecar", "car"}).empty());
 }
