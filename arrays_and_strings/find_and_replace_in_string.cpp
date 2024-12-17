@@ -2,7 +2,17 @@
 
 #include <string>
 #include <string_view>
+#include <utility>
 #include <vector>
+
+//! @struct Find_replace
+//! @brief Stores index, source, and target string for each find and replace op
+struct Find_replace
+{
+    int         idx {};
+    std::string source {};
+    std::string target {};
+};
 
 //! @brief 1st attempt to replace sources[i] with targets[i] in s at indices[i]
 //! @param[in] s       Original std::string to perform replacements in
@@ -17,19 +27,35 @@ static std::string findReplaceStringFA(std::string              s,
     //! @details https://leetcode.com/explore/interview/card/google/59
     //!          /array-and-strings/3057/
     //!
-    //!          First attempt does not pass SampleTest3
+    //!          Time complexity O(N * log N) where N = indices.size().
+    //!          Space complexity O(N) for candidate vector
 
     std::string replacement {};
     const auto  indices_size = static_cast<int>(std::ssize(indices));
 
-    int                    s_idx {};
-    const std::string_view s_view {s};
+    std::vector<Find_replace> candidates {};
+    candidates.reserve(indices_size);
 
     for (int idx = 0; idx < indices_size; ++idx)
     {
-        const int              curr_idx {indices[idx]};
-        const std::string_view curr_source {sources[idx]};
-        const std::string_view curr_target {targets[idx]};
+        candidates.emplace_back(indices[idx],
+                                std::move(sources[idx]),
+                                std::move(targets[idx]));
+    }
+    std::sort(candidates.begin(),
+              candidates.end(),
+              [](const auto& lhs_candidate, const auto& rhs_candidate) {
+                  return lhs_candidate.idx < rhs_candidate.idx;
+              });
+
+    int                    s_idx {};
+    const std::string_view s_view {s};
+
+    for (const auto& candidate : candidates)
+    {
+        const int              curr_idx {candidate.idx};
+        const std::string_view curr_source {candidate.source};
+        const std::string_view curr_target {candidate.target};
 
         const auto curr_source_size = static_cast<int>(std::ssize(curr_source));
         const auto curr_target_size = static_cast<int>(std::ssize(curr_target));
@@ -44,12 +70,9 @@ static std::string findReplaceStringFA(std::string              s,
             replacement.append(curr_target);
             s_idx = curr_idx + curr_source_size;
         }
-        else
-        {
-            replacement.append(s_view.substr(s_idx, curr_target_size));
-            s_idx = curr_idx + curr_target_size;
-        }
     }
+
+    replacement.append(s_view.substr(s_idx));
 
     return replacement;
 
@@ -78,6 +101,5 @@ TEST(FindReplaceStringTest, SampleTest3)
     const std::vector<std::string> sources {"kg", "ggq", "mo"};
     const std::vector<std::string> targets {"s", "so", "bfr"};
 
-    EXPECT_EQ("vmossobfr", findReplaceStringFA(s, indices, sources, targets));
-    EXPECT_NE("vbfrssozp", findReplaceStringFA(s, indices, sources, targets));
+    EXPECT_EQ("vbfrssozp", findReplaceStringFA(s, indices, sources, targets));
 }
