@@ -44,22 +44,82 @@ static int maxDistToClosestFA(std::vector<int> seats)
 
 } // static int maxDistToClosestFA( ...
 
+//! @brief Next array discussion solution
+//! @param[in] seats Vector of empty (0) and occupied (1) seats
+//! @return Max distance to the closest person
+static int maxDistToClosestDS1(std::vector<int> seats)
+{
+    //! @details https://leetcode.com/problems
+    //!          /maximize-distance-to-closest-person/editorial/
+    //!
+    //!          Time complexity O(N) where N = seats.size()
+    //!          Space complexity O(N) for left_closest_person and
+    //!          right_closest_person vectors.
+
+    const auto num_seats = static_cast<int>(std::ssize(seats));
+
+    std::vector<int> left_closest_person(num_seats, num_seats);
+    std::vector<int> right_closest_person(num_seats, num_seats);
+
+    for (int idx = 0; idx < num_seats; ++idx)
+    {
+        if (seats[idx] == 1)
+        {
+            left_closest_person[idx] = 0;
+        }
+        else if (idx > 0)
+        {
+            left_closest_person[idx] = left_closest_person[idx - 1] + 1;
+        }
+    }
+
+    for (int idx = num_seats - 1; idx >= 0; --idx)
+    {
+        if (seats[idx] == 1)
+        {
+            right_closest_person[idx] = 0;
+        }
+        else if (idx < num_seats - 1)
+        {
+            right_closest_person[idx] = right_closest_person[idx + 1] + 1;
+        }
+    }
+
+    int max_dist {};
+    for (int idx = 0; idx < num_seats; ++idx)
+    {
+        if (seats[idx] == 0)
+        {
+            max_dist = std::max(max_dist,
+                                std::min(left_closest_person[idx],
+                                         right_closest_person[idx]));
+        }
+    }
+
+    return max_dist;
+
+} // static int maxDistToClosestDS1( ...
+
 TEST(MaxDistToClosestTest, SampleTest1)
 {
     EXPECT_EQ(2, maxDistToClosestFA({1, 0, 0, 0, 1, 0, 1}));
+    EXPECT_EQ(2, maxDistToClosestDS1({1, 0, 0, 0, 1, 0, 1}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest2)
 {
     EXPECT_EQ(3, maxDistToClosestFA({1, 0, 0, 0}));
+    EXPECT_EQ(3, maxDistToClosestDS1({1, 0, 0, 0}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest3)
 {
     EXPECT_EQ(1, maxDistToClosestFA({0, 1}));
+    EXPECT_EQ(1, maxDistToClosestDS1({0, 1}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest4)
 {
     EXPECT_EQ(2, maxDistToClosestFA({0, 0, 1, 0, 1, 1}));
+    EXPECT_EQ(2, maxDistToClosestDS1({0, 0, 1, 0, 1, 1}));
 }
