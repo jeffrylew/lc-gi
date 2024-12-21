@@ -152,11 +152,65 @@ static int maxDistToClosestDS2(std::vector<int> seats)
 
 } // static int maxDistToClosestDS2( ...
 
+//! @brief Group by zero discussion solution
+//! @param[in] seats Vector of empty (0) and occupied (1) seats
+//! @return Max distance to the closest person
+static int maxDistToClosestDS3(std::vector<int> seats)
+{
+    //! @details https://leetcode.com/problems
+    //!          /maximize-distance-to-closest-person/editorial/
+    //!
+    //!          Time complexity O(N) where N = seats.size()
+    //!          Space complexity O(1)
+
+    const auto num_seats = static_cast<int>(std::ssize(seats));
+
+    //! Current longest group of empty seats
+    int longest_empty_seat_group {};
+    int max_dist {};
+
+    for (int idx = 0; idx < num_seats; ++idx)
+    {
+        if (seats[idx] == 1)
+        {
+            longest_empty_seat_group = 0;
+        }
+        else
+        {
+            ++longest_empty_seat_group;
+            max_dist = std::max(max_dist,
+                                (longest_empty_seat_group + 1) / 2);
+        }
+    }
+
+    for (int idx = 0; idx < num_seats; ++idx)
+    {
+        if (seats[idx] == 1)
+        {
+            max_dist = std::max(max_dist, idx);
+            break;
+        }
+    }
+
+    for (int idx = num_seats - 1; idx >= 0; --idx)
+    {
+        if (seats[idx] == 1)
+        {
+            max_dist = std::max(max_dist, num_seats - 1 - idx);
+            break;
+        }
+    }
+
+    return max_dist;
+
+} // static int maxDistToClosestDS3( ...
+
 TEST(MaxDistToClosestTest, SampleTest1)
 {
     EXPECT_EQ(2, maxDistToClosestFA({1, 0, 0, 0, 1, 0, 1}));
     EXPECT_EQ(2, maxDistToClosestDS1({1, 0, 0, 0, 1, 0, 1}));
     EXPECT_EQ(2, maxDistToClosestDS2({1, 0, 0, 0, 1, 0, 1}));
+    EXPECT_EQ(2, maxDistToClosestDS3({1, 0, 0, 0, 1, 0, 1}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest2)
@@ -164,6 +218,7 @@ TEST(MaxDistToClosestTest, SampleTest2)
     EXPECT_EQ(3, maxDistToClosestFA({1, 0, 0, 0}));
     EXPECT_EQ(3, maxDistToClosestDS1({1, 0, 0, 0}));
     EXPECT_EQ(3, maxDistToClosestDS2({1, 0, 0, 0}));
+    EXPECT_EQ(3, maxDistToClosestDS3({1, 0, 0, 0}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest3)
@@ -171,6 +226,7 @@ TEST(MaxDistToClosestTest, SampleTest3)
     EXPECT_EQ(1, maxDistToClosestFA({0, 1}));
     EXPECT_EQ(1, maxDistToClosestDS1({0, 1}));
     EXPECT_EQ(1, maxDistToClosestDS2({0, 1}));
+    EXPECT_EQ(1, maxDistToClosestDS3({0, 1}));
 }
 
 TEST(MaxDistToClosestTest, SampleTest4)
@@ -178,4 +234,5 @@ TEST(MaxDistToClosestTest, SampleTest4)
     EXPECT_EQ(2, maxDistToClosestFA({0, 0, 1, 0, 1, 1}));
     EXPECT_EQ(2, maxDistToClosestDS1({0, 0, 1, 0, 1, 1}));
     EXPECT_EQ(2, maxDistToClosestDS2({0, 0, 1, 0, 1, 1}));
+    EXPECT_EQ(2, maxDistToClosestDS3({0, 0, 1, 0, 1, 1}));
 }
