@@ -5,6 +5,7 @@ set (
     "course_schedule_ii"
     "cracking_the_safe"
     "decode_string"
+    "evaluate_division"
     "longest_increasing_path_in_matrix"
     "number_of_islands"
 )
