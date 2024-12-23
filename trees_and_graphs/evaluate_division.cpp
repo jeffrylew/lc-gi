@@ -20,6 +20,8 @@ static std::vector<double> calcEquationFA(
     std::vector<double> answers {};
     answers.reserve(queries.size());
 
+    std::unordered_map<char, double> letter_val {};
+
     //! @todo
 
 } // static std::vector<double> calcEquationFA( ...
