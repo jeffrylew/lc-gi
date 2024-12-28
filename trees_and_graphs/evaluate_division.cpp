@@ -68,6 +68,15 @@ static std::vector<double> calcEquationDS1(
     //!          https://leetcode.com/explore/featured/card/
     //!          leetcodes-interview-crash-course-data-structures-and-algorithms
     //!          /707/traversals-trees-graphs/4635/
+    //!
+    //!          Time complexity O(Q * (N + E)) where Q = queries.size(),
+    //!          N = number of variables given in equations (linear with
+    //!          equations.size() in the worst case), and E = number of edges.
+    //!          Each call to answerQueryDS1 is a graph traversal, which costs
+    //!          the number of nodes plus the number of edges N + E. We perform
+    //!          Q traversals.
+    //!          Space complexity O(N + E) for building graph, seen, and the
+    //!          node_ratio stack.
 
     Graph_t    graph {};
     const auto num_values = static_cast<int>(std::ssize(values));
