@@ -161,6 +161,17 @@ static std::vector<double> calcEquationDS2(
     const std::vector<std::vector<std::string>>& queries)
 {
     //! @details https://leetcode.com/problems/evaluate-division/editorial/
+    //!
+    //!          Time complexity O(M * N) where M = queries.size() and
+    //!          N = equations.size(). We iterate through the equations to build
+    //!          a graph in O(N). For each query, need to traverse the graph. In
+    //!          the worst case, need to traverse the entire graph in O(N). In
+    //!          total, the evaluation of queries could take M * O(N) = O(M * N)
+    //!          Space complexity O(N). We build a graph from the equations. In
+    //!          the worst case of no overlap between equations, we have N edges
+    //!          and 2 * N nodes in the graph. Therefore, the space complexity
+    //!          is O(N + 2N) = O(N). Recursion in backtracking uses O(N) for
+    //!          the function call stack. The visited set uses O(N).
 
     Graph_t graph {};
 
