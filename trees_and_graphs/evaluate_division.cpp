@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <functional>
 #include <stack>
 #include <string>
 #include <string_view>
@@ -219,6 +220,100 @@ static std::vector<double> calcEquationDS2(
 
 } // static std::vector<double> calcEquationDS2( ...
 
+//! @brief Union-Find with weights discussion soln to get answers to all queries
+//! @param[in] equations Reference to vector of variable pairs [A_i, B_i]
+//! @param[in] values    Reference to vector of values A_i / B_i = values[i]
+//! @param[in] queries   Reference to vector of queries [C_j, D_j]
+//! @return Answers to all queries. If cannot be determined, return -1.0
+static std::vector<double> calcEquationDS3(
+    const std::vector<std::vector<std::string>>& equations,
+    const std::vector<double>&                   values,
+    const std::vector<std::vector<std::string>>& queries)
+{
+    //! @details https://leetcode.com/problems/evaluate-division/editorial/
+
+    std::unordered_map<std::string_view, std::pair<std::string_view, double>>
+        gid_weight {};
+
+    std::function<std::pair<std::string_view, double>(std::string_view)> find =
+        [&](std::string_view node_id) {
+            if (!gid_weight.contains(node_id))
+            {
+                gid_weight[node_id] = {node_id, 1.0};
+            }
+
+            const auto& [group_id, weight] = gid_weight[node_id];
+
+            //! Found inconsistency, trigger chain update
+            if (group_id != node_id)
+            {
+                const auto& [new_group_id, new_weight] = find(group_id);
+
+                gid_weight[node_id] = {new_group_id, weight * new_weight};
+            }
+
+            return gid_weight[node_id];
+        };
+
+    const auto unionize = [&](std::string_view dividend,
+                              std::string_view divisor,
+                              double           value) {
+        const auto& [dividend_gid, dividend_weight] = find(dividend);
+        const auto& [divisor_gid, divisor_weight]   = find(divisor);
+
+        //! Merge the two groups together by attaching the dividend group
+        //! to that of the divisor
+        if (dividend_gid != divisor_gid)
+        {
+            gid_weight[dividend_gid] = {
+                divisor_gid, divisor_weight * value / dividend_weight};
+        }
+    };
+
+    //! Step 1) Build the union groups
+    for (int idx = 0; idx < std::ssize(equations); ++idx)
+    {
+        const auto   dividend = equations[idx].front();
+        const auto   divisor  = equations[idx].back();
+        const double quotient {values[idx]};
+
+        unionize(dividend, divisor, quotient);
+    }
+
+    //! Step 2) Run the evaluation with "lazy" updates in find() function
+    std::vector<double> answers(queries.size());
+
+    for (int idx = 0; idx < std::ssize(queries); ++idx)
+    {
+        const auto dividend = queries[idx].front();
+        const auto divisor  = queries[idx].back();
+
+        if (!gid_weight.contains(dividend) || !gid_weight.contains(divisor))
+        {
+            //! Case 1) At least one variable did not appear before
+            answers[idx] = -1.0;
+            continue;
+        }
+
+        const auto& [dividend_gid, dividend_weight] = find(dividend);
+        const auto& [divisor_gid, divisor_weight]   = find(divisor);
+
+        if (dividend_gid != divisor_gid)
+        {
+            //! Case 2) Variables do not belong to the same chain/group
+            answers[idx] = -1.0;
+        }
+        else
+        {
+            //! Case 3) There is a chain/path between the variables
+            answers[idx] = dividend_weight / divisor_weight;
+        }
+    }
+
+    return answers;
+
+} // static std::vector<double> calcEquationDS3( ...
+
 TEST(CalcEquationTest, SampleTest1)
 {
     const std::vector<std::vector<std::string>> equations {
@@ -230,6 +325,7 @@ TEST(CalcEquationTest, SampleTest1)
 
     EXPECT_EQ(expected_output, calcEquationDS1(equations, values, queries));
     EXPECT_EQ(expected_output, calcEquationDS2(equations, values, queries));
+    EXPECT_EQ(expected_output, calcEquationDS3(equations, values, queries));
 }
 
 TEST(CalcEquationTest, SampleTest2)
@@ -243,6 +339,7 @@ TEST(CalcEquationTest, SampleTest2)
 
     EXPECT_EQ(expected_output, calcEquationDS1(equations, values, queries));
     EXPECT_EQ(expected_output, calcEquationDS2(equations, values, queries));
+    EXPECT_EQ(expected_output, calcEquationDS3(equations, values, queries));
 }
 
 TEST(CalcEquationTest, SampleTest3)
@@ -255,4 +352,5 @@ TEST(CalcEquationTest, SampleTest3)
 
     EXPECT_EQ(expected_output, calcEquationDS1(equations, values, queries));
     EXPECT_EQ(expected_output, calcEquationDS2(equations, values, queries));
+    EXPECT_EQ(expected_output, calcEquationDS3(equations, values, queries));
 }
