@@ -231,6 +231,21 @@ static std::vector<double> calcEquationDS3(
     const std::vector<std::vector<std::string>>& queries)
 {
     //! @details https://leetcode.com/problems/evaluate-division/editorial/
+    //!
+    //!          Time complexity O((M + N) * log N) where M = queries.size() and
+    //!          N = equations.size(). If M operations, either Union or Find,
+    //!          are applied to N elements then the total run time is
+    //!          O(M * log N) where we perform unions arbitrarily instead of by
+    //!          size or rank. To iterate through each input equation and invoke
+    //!          unionize() on it takes O(N * log N). Evaluating each query can
+    //!          involve invoking the find() function at most twice, taking
+    //!          O(M * log N). The Union-Find data structure is more efficient
+    //!          than the DFS/BFS search approach for the repetitive/redundant
+    //!          scenario. Once we evaluate a query with Union-Find, subsequent
+    //!          repetitive or overlapping queries can be evaluated in constant
+    //!          time.
+    //!          Space complexity O(N) for the Union-Find data structure. The
+    //!          call stack of find() uses O(N).
 
     std::unordered_map<std::string_view, std::pair<std::string_view, double>>
         gid_weight {};
