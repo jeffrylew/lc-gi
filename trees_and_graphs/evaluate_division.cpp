@@ -288,8 +288,8 @@ static std::vector<double> calcEquationDS3(
     //! Step 1) Build the union groups
     for (int idx = 0; idx < std::ssize(equations); ++idx)
     {
-        const auto   dividend = equations[idx].front();
-        const auto   divisor  = equations[idx].back();
+        const auto&   dividend = equations[idx].front();
+        const auto&   divisor  = equations[idx].back();
         const double quotient {values[idx]};
 
         unionize(dividend, divisor, quotient);
@@ -300,8 +300,8 @@ static std::vector<double> calcEquationDS3(
 
     for (int idx = 0; idx < std::ssize(queries); ++idx)
     {
-        const auto dividend = queries[idx].front();
-        const auto divisor  = queries[idx].back();
+        const auto& dividend = queries[idx].front();
+        const auto& divisor  = queries[idx].back();
 
         if (!gid_weight.contains(dividend) || !gid_weight.contains(divisor))
         {
