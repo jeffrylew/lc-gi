@@ -2,6 +2,7 @@ set (
     cpp_files
     "find_first_and_last_position_of_element_in_sorted_array"
     "median_of_two_sorted_arrays"
+    "merge_intervals"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
