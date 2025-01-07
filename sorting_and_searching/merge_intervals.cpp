@@ -12,7 +12,7 @@ static std::vector<std::vector<int>> mergeFA(
     //! @details https://leetcode.com/explore/interview/card/google/63
     //!          /sorting-and-searching-4/450/
 
-    std::vector<std::ector<int>> merged_intervals {};
+    std::vector<std::vector<int>> merged_intervals {};
 
     //! @todo Figure out how to use Union-Find algorithm to union all mergeable
     //!       intervals
