@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
+#include <unordered_map>
 #include <vector>
 
 //! @brief First attempt to merge overlapping intervals
@@ -16,6 +18,52 @@ static std::vector<std::vector<int>> mergeFA(
 
     //! @todo Figure out how to use Union-Find algorithm to union all mergeable
     //!       intervals
+
+    //! Map of <element in interval, representative of interval>
+    std::unordered_map<int, int> representative {};
+
+    //! Initialize representative map
+    for (const auto& interval : intervals)
+    {
+        const int lower_bound {interval[0]};
+        const int upper_bound {interval[1]};
+
+        //! lower bound is the representative of the interval
+        representative[lower_bound] = lower_bound;
+        representative[upper_bound] = lower_bound;
+    }
+
+    const std::function<int(int)> find_representative =
+        [&](int bound) {
+            if (bound == representative[bound])
+            {
+                return bound;
+            }
+
+            return find_representative(representative[bound]);
+        };
+
+    const auto combine_intervals =
+        [&](int bound_1, int bound_2) {
+            bound_1 = find_representative(bound_1);
+            bound_2 = find_representative(bound_2);
+
+            //! Elements of intervals have the same representative
+            //! They are in the same set so no action needed
+            if (bound_1 == bound_2)
+            {
+                return;
+            }
+
+            representative[bound_2] = bound_1;
+        };
+
+    //! @todo Loop over interval and merge overlapping ones. Might sort first.
+    for (const auto& interval : intervals)
+    {
+        const int lower_bound {interval[0]};
+        const int upper_bound {interval[1]};
+    }
 
     return merged_intervals;
 
