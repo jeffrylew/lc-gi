@@ -58,11 +58,24 @@ static std::vector<std::vector<int>> mergeFA(
             representative[bound_2] = bound_1;
         };
 
-    //! @todo Loop over interval and merge overlapping ones. Might sort first.
-    for (const auto& interval : intervals)
+    //! Sort intervals based on lower bound
+    std::sort(intervals.begin(),
+              intervals.end(),
+              [](const auto& interval_lhs, const auto& interval_rhs) {
+                  return interval_lhs[0] < interval_rhs[0];
+              });
+
+    for (int idx = 1; idx < std::ssize(intervals); ++idx)
     {
-        const int lower_bound {interval[0]};
-        const int upper_bound {interval[1]};
+        const auto& prev_interval = intervals[idx - 1];
+        const auto& curr_interval = intervals[idx];
+
+        const int prev_lower_bound {prev_interval[0]};
+        const int prev_upper_bound {prev_interval[1]};
+        const int curr_lower_bound {curr_interval[0]};
+        const int curr_upper_bound {curr_interval[1]};
+
+        //! @todo Figure out merge scheme based on bounds
     }
 
     return merged_intervals;
