@@ -2,6 +2,9 @@
 
 #include <algorithm>
 #include <functional>
+#include <map>
+#include <set>
+#include <stack>
 #include <unordered_map>
 #include <vector>
 
@@ -113,6 +116,121 @@ static std::vector<std::vector<int>> mergeFA(
 
 } // static std::vector<std::vector<int>> mergeFA( ...
 
+//! @brief Connected components discussion solution
+//! @param[in] intervals Reference to vector of intervals
+//! @return Vector of non-overlapping intervals that cover all input intervals
+static std::vector<std::vector<int>> mergeDS1(
+    const std::vector<std::vector<int>>& intervals)
+{
+    //! @details https://leetcode.com/problems/merge-intervals/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = intervals.size(). Building
+    //!          the graph costs O(V + E) = O(V) + O(E) = O(N) + O(N ^ 2) where
+    //!          all intervals are mutually overlapping in the worst case.
+    //!          Traversing the graph has same cost because visited_intervals
+    //!          set guarantees each interval is visited exactly once. Finally,
+    //!          because each interval is in exactly one connected component,
+    //!          the merge step costs O(V) = O(N). Note that this solution
+    //!          passes 168 / 171 cases but has Time Limit Exceeded for 169.
+    //!          Space complexity O(N ^ 2). In the worst case, all intervals are
+    //!          mutually overlapping so there will be an edge for every pair of
+    //!          intervals. The memory footprint is quadratic.
+
+    std::map<std::vector<int>, std::vector<std::vector<int>>> graph {};
+
+    std::map<int, std::vector<std::vector<int>>> intervals_in_component {};
+
+    std::set<std::vector<int>> visited_intervals {};
+
+    //! Build graph where undirected edge exists between overlapping intervals
+    const auto build_graph = [&] {
+        for (const auto& interval1 : intervals)
+        {
+            for (const auto& interval2 : intervals)
+            {
+                //! Intervals overlap
+                if (interval1[0] <= interval2[1]
+                    && interval2[0] <= interval1[1])
+                {
+                    graph[interval1].push_back(interval2);
+                    graph[interval2].push_back(interval1);
+                }
+            }
+        }
+    };
+
+    //! Mark all intervals in same connected component with component_number
+    const auto mark_component_DFS =
+        [&](const std::vector<int>& start, int component_number) {
+            std::stack<std::vector<int>> interval_stack({start});
+
+            while (!interval_stack.empty())
+            {
+                auto interval = interval_stack.top();
+                interval_stack.pop();
+
+                if (!visited_intervals.contains(interval))
+                {
+                    visited_intervals.insert(interval);
+
+                    intervals_in_component[component_number].push_back(
+                        interval);
+
+                    for (const auto& neighbor_interval : graph[interval])
+                    {
+                        interval_stack.push(neighbor_interval);
+                    }
+                }
+            }
+        };
+
+    //! Populate nodes_in_comp with the connected components in graph
+    const auto connect_components = [&] {
+        int component_number {};
+
+        for (const auto& interval : intervals)
+        {
+            if (!visited_intervals.contains(interval))
+            {
+                mark_component_DFS(interval, component_number);
+                ++component_number;
+            }
+        }
+    };
+
+    //! Merge all intervals in connected component into one interval
+    const auto merge_intervals =
+        [&](const std::vector<std::vector<int>>& connected_intervals) {
+            int min_lower_bound {connected_intervals.front()[0]};
+            int max_upper_bound {connected_intervals.front()[1]};
+
+            for (const auto& interval : connected_intervals)
+            {
+                min_lower_bound = std::min(min_lower_bound, interval[0]);
+                max_upper_bound = std::max(max_upper_bound, interval[1]);
+            }
+
+            return std::vector<int> {min_lower_bound, max_upper_bound};
+        };
+
+    build_graph();
+    connect_components();
+
+    //! For each component, merge all intervals into one interval
+    std::vector<std::vector<int>> merged_intervals {};
+
+    for (int component_number = 0;
+         component_number < std::ssize(intervals_in_component);
+         ++component_number)
+    {
+        merged_intervals.push_back(
+            merge_intervals(intervals_in_component[component_number]));
+    }
+
+    return merged_intervals;
+
+} // static std::vector<std::vector<int>> mergeDS1( ...
+
 TEST(MergeTest, SampleTest1)
 {
     const std::vector<std::vector<int>> intervals {
@@ -122,6 +240,7 @@ TEST(MergeTest, SampleTest1)
         {1, 6}, {8, 10}, {15, 18}};
 
     EXPECT_EQ(expected_output, mergeFA(intervals));
+    EXPECT_EQ(expected_output, mergeDS1(intervals));
 }
 
 TEST(MergeTest, SampleTest2)
@@ -130,6 +249,7 @@ TEST(MergeTest, SampleTest2)
     const std::vector<std::vector<int>> expected_output {{1, 5}};
 
     EXPECT_EQ(expected_output, mergeFA(intervals));
+    EXPECT_EQ(expected_output, mergeDS1(intervals));
 }
 
 TEST(MergeTest, SampleTest3)
@@ -139,4 +259,5 @@ TEST(MergeTest, SampleTest3)
     const std::vector<std::vector<int>> expected_output {{1, 10}};
 
     EXPECT_NE(expected_output, mergeFA(intervals));
+    EXPECT_EQ(expected_output, mergeDS1(intervals));
 }
