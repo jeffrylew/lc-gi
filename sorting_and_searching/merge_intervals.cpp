@@ -16,9 +16,6 @@ static std::vector<std::vector<int>> mergeFA(
 
     std::vector<std::vector<int>> merged_intervals {};
 
-    //! @todo Figure out how to use Union-Find algorithm to union all mergeable
-    //!       intervals
-
     //! Map of <element in interval, representative of interval>
     std::unordered_map<int, int> representative {};
 
@@ -29,7 +26,10 @@ static std::vector<std::vector<int>> mergeFA(
         const int upper_bound {interval[1]};
 
         //! lower bound is the representative of the interval
-        representative[lower_bound] = lower_bound;
+        if (!representative.contains(lower_bound))
+        {
+            representative[lower_bound] = lower_bound;
+        }
         representative[upper_bound] = lower_bound;
     }
 
@@ -59,23 +59,50 @@ static std::vector<std::vector<int>> mergeFA(
         };
 
     //! Sort intervals based on lower bound
-    std::sort(intervals.begin(),
-              intervals.end(),
+    auto sorted_intervals = intervals;
+    std::sort(sorted_intervals.begin(),
+              sorted_intervals.end(),
               [](const auto& interval_lhs, const auto& interval_rhs) {
                   return interval_lhs[0] < interval_rhs[0];
               });
 
-    for (int idx = 1; idx < std::ssize(intervals); ++idx)
+    for (int idx = 1; idx < std::ssize(sorted_intervals); ++idx)
     {
-        const auto& prev_interval = intervals[idx - 1];
-        const auto& curr_interval = intervals[idx];
+        const auto& prev_interval = sorted_intervals[idx - 1];
+        const auto& curr_interval = sorted_intervals[idx];
 
         const int prev_lower_bound {prev_interval[0]};
         const int prev_upper_bound {prev_interval[1]};
         const int curr_lower_bound {curr_interval[0]};
         const int curr_upper_bound {curr_interval[1]};
 
-        //! @todo Figure out merge scheme based on bounds
+        if (curr_lower_bound <= prev_upper_bound)
+        {
+            combine_intervals(prev_upper_bound, curr_lower_bound);
+        }
+    }
+
+    for (const auto& interval : sorted_intervals)
+    {
+        if (merged_intervals.empty())
+        {
+            merged_intervals.push_back(interval);
+            continue;
+        }
+
+        const int lower_bound {interval[0]};
+        const int upper_bound {interval[1]};
+        const int representative_lower_bound {find_representative(lower_bound)};
+
+        auto& last_interval = merged_intervals.back();
+        if (representative_lower_bound == last_interval[0])
+        {
+            last_interval[1] = std::max(last_interval[1], upper_bound);
+        }
+        else
+        {
+            merged_intervals.push_back(interval);
+        }
     }
 
     return merged_intervals;
