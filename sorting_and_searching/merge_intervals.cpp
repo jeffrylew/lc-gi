@@ -13,19 +13,31 @@ static std::vector<std::vector<int>> mergeFA(
 {
     //! @details https://leetcode.com/explore/interview/card/google/63
     //!          /sorting-and-searching-4/450/
+    //!
+    //!          First attempt solution does not pass SampleTest3
 
     std::vector<std::vector<int>> merged_intervals {};
 
     //! Map of <element in interval, representative of interval>
     std::unordered_map<int, int> representative {};
 
+    //! Sort intervals based on lower bound
+    auto sorted_intervals = intervals;
+    std::sort(sorted_intervals.begin(),
+              sorted_intervals.end(),
+              [](const auto& interval_lhs, const auto& interval_rhs) {
+                  return interval_lhs[0] < interval_rhs[0];
+              });
+
     //! Initialize representative map
-    for (const auto& interval : intervals)
+    for (const auto& interval : sorted_intervals)
     {
         const int lower_bound {interval[0]};
         const int upper_bound {interval[1]};
 
         //! lower bound is the representative of the interval
+        //! If it is already in representative then lower bound is already the
+        //! upper bound of a previously processed interval.
         if (!representative.contains(lower_bound))
         {
             representative[lower_bound] = lower_bound;
@@ -57,14 +69,6 @@ static std::vector<std::vector<int>> mergeFA(
 
             representative[bound_2] = bound_1;
         };
-
-    //! Sort intervals based on lower bound
-    auto sorted_intervals = intervals;
-    std::sort(sorted_intervals.begin(),
-              sorted_intervals.end(),
-              [](const auto& interval_lhs, const auto& interval_rhs) {
-                  return interval_lhs[0] < interval_rhs[0];
-              });
 
     for (int idx = 1; idx < std::ssize(sorted_intervals); ++idx)
     {
@@ -126,4 +130,13 @@ TEST(MergeTest, SampleTest2)
     const std::vector<std::vector<int>> expected_output {{1, 5}};
 
     EXPECT_EQ(expected_output, mergeFA(intervals));
+}
+
+TEST(MergeTest, SampleTest3)
+{
+    const std::vector<std::vector<int>> intervals {
+        {2, 3}, {4, 5}, {6, 7}, {8, 9}, {1, 10}};
+    const std::vector<std::vector<int>> expected_output {{1, 10}};
+
+    EXPECT_NE(expected_output, mergeFA(intervals));
 }
