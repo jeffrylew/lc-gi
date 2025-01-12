@@ -231,6 +231,48 @@ static std::vector<std::vector<int>> mergeDS1(
 
 } // static std::vector<std::vector<int>> mergeDS1( ...
 
+//! @brief Sorting discussion solution
+//! @param[in] intervals Reference to vector of intervals
+//! @return Vector of non-overlapping intervals that cover all input intervals
+static std::vector<std::vector<int>> mergeDS2(
+    const std::vector<std::vector<int>>& intervals)
+{
+    //! @details https://leetcode.com/problems/merge-intervals/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = intervals.size() for
+    //!          sorting. We also perform a linear scan which is dominated.
+    //!          Space complexity O(log N) or O(N) for sorting O(N) is needed to
+    //!          allocate linear space for a copy of intervals, sorted_intervals
+
+    auto sorted_intervals = intervals;
+    std::sort(sorted_intervals.begin(),
+              sorted_intervals.end(),
+              [](const auto& interval_lhs, const auto& interval_rhs) {
+                  return interval_lhs[0] < interval_rhs[0];
+              });
+
+    std::vector<std::vector<int>> merged_intervals {};
+
+    for (const auto& interval : sorted_intervals)
+    {
+        //! If the list of merged intervals is empty or if the current interval
+        //! does not overlap with the previous, simply append it
+        if (merged_intervals.empty()
+            || merged_intervals.back()[1] < interval[0])
+        {
+            merged_intervals.push_back(interval);
+            continue;
+        }
+
+        //! There is overlap so merge the previous and current intervals
+        merged_intervals.back()[1] =
+            std::max(merged_intervals.back()[1], interval[1]);
+    }
+
+    return merged_intervals;
+
+} // static std::vector<std::vector<int>> mergeDS2( ...
+
 TEST(MergeTest, SampleTest1)
 {
     const std::vector<std::vector<int>> intervals {
@@ -241,6 +283,7 @@ TEST(MergeTest, SampleTest1)
 
     EXPECT_EQ(expected_output, mergeFA(intervals));
     EXPECT_EQ(expected_output, mergeDS1(intervals));
+    EXPECT_EQ(expected_output, mergeDS2(intervals));
 }
 
 TEST(MergeTest, SampleTest2)
@@ -250,6 +293,7 @@ TEST(MergeTest, SampleTest2)
 
     EXPECT_EQ(expected_output, mergeFA(intervals));
     EXPECT_EQ(expected_output, mergeDS1(intervals));
+    EXPECT_EQ(expected_output, mergeDS2(intervals));
 }
 
 TEST(MergeTest, SampleTest3)
@@ -260,4 +304,5 @@ TEST(MergeTest, SampleTest3)
 
     EXPECT_NE(expected_output, mergeFA(intervals));
     EXPECT_EQ(expected_output, mergeDS1(intervals));
+    EXPECT_EQ(expected_output, mergeDS2(intervals));
 }
