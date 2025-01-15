@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 
@@ -35,16 +36,42 @@ static bool isAnagramFA(std::string s, std::string t)
         }
     }
 
-
+    return s_char_counts.empty();
 
 } // static bool isAnagramFA( ...
+
+//! @brief Sorting discussion solution
+//! @param[in] s First string
+//! @param[in] t Second string to check if is an anagram
+//! @return True if t is an anagram of s, else false
+static bool isAnagramDS1(std::string s, std::string t)
+{
+    //! @details https://leetcode.com/problems/valid-anagram/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = s.size(). Sorting costs
+    //!          O(N * log N) and comparing two strings costs O(N).
+    //!          Space complexity O(1) depending on the implementation.
+
+    if (std::ssize(s) != std::ssize(t))
+    {
+        return false;
+    }
+
+    std::sort(s.begin(), s.end());
+    std::sort(t.begin(), t.end());
+
+    return s == t;
+
+} // static bool isAnagramDS1( ...
 
 TEST(IsAnagramTest, SampleTest1)
 {
     EXPECT_TRUE(isAnagramFA("anagram", "nagaram"));
+    EXPECT_TRUE(isAnagramDS1("anagram", "nagaram"));
 }
 
 TEST(IsAnagramTest, SampleTest2)
 {
     EXPECT_FALSE(isAnagramFA("rat", "car"));
+    EXPECT_FALSE(isAnagramDS1("rat", "car"));
 }
