@@ -16,6 +16,7 @@ set (
     "plus_one"
     "read_N_characters_given_read4_ii"
     "rotate_image"
+    "valid_parentheses"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
