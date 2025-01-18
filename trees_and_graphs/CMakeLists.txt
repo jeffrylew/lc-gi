@@ -8,6 +8,7 @@ set (
     "evaluate_division"
     "longest_increasing_path_in_matrix"
     "number_of_islands"
+    "robot_room_cleaner"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
