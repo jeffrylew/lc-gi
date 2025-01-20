@@ -21,7 +21,31 @@ public:
 };
  */
 
+//! @brief First attempt to clean an m x n room with walls (0) and cells (1)
+//! @param[in, out] robot Reference to robot starting at unknown cell
 void cleanRoomFA(Robot& robot)
 {
 
+}
+
+TEST(CleanRoomTest, SampleTest1)
+{
+    // room = {{1, 1, 1, 1, 1, 0, 1, 1},
+    //         {1, 1, 1, 1, 1, 0, 1, 1},
+    //         {1, 0, 1, 1, 1, 1, 1, 1},
+    //         {0, 0, 0, 1, 0, 0, 0, 0},
+    //         {1, 1, 1, 1, 1, 1, 1, 1}}
+    // row = 1, col = 3
+
+    Robot robot;
+    cleanRoomFA(robot);
+}
+
+TEST(CleanRoomTest, SampleTest2)
+{
+    // room = {{1}}
+    // row = 0, col = 0
+
+    Robot robot;
+    cleanRoomFA(robot);
 }
