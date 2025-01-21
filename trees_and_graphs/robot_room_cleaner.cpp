@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <unordered_map>
+#include <utility>
+
 /*
  * This is the robot's control interface
  * You should not implement it or speculate about its implementation
@@ -25,7 +28,10 @@ public:
 //! @param[in, out] robot Reference to robot starting at unknown cell
 void cleanRoomFA(Robot& robot)
 {
+    //! Map of <<row, col>, number of visits>
+    std::unordered_map<std::pair<int, int>, int> cell_visits {};
 
+    //! @todo
 }
 
 TEST(CleanRoomTest, SampleTest1)
