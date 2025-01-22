@@ -46,22 +46,68 @@ static bool isValidFA(std::string s)
 
 } // static bool isValidFA( ...
 
+//! @brief Stacks discussion solution
+//! @param[in] s std::string containing '(', ')', '{', '}', '[', ']'
+//! @return True if open brackets are closed by the same type in order
+static bool isValidDS(std::string s)
+{
+    //! @details https://leetcode.com/problems/valid-parentheses/editorial
+
+    const std::unordered_map<char, char> brackets {
+        {')', '('}, {'}', '{'}, {']', '['}};
+
+    std::stack<char> left_bracket_stack {};
+
+    for (const char ch : s)
+    {
+        if (!brackets.contains(ch))
+        {
+            //! Opening bracket
+            left_bracket_stack.push(ch);
+            continue;
+        }
+
+        if (left_bracket_stack.empty())
+        {
+            return false;
+        }
+
+        //! Get the top element of the stack
+        const char left_bracket {left_bracket_stack.top()};
+        left_bracket_stack.pop();
+
+        //! If the mapping for this right bracket doesn't match the
+        //! left bracket from the top of the stack, return false
+        if (left_bracket != brackets.at(ch))
+        {
+            return false;
+        }
+    }
+
+    return left_bracket_stack.empty();
+
+} // static bool isValidDS( ...
+
 TEST(IsValidTest, SampleTest1)
 {
     EXPECT_TRUE(isValidFA("()"));
+    EXPECT_TRUE(isValidDS("()"));
 }
 
 TEST(IsValidTest, SampleTest2)
 {
     EXPECT_TRUE(isValidFA("()[]{}"));
+    EXPECT_TRUE(isValidDS("()[]{}"));
 }
 
 TEST(IsValidTest, SampleTest3)
 {
     EXPECT_FALSE(isValidFA("(]"));
+    EXPECT_FALSE(isValidDS("(]"));
 }
 
 TEST(IsValidTest, SampleTest4)
 {
     EXPECT_TRUE(isValidFA("([])"));
+    EXPECT_TRUE(isValidDS("([])"));
 }
