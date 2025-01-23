@@ -52,6 +52,11 @@ static bool isValidFA(std::string s)
 static bool isValidDS(std::string s)
 {
     //! @details https://leetcode.com/problems/valid-parentheses/editorial
+    //!
+    //!          Time complexity O(N) where N = s.size() to traverse the given
+    //!          string. Push and pop operations on a stack are O(1).
+    //!          Space complexity O(N). In the worst case, we push all left
+    //!          brackets onto the stack, e.g. (((((
 
     const std::unordered_map<char, char> brackets {
         {')', '('}, {'}', '{'}, {']', '['}};
