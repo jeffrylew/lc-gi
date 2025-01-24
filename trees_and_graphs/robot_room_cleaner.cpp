@@ -31,12 +31,19 @@ public:
 void cleanRoomDS(Robot& robot)
 {
     //! @details https://leetcode.com/problems/robot-room-cleaner/editorial/
+    //!
+    //!          Time complexity O(M - N) where M = number of cells in the room
+    //!          and N = number of obstacles. We visit each non-obstacle cell
+    //!          once. At each visit, we check 4 directions around the cell. The
+    //!          total number of operations would be 4 * (M - N).
+    //!          Space complexity O(M - N) for the visited_cells set to keep
+    //!          track of whether a non-obstacle cell is visited or not.
 
-    //! Going clockwise:                             col -1   0   1
-    //! - 0 : up    (delta row = -1, delta col = 0) row  _ _ _ _ _ _
-    //! - 1 : right (delta row = 0, delta col = 1)   -1 |_ _|_ _|_ _|
-    //! - 2 : down  (delta row = 1, delta col = 0)    0 |_ _|_x_|_ _|
-    //! - 3 : left  (delta row = 0, delta col = -1)   1 |_ _|_ _|_ _|
+    //! Going clockwise:                                 col -1   0   1
+    //! - 0 : up    (delta row = -1, delta col = 0)          _ _ _ _ _ _
+    //! - 1 : right (delta row = 0, delta col = 1)       -1 |_ _|_ _|_ _|
+    //! - 2 : down  (delta row = 1, delta col = 0)   row  0 |_ _|_x_|_ _|
+    //! - 3 : left  (delta row = 0, delta col = -1)       1 |_ _|_ _|_ _|
     //!
     //! directions vector stores <delta row, delta col>
     const std::vector<std::pair<int, int>> directions {
