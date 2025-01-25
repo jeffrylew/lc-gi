@@ -7,6 +7,7 @@ set (
     "decode_string"
     "evaluate_division"
     "longest_increasing_path_in_matrix"
+    "most_stones_removed_with_same_row_or_column"
     "number_of_islands"
     "robot_room_cleaner"
 )
