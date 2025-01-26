@@ -155,6 +155,98 @@ static int removeStonesDS1(const std::vector<std::vector<int>>& stones)
 
 } // static int removeStonesDS1( ...
 
+//! Union-Find data structure for tracking groups of connected stones
+class Union_find_DS2
+{
+public:
+    //! Initially, each stone is its own connected component/group
+    explicit Union_find_DS2(int num_stones)
+        : num_groups_of_connected_stones {num_stones}
+        , stone_parents(num_stones, -1)
+    {
+    }
+
+    [[nodiscard]] constexpr int get_connected_components() const noexcept
+    {
+        return num_groups_of_connected_stones;
+    }
+
+    //! Find the root of a stone with path compression
+    [[nodiscard]] constexpr int find_root(int stone_id) noexcept
+    {
+        if (stone_parents[stone_id] == -1)
+        {
+            return stone_id;
+        }
+
+        return stone_parents[stone_id] = find_root(stone_parents[stone_id]);
+    }
+
+    //! Union two stones, reducing the number of groups of connected stones
+    constexpr void union_stones(int stone_id1, int stone_id2) noexcept
+    {
+        const int root_stone_id1 {find_root(stone_id1)};
+        const int root_stone_id2 {find_root(stone_id2)};
+
+        //! If stones are already in the same group/component, do nothing
+        if (root_stone_id1 == root_stone_id2)
+        {
+            return;
+        }
+
+        //! Merge the groups/components and reduce the count of groups of
+        //! connected stones
+        stone_parents[root_stone_id1] = root_stone_id2;
+        --num_groups_of_connected_stones;
+    }
+
+private:
+    //! Number of groups of connected stones
+    int num_groups_of_connected_stones {};
+
+    //! Vector tracks the parent of each stone
+    std::vector<int> stone_parents {};
+
+}; // class Union_find_DS2
+
+//! @brief Disjoint Set Union discussion solution
+//! @param[in] stones Reference to vector of locations of N stones
+//! @return Largest possible number of stones that can be removed
+static int removeStonesDS2(const std::vector<std::vector<int>>& stones)
+{
+    //! @details https://leetcode.com/problems
+    //!          /most-stones-removed-with-same-row-or-column/editorial/
+    //!
+    //!          Time complexity O(N ^ 2 * alpha(N)) where N = stones.size() and
+    //!          alpha(N) is the inverse Ackermann function. Initializing vector
+    //!          stone_parents with -1 takes O(N). The nested loops iterate
+    //!          through each pair of stones. The number of pairs is N(N - 1)/2,
+    //!          which is O(N ^ 2). For each pair, the union_stones operation is
+    //!          performed if the stones share the same row or column. The
+    //!          union_stones operation and subsequent find_root operation takes
+    //!          O(alpha(N)).
+    //!          Space complexity O(N) for the stone_parents vector.
+
+    const auto     num_stones = static_cast<int>(std::ssize(stones));
+    Union_find_DS2 union_find {num_stones};
+
+    //! Connect stones that share the same row or column
+    for (int stone_id1 = 0; stone_id1 < num_stones; ++stone_id1)
+    {
+        for (int stone_id2 = stone_id1 + 1; stone_id2 < num_stones; ++stone_id2)
+        {
+            if (stones[stone_id1][0] == stones[stone_id2][0]
+                || stones[stone_id1][1] == stones[stone_id2][1])
+            {
+                union_find.union_stones(stone_id1, stone_id2);
+            }
+        }
+    }
+
+    return num_stones - union_find.get_connected_components();
+
+} // static int removeStonesDS2( ...
+
 TEST(RemoveStonesTest, SampleTest1)
 {
     const std::vector<std::vector<int>> stones {
@@ -162,6 +254,7 @@ TEST(RemoveStonesTest, SampleTest1)
 
     EXPECT_EQ(5, removeStonesFA(stones));
     EXPECT_EQ(5, removeStonesDS1(stones));
+    EXPECT_EQ(5, removeStonesDS2(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest2)
@@ -171,6 +264,7 @@ TEST(RemoveStonesTest, SampleTest2)
 
     EXPECT_EQ(3, removeStonesFA(stones));
     EXPECT_EQ(3, removeStonesDS1(stones));
+    EXPECT_EQ(3, removeStonesDS2(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest3)
@@ -179,6 +273,7 @@ TEST(RemoveStonesTest, SampleTest3)
 
     EXPECT_EQ(0, removeStonesFA(stones));
     EXPECT_EQ(0, removeStonesDS1(stones));
+    EXPECT_EQ(0, removeStonesDS2(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest4)
@@ -189,4 +284,5 @@ TEST(RemoveStonesTest, SampleTest4)
     EXPECT_NE(5, removeStonesFA(stones));
     EXPECT_EQ(4, removeStonesFA(stones));
     EXPECT_EQ(5, removeStonesDS1(stones));
+    EXPECT_EQ(5, removeStonesDS2(stones));
 }
