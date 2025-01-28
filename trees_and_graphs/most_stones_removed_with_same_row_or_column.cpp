@@ -247,6 +247,16 @@ static int removeStonesDS2(const std::vector<std::vector<int>>& stones)
 
 } // static int removeStonesDS2( ...
 
+//! @brief Optimized Disjoint Set Union discussion solution
+//! @param[in] stones Reference to vector of locations of N stones
+//! @return Largest possible number of stones that can be removed
+static int removeStonesDS3(const std::vector<std::vector<int>>& stones)
+{
+    //! @details https://leetcode.com/problems
+    //!          /most-stones-removed-with-same-row-or-column/editorial/
+
+} // static int removeStonesDS3( ...
+
 TEST(RemoveStonesTest, SampleTest1)
 {
     const std::vector<std::vector<int>> stones {
@@ -255,6 +265,7 @@ TEST(RemoveStonesTest, SampleTest1)
     EXPECT_EQ(5, removeStonesFA(stones));
     EXPECT_EQ(5, removeStonesDS1(stones));
     EXPECT_EQ(5, removeStonesDS2(stones));
+    EXPECT_EQ(5, removeStonesDS3(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest2)
@@ -265,6 +276,7 @@ TEST(RemoveStonesTest, SampleTest2)
     EXPECT_EQ(3, removeStonesFA(stones));
     EXPECT_EQ(3, removeStonesDS1(stones));
     EXPECT_EQ(3, removeStonesDS2(stones));
+    EXPECT_EQ(3, removeStonesDS3(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest3)
@@ -274,6 +286,7 @@ TEST(RemoveStonesTest, SampleTest3)
     EXPECT_EQ(0, removeStonesFA(stones));
     EXPECT_EQ(0, removeStonesDS1(stones));
     EXPECT_EQ(0, removeStonesDS2(stones));
+    EXPECT_EQ(0, removeStonesDS3(stones));
 }
 
 TEST(RemoveStonesTest, SampleTest4)
@@ -285,4 +298,5 @@ TEST(RemoveStonesTest, SampleTest4)
     EXPECT_EQ(4, removeStonesFA(stones));
     EXPECT_EQ(5, removeStonesDS1(stones));
     EXPECT_EQ(5, removeStonesDS2(stones));
+    EXPECT_EQ(5, removeStonesDS3(stones));
 }
