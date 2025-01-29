@@ -4,6 +4,7 @@
 #include <map>
 #include <set>
 #include <stack>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -246,6 +247,62 @@ static int removeStonesDS2(const std::vector<std::vector<int>>& stones)
     return num_stones - union_find.get_connected_components();
 
 } // static int removeStonesDS2( ...
+
+//! Union-Find data structure for tracking connected components
+class Union_find_DS3
+{
+public:
+    //! Initialize all nodes as their own parent
+    explicit Union_find_DS3(int num_nodes)
+        : parent(num_nodes, -1)
+    {
+    }
+
+    //! Find the root of a node with path compression
+    [[nodiscard]] int find_root(int node)
+    {
+        //! If the node has not been tracked yet, increase the component count
+        if (!unique_nodes.contains(node))
+        {
+            ++component_count;
+            unique_nodes.insert(node);
+        }
+
+        if (parent[node] == -1)
+        {
+            return node;
+        }
+
+        return parent[node] = find_root(parent[node]);
+    }
+
+    voi union_nodes(int node1, int node2)
+    {
+        const int root1 {find_root(node1)};
+        const int root2 {find_root(node2)};
+
+        //! If nodes are already in the same group/component, do nothing
+        if (root1 == root2)
+        {
+            return;
+        }
+
+        //! Merge the components and reduce the component count
+        parent[root1] = root2;
+        --component_count;
+    }
+
+private:
+    //! Number of connected components
+    int component_count {};
+
+    //! Vector tracks the parent of each node
+    std::vector<int> parent;
+
+    //! Set to track unique nodes
+    std::unordered_set<int> unique_nodes;
+
+}; // class Union_find_DS3
 
 //! @brief Optimized Disjoint Set Union discussion solution
 //! @param[in] stones Reference to vector of locations of N stones
