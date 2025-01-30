@@ -312,6 +312,20 @@ static int removeStonesDS3(const std::vector<std::vector<int>>& stones)
     //! @details https://leetcode.com/problems
     //!          /most-stones-removed-with-same-row-or-column/editorial/
 
+    const auto num_stones = static_cast<int>(std::ssize(stones));
+
+    //! Initialize Union_find_DS3 with large enough range to handle coordinates
+    Union_find_DS3 union_find {20002};
+
+    //! Union stones that share the same row or column
+    for (const auto& stone : stones)
+    {
+        //! Offset y-coordinates to avoid conflict with x-coordinates
+        union_find.union_nodes(stone[0], stone[1] + 10001);
+    }
+
+    return num_stones - union_find.component_count;
+
 } // static int removeStonesDS3( ...
 
 TEST(RemoveStonesTest, SampleTest1)
