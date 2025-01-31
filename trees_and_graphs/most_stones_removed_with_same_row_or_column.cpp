@@ -311,6 +311,16 @@ static int removeStonesDS3(const std::vector<std::vector<int>>& stones)
 {
     //! @details https://leetcode.com/problems
     //!          /most-stones-removed-with-same-row-or-column/editorial/
+    //!
+    //!          Time complexity O(N) where N = stones.size(). The size of the
+    //!          parent vector is constant (20002) so initialization takes O(1).
+    //!          The union_nodes operation is called N times, once for each
+    //!          stone. All union_nodes and find_root operations take
+    //!          O(alpha(20002)) = O(1) where alpha is the inverse Ackermann
+    //!          function.
+    //!          Space complexity O(N + 20002). The parent vector takes constant
+    //!          space. The unique_nodes set can have at most 2 * N elements,
+    //!          corresponding to all unique x and y coordinates.
 
     const auto num_stones = static_cast<int>(std::ssize(stones));
 
