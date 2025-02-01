@@ -6,6 +6,7 @@ set (
     "cracking_the_safe"
     "decode_string"
     "evaluate_division"
+    "flip_equivalent_binary_trees"
     "longest_increasing_path_in_matrix"
     "most_stones_removed_with_same_row_or_column"
     "number_of_islands"
