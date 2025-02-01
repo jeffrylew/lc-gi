@@ -15,7 +15,11 @@ static bool flipEquivFA(TreeNode* root1, TreeNode* root2)
     //! @details https://leetcode.com/explore/interview/card/google/61
     //!          /trees-and-graphs/3077/
     //!
-    //!          First attempt solution does not pass SampleTest4
+    //!          Time complexity O(M + N) where M = number of nodes in first
+    //!          binary tree and N = number of nodes in second binary tree. In
+    //!          the worst case, both trees are flip equivalent and need to
+    //!          traverse all nodes in both trees.
+    //!          Space complexity O(M) for the parent_children map.
 
     if (root1 == nullptr && root2 == nullptr)
     {
@@ -83,8 +87,8 @@ static bool flipEquivFA(TreeNode* root1, TreeNode* root2)
 
         const auto& [left_child1, right_child1] = parent_children[node->val];
 
-        if ((left_child1 != left_child2 && right_child1 != right_child2)
-            && (left_child1 != right_child2 && right_child1 != left_child2))
+        if ((left_child1 != left_child2 || right_child1 != right_child2)
+            && (left_child1 != right_child2 || right_child1 != left_child2))
         {
             return false;
         }
@@ -141,6 +145,5 @@ TEST(FlipEquivTest, SampleTest4)
     TreeNode       root2_two {2, &root2_three, nullptr};
     TreeNode       root2_one {1, &root2_two, nullptr};
 
-    //! Should be false
-    EXPECT_TRUE(flipEquivFA(&root1_one, &root2_one));
+    EXPECT_FALSE(flipEquivFA(&root1_one, &root2_one));
 }
