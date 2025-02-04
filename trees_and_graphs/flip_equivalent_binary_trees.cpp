@@ -148,6 +148,77 @@ static bool flipEquivDS1(TreeNode* root1, TreeNode* root2)
 
 } // static bool flipEquivDS1( ...
 
+//! @brief Check if nodes share the same value and should be processed further
+//! @param[in] node1 Pointer to the first TreeNode
+//! @param[in] node2 Pointer to the second TreeNode
+//! @return True if the nodes share the same value, else false
+[[nodiscard]] static bool are_node_values_equal_DS2(const TreeNode* node1,
+                                                    const TreeNode* node2)
+{
+    if (node1 == nullptr && node2 == nullptr)
+    {
+        return true;
+    }
+
+    if (node1 != nullptr && node2 != nullptr && node1->val == node2->val)
+    {
+        return true;
+    }
+
+    return false;
+}
+
+//! @brief Iterative DFS discussion solution
+//! @param[in, out] root1 Pointer to root of first binary tree
+//! @param[in, out] root2 Pointer to root of second binary tree
+//! @return True if two trees are flip equivalent, else false
+static bool flipEquivDS2(TreeNode* root1, TreeNode* root2)
+{
+    //! @details https://leetcode.com/problems/flip-equivalent-binary-trees
+    //!
+    //!          Time complexity O(N)
+
+    //! Initialize stack storing pairs of nodes
+    std::stack<std::pair<TreeNode*, TreeNode*>> node_pair_stack({root1, root2});
+
+    while (!node_pair_stack.empty())
+    {
+        const auto [node1, node2] = node_pair_stack.top();
+        node_pair_stack.pop();
+
+        if (node1 == nullptr && node2 == nullptr)
+        {
+            continue;
+        }
+
+        if (!are_node_values_equal_DS2(node1, node2))
+        {
+            return false;
+        }
+
+        //! Check both configurations: no swap and swap
+        if (are_node_values_equal_DS2(node1->left, node2->left)
+            && are_node_values_equal_DS2(node1->right, node2->right))
+        {
+            node_pair_stack.push({node1->left, node2->left});
+            node_pair_stack.push({node1->right, node2->right});
+        }
+        else if (are_node_values_equal_DS2(node1->left, node2->right)
+                 && are_node_values_equal_DS2(node1->right, node2->left))
+        {
+            node_pair_stack.push({node1->left, node2->right});
+            node_pair_stack.push({node1->right, node2->left});
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    return true;
+
+} // static bool flipEquivDS2( ...
+
 TEST(FlipEquivTest, SampleTest1)
 {
     const TreeNode root1_four {4};
@@ -172,12 +243,14 @@ TEST(FlipEquivTest, SampleTest1)
 
     EXPECT_TRUE(flipEquivFA(&root1_one, &root2_one));
     EXPECT_TRUE(flipEquivDS1(&root1_one, &root2_one));
+    EXPECT_TRUE(flipEquivDS2(&root1_one, &root2_one));
 }
 
 TEST(FlipEquivTest, SampleTest2)
 {
     EXPECT_TRUE(flipEquivFA(nullptr, nullptr));
     EXPECT_TRUE(flipEquivDS1(nullptr, nullptr));
+    EXPECT_TRUE(flipEquivDS2(nullptr, nullptr));
 }
 
 TEST(FlipEquivTest, SampleTest3)
@@ -186,6 +259,7 @@ TEST(FlipEquivTest, SampleTest3)
 
     EXPECT_FALSE(flipEquivFA(nullptr, &one));
     EXPECT_FALSE(flipEquivDS1(nullptr, &one));
+    EXPECT_FALSE(flipEquivDS2(nullptr, &one));
 }
 
 TEST(FlipEquivTest, SampleTest4)
@@ -200,4 +274,5 @@ TEST(FlipEquivTest, SampleTest4)
 
     EXPECT_FALSE(flipEquivFA(&root1_one, &root2_one));
     EXPECT_FALSE(flipEquivDS1(&root1_one, &root2_one));
+    EXPECT_FALSE(flipEquivDS2(&root1_one, &root2_one));
 }
