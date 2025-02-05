@@ -176,7 +176,13 @@ static bool flipEquivDS2(TreeNode* root1, TreeNode* root2)
 {
     //! @details https://leetcode.com/problems/flip-equivalent-binary-trees
     //!
-    //!          Time complexity O(N)
+    //!          Time complexity O(N) where N = number of nodes in smaller tree.
+    //!          Each node in the smaller tree enters the stack at most twice -
+    //!          one with swap and one without. Thus, the loop will run O(N)
+    //!          times where the operations within the loop are O(1).
+    //!          Space complexity O(N). The size of the stack can reach at most
+    //!          twice the number of nodes in the smaller tree, as each node can
+    //!          be pushed onto the stack in up to two configurations.
 
     //! Initialize stack storing pairs of nodes
     std::stack<std::pair<TreeNode*, TreeNode*>> node_pair_stack({root1, root2});
