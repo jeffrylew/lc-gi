@@ -225,6 +225,18 @@ static bool flipEquivDS2(TreeNode* root1, TreeNode* root2)
 
 } // static bool flipEquivDS2( ...
 
+//! @brief Canonical forms discussion solution
+//! @param[in, out] root1 Pointer to root of first binary tree
+//! @param[in, out] root2 Pointer to root of second binary tree
+//! @return True if two trees are flip equivalent, else false
+static bool flipEquivDS3(TreeNode* root1, TreeNode* root2)
+{
+    //! @details https://leetcode.com/problems/flip-equivalent-binary-trees
+
+    //! @todo
+
+} // static bool flipEquivDS3( ...
+
 TEST(FlipEquivTest, SampleTest1)
 {
     const TreeNode root1_four {4};
@@ -250,6 +262,7 @@ TEST(FlipEquivTest, SampleTest1)
     EXPECT_TRUE(flipEquivFA(&root1_one, &root2_one));
     EXPECT_TRUE(flipEquivDS1(&root1_one, &root2_one));
     EXPECT_TRUE(flipEquivDS2(&root1_one, &root2_one));
+    EXPECT_TRUE(flipEquivDS3(&root1_one, &root2_one));
 }
 
 TEST(FlipEquivTest, SampleTest2)
@@ -257,6 +270,7 @@ TEST(FlipEquivTest, SampleTest2)
     EXPECT_TRUE(flipEquivFA(nullptr, nullptr));
     EXPECT_TRUE(flipEquivDS1(nullptr, nullptr));
     EXPECT_TRUE(flipEquivDS2(nullptr, nullptr));
+    EXPECT_TRUE(flipEquivDS3(nullptr, nullptr));
 }
 
 TEST(FlipEquivTest, SampleTest3)
@@ -266,6 +280,7 @@ TEST(FlipEquivTest, SampleTest3)
     EXPECT_FALSE(flipEquivFA(nullptr, &one));
     EXPECT_FALSE(flipEquivDS1(nullptr, &one));
     EXPECT_FALSE(flipEquivDS2(nullptr, &one));
+    EXPECT_FALSE(flipEquivDS3(nullptr, &one));
 }
 
 TEST(FlipEquivTest, SampleTest4)
@@ -281,4 +296,5 @@ TEST(FlipEquivTest, SampleTest4)
     EXPECT_FALSE(flipEquivFA(&root1_one, &root2_one));
     EXPECT_FALSE(flipEquivDS1(&root1_one, &root2_one));
     EXPECT_FALSE(flipEquivDS2(&root1_one, &root2_one));
+    EXPECT_FALSE(flipEquivDS3(&root1_one, &root2_one));
 }
