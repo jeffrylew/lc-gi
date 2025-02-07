@@ -225,6 +225,64 @@ static bool flipEquivDS2(TreeNode* root1, TreeNode* root2)
 
 } // static bool flipEquivDS2( ...
 
+static void find_canonical_form_DS3(TreeNode* root)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    //! Post-order traversal: First bring subtrees to their canonical form
+    find_canonical_form_DS3(root->left);
+    find_canonical_form_DS3(root->right);
+
+    if (root->right == nullptr)
+    {
+        return;
+    }
+
+    //! Swap subtrees so that the left is not empty
+    if (root->left == nullptr)
+    {
+        root->left  = root->right;
+        root->right = nullptr;
+        return;
+    }
+
+    auto* left  = root->left;
+    auto* right = root->right;
+
+    //! Swap subtrees
+    if (left->val > right->val)
+    {
+        root->left  = right;
+        root->right = left;
+    }
+
+} // static void find_canonical_form_DS3( ...
+
+[[nodiscard]] static bool are_equivalent_DS3(TreeNode* root1, TreeNode* root2)
+{
+    if (root1 == nullptr && root2 == nullptr)
+    {
+        return true;
+    }
+
+    if (root1 == nullptr || root2 == nullptr)
+    {
+        return false;
+    }
+
+    if (root1->val != root2->val)
+    {
+        return false;
+    }
+
+    return are_equivalent_DS3(root1->left, root2->left)
+           && are_equivalent_DS3(root1->right, root2->right);
+
+} // [[nodiscard]] static bool are_equivalent_DS3( ...
+
 //! @brief Canonical forms discussion solution
 //! @param[in, out] root1 Pointer to root of first binary tree
 //! @param[in, out] root2 Pointer to root of second binary tree
@@ -233,7 +291,10 @@ static bool flipEquivDS3(TreeNode* root1, TreeNode* root2)
 {
     //! @details https://leetcode.com/problems/flip-equivalent-binary-trees
 
-    //! @todo
+    find_canonical_form_DS3(root1);
+    find_canonical_form_DS3(root2);
+
+    return are_equivalent_DS3(root1, root2);
 
 } // static bool flipEquivDS3( ...
 
