@@ -225,8 +225,18 @@ static bool flipEquivDS2(TreeNode* root1, TreeNode* root2)
 
 } // static bool flipEquivDS2( ...
 
+//! @brief Get canonical form of tree
+//! @param[in, out] root Pointer to root of binary tree
 static void find_canonical_form_DS3(TreeNode* root)
 {
+    //! @details A binary tree is in its canonical form if, for each node, one
+    //!          of the following conditions holds
+    //!          - The node has no children
+    //!          - The node has only a left child
+    //!          - The left child's value is greater than right child's value
+    //!          Two binary trees are flip-equivalent if and only if they have
+    //!          the same canonical form.
+
     if (root == nullptr)
     {
         return;
@@ -261,6 +271,10 @@ static void find_canonical_form_DS3(TreeNode* root)
 
 } // static void find_canonical_form_DS3( ...
 
+//! @brief Check if both trees are equivalent
+//! @param[in] root1 Pointer to root of first binary tree
+//! @param[in] root2 Pointer to root of second binary tree
+//! @return True if both binary trees are equivalent
 [[nodiscard]] static bool are_equivalent_DS3(TreeNode* root1, TreeNode* root2)
 {
     if (root1 == nullptr && root2 == nullptr)
