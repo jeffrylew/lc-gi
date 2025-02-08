@@ -259,6 +259,7 @@ static void find_canonical_form_DS3(TreeNode* root)
         return;
     }
 
+    //! Both left and right are non-nullptr
     auto* left  = root->left;
     auto* right = root->right;
 
@@ -304,9 +305,25 @@ static void find_canonical_form_DS3(TreeNode* root)
 static bool flipEquivDS3(TreeNode* root1, TreeNode* root2)
 {
     //! @details https://leetcode.com/problems/flip-equivalent-binary-trees
+    //!
+    //!          The choice of tree for the flip operation does not affect the
+    //!          outcome. We can apply flip operations to transform each tree
+    //!          into a standardized format that makes it easier to determine
+    //!          whether they are equivalent.
+    //!
+    //!          Time complexity O(N) where N = number of nodes in the bigger
+    //!          tree. find_canonical_form_DS3 processes each node in the tree
+    //!          exactly once. The are_equivalent_DS3 function performs a DFS on
+    //!          both trees, also visiting each node once in O(N).
+    //!          Space complexity O(N) for the recursion stack. In the worst
+    //!          case, the recursion goes as deep as the height of the tree,
+    //!          which can be O(N) for a skewed tree (each internal node has
+    //!          only one child). For a balanced tree, the space complexity is
+    //!          O(log N) because the height of the tree would be logarithmic
+    //!          relative to the number of nodes.
 
-    find_canonical_form_DS3(root1);
-    find_canonical_form_DS3(root2);
+    find_canonical_form_DS3(root1); //! Convert root1 tree to its canonical form
+    find_canonical_form_DS3(root2); //! Convert root2 tree to its canonical form
 
     return are_equivalent_DS3(root1, root2);
 
