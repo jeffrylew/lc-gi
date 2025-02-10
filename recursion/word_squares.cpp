@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 using Start_char_words_t = std::unordered_map<char, std::vector<std::string>>;
@@ -131,6 +132,80 @@ static std::vector<std::vector<std::string>>
 
 } // static std::vector<std::vector<std::string>> wordSquaresFA( ...
 
+using Prefix_map_t = std::unordered_map<std::string, std::vector<std::string>>;
+
+[[nodiscard]] static Prefix_map_t build_prefix_hash_table_DS1(
+    const std::vector<std::string>& words)
+{
+    Prefix_map_t prefix_map {};
+
+    const auto word_square_size = static_cast<int>(std::ssize(words[0]));
+
+    for (const auto& word : words)
+    {
+        for (int prefix_len = 1; prefix_len < word_square_size; ++prefix_len)
+        {
+            auto prefix = word.substr(0, prefix_len);
+            prefix_map[std::move(prefix)].push_back(word);
+        }
+    }
+
+    return prefix_map;
+}
+
+static void find_word_squares(
+    int                                    step,
+    const Prefix_map_t&                    prefix_map,
+    std::vector<std::string>&              word_square,
+    std::vector<std::vector<std::string>>& word_squares)
+{
+    if (step == std::ssize(word_squares[0]))
+    {
+        word_squares.push_back(word_square);
+        return;
+    }
+
+    std::string prefix {};
+    for (const auto& word : word_square)
+    {
+        prefix += word[step];
+    }
+
+    if (!prefix_map.contains(prefix))
+    {
+        return;
+    }
+
+    for (const auto& candidate : prefix_map.at(prefix))
+    {
+        word_square.push_back(candidate);
+        find_word_squares(step + 1, prefix_map, word_square, word_squares);
+        word_square.pop_back();
+    }
+}
+
+//! @brief Backtracking with hash table discussion solution
+//! @param[in] words Vector of unique strings to build word squares from
+//! @return All word squares from words. Same word can be used multiple times.
+static std::vector<std::vector<std::string>>
+    wordSquaresDS1(const std::vector<std::string>& words)
+{
+    //! @details https://leetcode.com/problems/word-squares/editorial/
+
+    std::vector<std::vector<std::string>> word_squares {};
+
+    const auto prefix_map = build_prefix_hash_table_DS1(words);
+
+    for (const auto& word : words)
+    {
+        std::vector<std::string> word_square {word};
+        find_word_squares(1, prefix_map, word_square, word_squares);
+    }
+
+    return word_squares;
+
+} // static std::vector<std::vector<std::string>> wordSquaresDS1( ...
+
 TEST(WordSquaresTest, SampleTest1)
 {
     //! Order of output does not matter, just order of words in each word square
@@ -145,6 +220,7 @@ TEST(WordSquaresTest, SampleTest1)
         "area", "lead", "wall", "lady", "ball"};
 
     EXPECT_EQ(expected_output, wordSquaresFA(words));
+    EXPECT_EQ(expected_output, wordSquaresDS1(words));
 }
 
 TEST(WordSquaresTest, SampleTest2)
@@ -160,4 +236,5 @@ TEST(WordSquaresTest, SampleTest2)
     const std::vector<std::string> words {"abat", "baba", "atan", "atal"};
 
     EXPECT_EQ(expected_output, wordSquaresFA(words));
+    EXPECT_EQ(expected_output, wordSquaresDS1(words));
 }
