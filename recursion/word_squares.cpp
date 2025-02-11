@@ -134,6 +134,9 @@ static std::vector<std::vector<std::string>>
 
 using Prefix_map_t = std::unordered_map<std::string, std::vector<std::string>>;
 
+//! @brief Build hash table with all possible prefixes as keys from input words
+//! @param[in] words Vector of unique strings to build the hash table from
+//! @return Map of <prefix to words associated with the prefix>
 [[nodiscard]] static Prefix_map_t build_prefix_hash_table_DS1(
     const std::vector<std::string>& words)
 {
@@ -153,6 +156,11 @@ using Prefix_map_t = std::unordered_map<std::string, std::vector<std::string>>;
     return prefix_map;
 }
 
+//! @brief Find all word squares from a starting word
+//! @param[in]      step         Index of the current row/column being processed
+//! @param[in]      prefix_map   Reference to map of <prefix, associated words>
+//! @param[in, out] word_square  Word square containing starting word
+//! @param[in, out] word_squares Reference to output vector of all word squares
 static void find_word_squares(
     int                                    step,
     const Prefix_map_t&                    prefix_map,
