@@ -199,6 +199,14 @@ static std::vector<std::vector<std::string>>
     wordSquaresDS1(const std::vector<std::string>& words)
 {
     //! @details https://leetcode.com/problems/word-squares/editorial/
+    //!
+    //!          Time complexity O(N * 26 ^ L) where N = words.size() and L is
+    //!          the length of a single word.
+    //!          Space complexity O(N * L + N * L / 2) = O(N * L). The first
+    //!          half of the space complexity N * L are the values in the hash
+    //!          table, where we store L * all words. The second half N * L /2
+    //!          is the space taken by the hash table keys, which include
+    //!          all prefixes of all words.
 
     std::vector<std::vector<std::string>> word_squares {};
 
