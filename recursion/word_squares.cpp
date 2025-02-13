@@ -201,7 +201,13 @@ static std::vector<std::vector<std::string>>
     //! @details https://leetcode.com/problems/word-squares/editorial/
     //!
     //!          Time complexity O(N * 26 ^ L) where N = words.size() and L is
-    //!          the length of a single word.
+    //!          the length of a single word. The trace of the backtrack would
+    //!          form an n-ary tree so the upper bound of the operations would
+    //!          be the total number of nodes in a full n-ary tree. At any node,
+    //!          it could have 26 branches so the max number of nodes is 26 ^ L.
+    //!          In the loop around the backtracking find_word_squares, we check
+    //!          the possibility of having each word as the starting word in the
+    //!          word square so the overall time complexity is O(N * 26 ^ L).
     //!          Space complexity O(N * L + N * L / 2) = O(N * L). The first
     //!          half of the space complexity N * L are the values in the hash
     //!          table, where we store L * all words. The second half N * L /2
