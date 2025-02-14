@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "strobogrammatic_number_ii"
     "word_squares"
 )
 
