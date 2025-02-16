@@ -8,9 +8,12 @@
 //! @brief Recursive helper to find strobogrammatic numbers of length curr_len
 //! @param[in, out] snum_map Reference to map to memoize nums at varying lengths
 //! @param[in]      curr_len Current length of strobogrammatic numbers to find
+//! @param[in]      last_len Final desired length of strobogrammatic number
 //! @return Reference to vector of strobogrammatic numbers with length curr_len
 static const std::vector<std::string>& find_strobogrammatic_nums(
-    std::unordered_map<int, std::vector<std::string>>& snum_map, int curr_len)
+    std::unordered_map<int, std::vector<std::string>>& snum_map,
+    int                                                curr_len,
+    int                                                last_len)
 {
     if (snum_map.contains(curr_len))
     {
@@ -18,16 +21,22 @@ static const std::vector<std::string>& find_strobogrammatic_nums(
     }
 
     //! Get vector of strobogrammatic numbers with length curr_len - 2
-    const auto& prev_snums = find_strobogrammatic_nums(snum_map, curr_len - 2);
+    const auto& prev_snums =
+        find_strobogrammatic_nums(snum_map, curr_len - 2, last_len);
 
     //! Reserve space for new strobogrammatic numbers. Multiply by 4 to account
     //! for inserting 1/6/8/9. ssize(prev_snums) = ssize(snum_map[curr_len - 2])
     std::vector<std::string> new_snums;
     new_snums.reserve(4U * prev_snums.size());
 
-    //! New strobogrammatic numbers cannot begin with zero
-    for (const char num_to_insert : {'1', '6', '8', '9'})
+    //! New strobogrammatic numbers can begin with zero if curr_len != last_len
+    for (const char num_to_insert : {'0', '1', '6', '8', '9'})
     {
+        if (curr_len == last_len && num_to_insert == '0')
+        {
+            continue;
+        }
+
         for (const auto& prev_snum : prev_snums)
         {
             auto& new_snum = new_snums.emplace_back(1U, num_to_insert);
@@ -58,10 +67,7 @@ static const std::vector<std::string>& find_strobogrammatic_nums(
 static std::vector<std::string> findStrobogrammaticFA(int n)
 {
     //! @details leetcode.com/explore/interview/card/google/62/recursion-4/399
-    //!
-    //!          First attempt solution does not pass SampleTest3. Need to
-    //!          account for starting with zero if current length is not the
-    //!          final desired strobogrammatic number length
+
 
     if (n == 1)
     {
@@ -78,7 +84,7 @@ static std::vector<std::string> findStrobogrammaticFA(int n)
     std::unordered_map<int, std::vector<std::string>> snum_map {
         {1, {"0", "1", "8"}}, {2, {"00", "11", "69", "88", "96"}}};
 
-    return find_strobogrammatic_nums(snum_map, n);
+    return find_strobogrammatic_nums(snum_map, n, n);
 
 } // static std::vector<std::string> findStrobogrammaticFA( ...
 
@@ -115,8 +121,9 @@ TEST(FindStrobogrammaticTest, SampleTest3)
         "981186", "986986", "988886", "989686", "990066", "991166", "996966",
         "998866", "999666"};
 
-    EXPECT_NE(expected_output, findStrobogrammaticFA(6));
+    EXPECT_EQ(expected_output, findStrobogrammaticFA(6));
 
+    /*
     const std::vector<std::string> first_attempt_output {
         "110011", "111111", "116911", "118811", "119611", "160091", "161191",
         "166991", "168891", "169691", "180081", "181181", "186981", "188881",
@@ -132,4 +139,5 @@ TEST(FindStrobogrammaticTest, SampleTest3)
         "996966", "998866", "999666"};
 
     EXPECT_EQ(first_attempt_output, findStrobogrammaticFA(6));
+     */
 }
