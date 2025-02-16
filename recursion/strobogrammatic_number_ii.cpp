@@ -67,7 +67,14 @@ static const std::vector<std::string>& find_strobogrammatic_nums(
 static std::vector<std::string> findStrobogrammaticFA(int n)
 {
     //! @details leetcode.com/explore/interview/card/google/62/recursion-4/399
-
+    //!
+    //!          Time complexity O(n ^ 3) (?) where n is the input length of the
+    //!          strobogrammatic number. find_strobogrammatic_nums is called
+    //!          roughly n times due to memoization. During each call of
+    //!          find_strobogrammatic_nums, we create 5 * n strings of length n
+    //!          in the worst case for a time complexity of roughly O(n ^ 2).
+    //!          Space complexity O(n ^ 3) (?). snum_map needs to store all the
+    //!          states for n strobogrammatic numbers.
 
     if (n == 1)
     {
