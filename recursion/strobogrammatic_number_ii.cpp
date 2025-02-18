@@ -10,7 +10,7 @@
 //! @param[in]      curr_len Current length of strobogrammatic numbers to find
 //! @param[in]      last_len Final desired length of strobogrammatic number
 //! @return Reference to vector of strobogrammatic numbers with length curr_len
-static const std::vector<std::string>& find_strobogrammatic_nums(
+[[nodiscard]] static const std::vector<std::string>& find_strobogrammatic_nums(
     std::unordered_map<int, std::vector<std::string>>& snum_map,
     int                                                curr_len,
     int                                                last_len)
@@ -95,11 +95,62 @@ static std::vector<std::string> findStrobogrammaticFA(int n)
 
 } // static std::vector<std::string> findStrobogrammaticFA( ...
 
+[[nodiscard]] static std::vector<std::string>
+    generate_strobogrammatic_nums(int curr_len, int final_len)
+{
+    if (curr_len == 0)
+    {
+        //! 0-digit strobogrammatic number is an empty string
+        return {""};
+    }
+
+    if (curr_len == 1)
+    {
+        //! 1-digit strobogrammatic numbers
+        return {"0", "1", "8"};
+    }
+
+    static const std::vector<std::pair<char>> reversible_pairs {
+        {'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
+
+    const auto prev_strobo_nums =
+        generate_strobogrammatic_nums(curr_len - 2, final_len);
+
+    std::vector<std::string> curr_strobo_nums;
+
+    for (const auto& prev_strobo_num : prev_strobo_nums)
+    {
+        for (const auto& [first_digit, last_digit] : reversible_pairs)
+        {
+            //! Only append 0 if it is not the first digit
+            if (first_digit != '0' || curr_len != final_len)
+            {
+                curr_strobo_nums.push_back(
+                    first_digit + prev_strobo_num + last_digit);
+            }
+        }
+    }
+
+    return curr_strobo_nums;
+
+} // static std::vector<std::string> generate_strobogrammatic_nums(
+
+//! @brief Recursive discussion solution
+//! @param[in] n Length of strobogrammatic number
+//! @return Vector of strobogrammatic numbers that are of length n
+static std::vector<std::string> findStrobogrammaticDS1(int n)
+{
+    //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
+
+    return generate_strobogrammatic_nums(n, n);
+}
+
 TEST(FindStrobogrammaticTest, SampleTest1)
 {
     const std::vector<std::string> expected_output {"11", "69", "88", "96"};
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(2));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS1(2));
 }
 
 TEST(FindStrobogrammaticTest, SampleTest2)
@@ -107,6 +158,7 @@ TEST(FindStrobogrammaticTest, SampleTest2)
     const std::vector<std::string> expected_output {"0", "1", "8"};
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(1));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS1(1));
 }
 
 TEST(FindStrobogrammaticTest, SampleTest3)
@@ -129,6 +181,7 @@ TEST(FindStrobogrammaticTest, SampleTest3)
         "998866", "999666"};
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(6));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS1(6));
 
     /*
     const std::vector<std::string> first_attempt_output {
