@@ -95,9 +95,18 @@ static std::vector<std::string> findStrobogrammaticFA(int n)
 
 } // static std::vector<std::string> findStrobogrammaticFA( ...
 
+//! @brief Generate strobogrammatic numbers of length curr_len
+//! @param[in] curr_len  Current length of strobogrammatic numbers
+//! @param[in] final_len Final length of strobogrammatic numbers = n
+//! @return Vector of strings containing strobogrammatic numbers with final_len
 [[nodiscard]] static std::vector<std::string>
     generate_strobogrammatic_nums(int curr_len, int final_len)
 {
+    //! @details Recurrence relation is generate_strobogrammatic_nums(N, N) =
+    //!          List("first_digit" + "number" + "second_digit"
+    //!          for each number in generate_strobogrammatic_nums(N - 2, N)
+    //!          for each (first_digit, second_digit) in reversible_pairs)
+
     if (curr_len == 0)
     {
         //! 0-digit strobogrammatic number is an empty string
