@@ -150,6 +150,10 @@ static std::vector<std::string> findStrobogrammaticFA(int n)
 static std::vector<std::string> findStrobogrammaticDS1(int n)
 {
     //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
+    //!
+    //!          Time complexity O(N * 5 ^ {[N / 2] + 1}) where N is the length
+    //!          of the strobogrammatic numbers.
+    //!          Space complexity O(N * 5 ^ [N / 2])
 
     return generate_strobogrammatic_nums(n, n);
 }
