@@ -152,7 +152,18 @@ static std::vector<std::string> findStrobogrammaticDS1(int n)
     //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
     //!
     //!          Time complexity O(N * 5 ^ {[N / 2] + 1}) where N is the length
-    //!          of the strobogrammatic numbers.
+    //!          of the strobogrammatic numbers. Each recursive call decreases N
+    //!          by two so there are N/2 elements in [N, N-2, N-4, N-6, ..., 0].
+    //!          In each recursive level, iterate over all prev_strobo_nums and
+    //!          append 5 pairs of characters to each so we increase the vector
+    //!          curr_strobo_nums by a factor of five with each level. Except
+    //!          for the last level, where it increases by a factor of four
+    //!          since zero is omitted. When N is even, the total iterations is
+    //!          5 + 5^2 + 5^3 + ... + 5^(N/2 - 1) + 4 = 5 ^ (N / 2). When N is
+    //!          odd, start with 3 strings and append 5 pairs of chars to each
+    //!          string in each level except the last. So the total iterations
+    //!          is 3 * 5 + 3 * 5^2 + 3 * 5^3 + ... + 3 * 5^((N - 3)/2) +
+    //!          3 * 4 * 5 ^ ((N - 3) / 2) = 5 ^ ((N - 1) / 2 + 1) = 5^(N/2 + 1)
     //!          Space complexity O(N * 5 ^ [N / 2])
 
     return generate_strobogrammatic_nums(n, n);
