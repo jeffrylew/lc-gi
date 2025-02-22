@@ -164,7 +164,15 @@ static std::vector<std::string> findStrobogrammaticDS1(int n)
     //!          string in each level except the last. So the total iterations
     //!          is 3 * 5 + 3 * 5^2 + 3 * 5^3 + ... + 3 * 5^((N - 3)/2) +
     //!          3 * 4 * 5 ^ ((N - 3) / 2) = 5 ^ ((N - 1) / 2 + 1) = 5^(N/2 + 1)
-    //!          Space complexity O(N * 5 ^ [N / 2])
+    //!          Space complexity O(N * 5 ^ [N / 2]). We make at most N / 2
+    //!          recursive calls so the call stack uses O(N / 2).
+    //!          curr_strobo_nums is the output vector so in the last recursive
+    //!          call it is not not considered as auxiliary space. However, for
+    //!          earlier recursive calls it is. We store at most 5 ^ (N/2 - 1)
+    //!          strings when N is even and otherwise 3 * 5 ^ ((N - 1)/2 - 1)
+    //!          = 5 ^ [N / 2] when N is odd in curr_strobo_nums and each string
+    //!          is of length N - 2. Thus, the overall space used will be
+    //!          (N - 2) * 5 ^ [N / 2] + N / 2 = N * 5 ^ [N / 2].
 
     return generate_strobogrammatic_nums(n, n);
 }
