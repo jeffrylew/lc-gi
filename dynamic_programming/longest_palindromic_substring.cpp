@@ -117,13 +117,71 @@ static std::string longestPalindromeFA(std::string s)
 
 } // static std::string longestPalindromeFA( ...
 
+//! @brief Check if substring at start_idx with substr_len is a palindrome
+//! @param[in] s_in       std::string_view of input string s
+//! @param[in] start_idx  Starting index of palindrome
+//! @param[in] substr_len Length of substring to check if it is a palindrome
+//! @return True if substring is a palindrome, else false
+[[nodiscard]] static bool is_palindrome(std::string_view s_in,
+                                        int              start_idx,
+                                        int              substr_len)
+{
+    int left_idx {start_idx};
+    int right_idx {start_idx + substr_len - 1};
+
+    while (left_idx < right_idx)
+    {
+        if (s[left_idx] != s[right_idx])
+        {
+            return false;
+        }
+
+        ++left_idx;
+        --right_idx;
+    }
+
+    return true;
+}
+
+//! @brief Check all substrings brute force discussion solution
+//! @param[in] s std::string to get longest palindromic substring from
+//! @return Longest palindromic substring in s
+static std::string longestPalindromeDS1(std::string s)
+{
+    //! @details leetcode.com/problems/longest-palindromic-substring/editorial/
+    //!
+    //!          Time complexity O(N ^ 3) where N = s.size(). The two nested for
+    //!          loops iterate O(N ^ 2) times. We check one substring of length
+    //!          N, two substrings of length N - 1, etc. The worst case involves
+    //!          checking 1 + 2 + ... + N - 1 substrings. The partial sum of the
+    //!          series is N * (N - 1) / 2 = O(N ^ 2). Each palidrome check is
+    //!          linear with N, giving a time complexity of O(N ^ 3).
+    //!          Space complexity O(1) for a few integer variables.
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    for (int substr_len = s_len; substr_len > 0; --substr_len)
+    {
+        for (int start_idx = 0; start_idx <= s_len - substr_len; ++start_idx)
+        {
+            if (is_palindrome(s, start_idx, substr_len))
+            {
+                return s.substr(start_idx, substr_len);
+            }
+        }
+    }
+
+} // static std::string longestPalindromeDS1( ...
+
 TEST(LongestPalidromeTest, SampleTest1)
 {
     // EXPECT_EQ("bab", longestPalindromeFA("babad"));
     // EXPECT_EQ("aba", longestPalindromeFA("babad"));
+    EXPECT_EQ("bab", longestPalindromeDS1("babad"));
 }
 
 TEST(LongestPalidromeTest, SampleTest2)
 {
     // EXPECT_EQ("bb", longestPalindromeFA("cbbd"));
+    EXPECT_EQ("bb", longestPalindromeDS1("cbbd"));
 }
