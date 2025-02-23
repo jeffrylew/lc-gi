@@ -3,6 +3,7 @@
 #include <string>
 #include <string_view>
 #include <unordered_map>
+#include <vector>
 
 struct Palindrome
 {
@@ -173,15 +174,78 @@ static std::string longestPalindromeDS1(std::string s)
 
 } // static std::string longestPalindromeDS1( ...
 
+//! @brief Dynamic programming discussion solution
+//! @param[in] s std::string to get longest palindromic substring from
+//! @return Longest palindromic substring in s
+static std::string longestPalindromeDS2(std::string s)
+{
+    //! @details leetcode.com/problems/longest-palindromic-substring/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = s.size(). We declare an NxN
+    //!          table is_palindrome, which takes O(N ^ 2). We then populate
+    //!          O(N ^ 2) states, where each state takes O(1) to compute.
+    //!          Space complexity O(N ^ 2) for the is_palindrome table.
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    //! is_palindrome[left_idx][right_idx] is a bool indicating if the substring
+    //! with inclusive bounds [left_idx, right_idx] is a palindrome
+    std::vector<std::vector<bool>> is_palindrome(
+        s_len, std::vector<bool>(s_len));
+
+    int longest_palindrome_left_idx {};
+    int longest_palindrome_right_idx {};
+
+    //! Substrings of length 1 are palindromes
+    for (int idx = 0; idx < s_len; ++idx)
+    {
+        is_palindrome[idx][idx] = true;
+    }
+
+    //! Substrings of length 2 are palindromes if both characters are equal
+    for (int idx = 0; idx < s_len - 1; ++idx)
+    {
+        if (s[idx] == s[idx + 1])
+        {
+            is_palindrome[idx][idx + 1]  = true;
+            longest_palindrome_left_idx  = idx;
+            longest_palindrome_right_idx = idx + 1;
+        }
+    }
+
+    for (int substr_len = 3; substr_len <= s_len; ++substr_len)
+    {
+        for (int start_idx = 0; start_idx < s_len - substr_len + 1; ++start_idx)
+        {
+            const int end_idx {start_idx + substr_len - 1};
+
+            if (s[start_idx] == s[end_idx]
+                && is_palindrome[start_idx + 1][end_idx - 1])
+            {
+                is_palindrome[start_idx][end_idx] = true;
+                longest_palindrome_left_idx       = start_idx;
+                longest_palindrome_right_idx      = end_idx;
+            }
+        }
+    }
+
+    return s.substr(
+        longest_palindrome_left_idx,
+        longest_palindrome_right_idx - longest_palindrome_left_idx + 1);
+
+} // static std::string longestPalindromeDS2( ...
+
 TEST(LongestPalidromeTest, SampleTest1)
 {
     // EXPECT_EQ("bab", longestPalindromeFA("babad"));
     // EXPECT_EQ("aba", longestPalindromeFA("babad"));
     EXPECT_EQ("bab", longestPalindromeDS1("babad"));
+    EXPECT_EQ("bab", longestPalindromeDS2("babad"));
 }
 
 TEST(LongestPalidromeTest, SampleTest2)
 {
     // EXPECT_EQ("bb", longestPalindromeFA("cbbd"));
     EXPECT_EQ("bb", longestPalindromeDS1("cbbd"));
+    EXPECT_EQ("bb", longestPalindromeDS2("cbbd"));
 }
