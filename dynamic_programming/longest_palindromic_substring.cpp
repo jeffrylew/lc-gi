@@ -235,12 +235,76 @@ static std::string longestPalindromeDS2(std::string s)
 
 } // static std::string longestPalindromeDS2( ...
 
+//! @brief Get longest palindrome centered around left_idx, right_idx
+//! @param[in] left_idx  Left index of palindrome center
+//! @param[in] right_idx Right index of palindrome center
+//! @param[in] s_in      std::string_view of input string s
+//! @return std::string_view of longest palindrome expanded from center indices
+[[nodiscard]] static std::string_view palindrome_expansion(
+    int              left_idx,
+    int              right_idx,
+    std::string_view s_in)
+{
+    while (left_idx >= 0
+           && right_idx < std::ssize(s_in)
+           && s_in[left_idx] == s_in[right_idx])
+    {
+        --left_idx;
+        ++right_idx;
+    }
+
+    return s_in.substr(left_idx + 1, right_idx - left_idx - 1);
+
+} // [[nodiscard]] static std::string_view palindrome_expansion( ...
+
+//! @brief Expand from centers discussion solution
+//! @param[in] s std::string to get longest palindromic substring from
+//! @return Longest palindromic substring in s
+static std::string longestPalindromeDS3(std::string s)
+{
+    //! @details leetcode.com/problems/longest-palindromic-substring/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = s.size(). There are 2N - 1
+    //!          centers and for each, we call palindrome_expansion which costs
+    //!          up to O(N). The average/practical runtime of the algorithm is
+    //!          much faster than the DP approach because most centers will not
+    //!          produce long palindromes. Most of the O(N) calls to
+    //!          palindrome_expansion will cost far less than N iterations. The
+    //!          worst case is when every character in the string is the same.
+    //!          Space complexity O(1) for a few integers.
+
+    const auto s_len = static_cast<int>(std::ssize(s));
+
+    std::string longest_palindrome {};
+
+    for (int idx = 0; idx < s_len; ++idx)
+    {
+        //! There are N center points for odd length palindromes
+        const auto odd_len_palindrome = palindrome_expansion(idx, idx, s);
+        if (odd_len_palindrome.size() > longest_palindrome.size())
+        {
+            longest_palindrome = std::string {odd_len_palindrome};
+        }
+
+        //! There are N - 1 center points for even length palindromes
+        const auto even_len_palindrome = palindrome_expansion(idx, idx + 1, s);
+        if (even_len_palindrome.size() > longest_palindrome.size())
+        {
+            longest_palindrome = std::string {even_len_palindrome};
+        }
+    }
+
+    return longest_palindrome;
+
+} // static std::string longestPalindromeDS3( ...
+
 TEST(LongestPalidromeTest, SampleTest1)
 {
     // EXPECT_EQ("bab", longestPalindromeFA("babad"));
     // EXPECT_EQ("aba", longestPalindromeFA("babad"));
     EXPECT_EQ("bab", longestPalindromeDS1("babad"));
     EXPECT_EQ("bab", longestPalindromeDS2("babad"));
+    EXPECT_EQ("bab", longestPalindromeDS3("babad"));
 }
 
 TEST(LongestPalidromeTest, SampleTest2)
@@ -248,4 +312,5 @@ TEST(LongestPalidromeTest, SampleTest2)
     // EXPECT_EQ("bb", longestPalindromeFA("cbbd"));
     EXPECT_EQ("bb", longestPalindromeDS1("cbbd"));
     EXPECT_EQ("bb", longestPalindromeDS2("cbbd"));
+    EXPECT_EQ("bb", longestPalindromeDS3("cbbd"));
 }
