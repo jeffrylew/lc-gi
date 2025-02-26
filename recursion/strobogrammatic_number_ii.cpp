@@ -177,12 +177,22 @@ static std::vector<std::string> findStrobogrammaticDS1(int n)
     return generate_strobogrammatic_nums(n, n);
 }
 
+//! @brief Iterative (Level Order Traversal) discussion solution
+//! @param[in] n Length of strobogrammatic number
+//! @return Vector of strobogrammatic numbers that are of length n
+static std::vector<std::string> findStrobogrammaticDS2(int n)
+{
+    //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
+
+} // static std::vector<std::string> findStrobogrammaticDS2( ...
+
 TEST(FindStrobogrammaticTest, SampleTest1)
 {
     const std::vector<std::string> expected_output {"11", "69", "88", "96"};
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(2));
     EXPECT_EQ(expected_output, findStrobogrammaticDS1(2));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS2(2));
 }
 
 TEST(FindStrobogrammaticTest, SampleTest2)
@@ -191,6 +201,7 @@ TEST(FindStrobogrammaticTest, SampleTest2)
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(1));
     EXPECT_EQ(expected_output, findStrobogrammaticDS1(1));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS2(1));
 }
 
 TEST(FindStrobogrammaticTest, SampleTest3)
@@ -214,6 +225,7 @@ TEST(FindStrobogrammaticTest, SampleTest3)
 
     EXPECT_EQ(expected_output, findStrobogrammaticFA(6));
     EXPECT_EQ(expected_output, findStrobogrammaticDS1(6));
+    EXPECT_EQ(expected_output, findStrobogrammaticDS2(6));
 
     /*
     const std::vector<std::string> first_attempt_output {
