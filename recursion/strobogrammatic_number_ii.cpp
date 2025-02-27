@@ -184,6 +184,44 @@ static std::vector<std::string> findStrobogrammaticDS2(int n)
 {
     //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
 
+    const std::vector<std::vector<char>> reversible_pairs {
+        {'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
+
+    std::queue<std::string> digits {};
+    int                     curr_string_len {};
+
+    //! When n is even, decreasing by two results in zero length
+    if (n % 2 == 0)
+    {
+        //! Start with 0-digit strobogrammatic numbers
+        curr_string_len = 0;
+        digits.emplace();
+    }
+    else
+    {
+        //! Start with 1-digit strobogrammatic numbers
+        curr_string_len = 1;
+        digits.emplace("0");
+        digits.emplace("1");
+        digits.emplace("8");
+    }
+
+    while (curr_string_len < n)
+    {
+        curr_string_len += 2;
+
+        //! @todo
+    }
+
+    std::vector<std::string> strobogrammatic_nums {};
+    while (!digits.empty())
+    {
+        strobogrammatic_nums.push_back(digits.front());
+        digits.pop();
+    }
+
+    return strobogrammatic_nums;
+
 } // static std::vector<std::string> findStrobogrammaticDS2( ...
 
 TEST(FindStrobogrammaticTest, SampleTest1)
