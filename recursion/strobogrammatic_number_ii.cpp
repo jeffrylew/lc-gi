@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <queue>
 #include <string>
 #include <unordered_map>
 #include <utility>
@@ -183,41 +184,79 @@ static std::vector<std::string> findStrobogrammaticDS1(int n)
 static std::vector<std::string> findStrobogrammaticDS2(int n)
 {
     //! @details leetcode.com/problems/strobogrammatic-number-ii/editorial
+    //!
+    //!          Time complexity O(N * 5 ^ ([N / 2] + 1)) where N = length of
+    //!          desired strobogrammatic numbers. Start with strings of length 0
+    //!          or 1 and process until they are N digits long. At each level,
+    //!          increment the string length by 2 so we traverse N / 2 levels.
+    //!          In each level, we iterate over all queue elements and append 5
+    //!          pairs of chars to each to increase the queue size by around 5x
+    //!          with each level. When N is even, start with 1 empty string and
+    //!          the total elements traversed using the queue is 5^(N/2 + 1) =
+    //!          1 + 5 + 5^2 + 5^3 + ... + 5^(N/2 - 1) + 4*5^(N/2 - 1). When N
+    //!          is odd, start with 3 strings so the total elements traversed is
+    //!          5 ^ ([N / 2] + 1) = 5 ^ ((N - 1) / 2 + 1) =
+    //!          3 + 3*5 + 3*5^2 + 3*5^3 + ... + 5^(N/2 - 1) + 4*5^(N/2 - 1).
+    //!          Appending a char at the end of a string takes O(1) but at the
+    //!          beginning it costs O(N). Thus, each iteration requires O(N).
+    //!          Space complexity O(N * 5^[N/2]). In the last level, we store at
+    //!          most 4 * 5 ^ (N / 2 - 1) = 5 ^ (N / 2) string when N is even,
+    //!          otherwise 3 * 4 * 5 ^ ((N - 3) / 2) = 5 ^ ((N - 1) / 2) =
+    //!          5 ^ [N / 2] strings when N is odd and each has length N.
 
-    const std::vector<std::vector<char>> reversible_pairs {
+    const std::vector<std::pair<char, char>> reversible_pairs {
         {'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
 
-    std::queue<std::string> digits {};
-    int                     curr_string_len {};
+    //! Queue for level order traversal, holds strobogrammatic numbers
+    std::queue<std::string> strobo_nums {};
+
+    //! Length of strobogrammatic numbers in the current level
+    int curr_strobo_nums_len {};
 
     //! When n is even, decreasing by two results in zero length
     if (n % 2 == 0)
     {
         //! Start with 0-digit strobogrammatic numbers
-        curr_string_len = 0;
-        digits.emplace();
+        curr_strobo_nums_len = 0;
+        strobo_nums.emplace();
     }
     else
     {
         //! Start with 1-digit strobogrammatic numbers
-        curr_string_len = 1;
-        digits.emplace("0");
-        digits.emplace("1");
-        digits.emplace("8");
+        curr_strobo_nums_len = 1;
+        strobo_nums.emplace("0");
+        strobo_nums.emplace("1");
+        strobo_nums.emplace("8");
     }
 
-    while (curr_string_len < n)
+    while (curr_strobo_nums_len < n)
     {
-        curr_string_len += 2;
+        curr_strobo_nums_len += 2;
+        auto level_size = static_cast<int>(std::ssize(strobo_nums));
 
-        //! @todo
+        while (level_size > 0)
+        {
+            const auto strobogrammatic_num = strobo_nums.front();
+            strobo_nums.pop();
+
+            for (const auto& [first_digit, last_digit] : reversible_pairs)
+            {
+                if (curr_strobo_nums_len != n || first_digit != '0')
+                {
+                    strobo_nums.push(
+                        first_digit + strobogrammatic_num + last_digit);
+                }
+            }
+
+            --level_size;
+        }
     }
 
     std::vector<std::string> strobogrammatic_nums {};
-    while (!digits.empty())
+    while (!strobo_nums.empty())
     {
-        strobogrammatic_nums.push_back(digits.front());
-        digits.pop();
+        strobogrammatic_nums.push_back(strobo_nums.front());
+        strobo_nums.pop();
     }
 
     return strobogrammatic_nums;
