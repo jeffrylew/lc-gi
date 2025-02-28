@@ -1,6 +1,7 @@
 set (
     cpp_files
     "3sum"
+    "backspace_string_compare"
     "container_with_most_water"
     "expressive_words"
     "find_and_replace_in_string"
