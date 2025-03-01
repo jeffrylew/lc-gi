@@ -2,6 +2,7 @@
 
 #include <stack>
 #include <string>
+#include <string_view>
 
 //! @brief First attempt to check if s and t are equal when typed into editors
 //! @param[in] s First string
@@ -63,17 +64,53 @@ static bool backspaceCompareFA(std::string s, std::string t)
 
 } // static bool backspaceCompareFA( ...
 
+//! @brief Build string discussion solution
+//! @param[in] s First string
+//! @param[in] t Second string to check equality with
+//! @return True if s == t else false
+static bool backspaceCompareDS1(std::string s, std::string t)
+{
+    //! @details leetcode.com/problems/backspace-string-compare/editorial
+    //!
+    //!          Time complexity O(S + T) where S = s.size() and T = t.size()
+    //!          Space complexity O(S + T) 
+
+    const auto build_string = [](std::string_view str_before_backspaces) {
+        std::string str_after_backspaces {};
+
+        for (const char ch : str_before_backspaces)
+        {
+            if (ch != '#')
+            {
+                str_after_backspaces += ch;
+            }
+            else if (!str_after_backspaces.empty())
+            {
+                str_after_backspaces.pop();
+            }
+        }
+
+        return str_after_backspaces;
+    };
+
+    return build_string(s) == build_string(t);
+
+} // static bool backspaceCompareDS1( ...
+
 TEST(BackspaceCompareTest, SampleTest1)
 {
     EXPECT_TRUE(backspaceCompareFA("ab#c", "ad#c"));
+    EXPECT_TRUE(backspaceCompareDS1("ab#c", "ad#c"));
 }
 
 TEST(BackspaceCompareTest, SampleTest2)
 {
     EXPECT_TRUE(backspaceCompareFA("ab##", "c#d#"));
+    EXPECT_TRUE(backspaceCompareDS1("ab##", "c#d#"));
 }
 
 TEST(backspaceCompareTest, SampleTest3)
 {
     EXPECT_FALSE(backspaceCompareFA("a#c", "b"));
+    EXPECT_FALSE(backspaceCompareDS1("a#c", "b"));
 }
