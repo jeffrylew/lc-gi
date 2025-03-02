@@ -97,20 +97,102 @@ static bool backspaceCompareDS1(std::string s, std::string t)
 
 } // static bool backspaceCompareDS1( ...
 
+//! @brief Two pointer discussion solution to check if s and t are equal
+//! @param[in] s First string
+//! @param[in] t Second string to check equality with
+//! @return True if s == t else false
+static bool backspaceCompareDS2(std::string s, std::string t)
+{
+    //! @details leetcode.com/problems/backspace-string-compare/editorial
+    //!
+    //!          Time complexity O(S + T) where S = s.size() and T = t.size()
+    //!          Space complexity O(1)
+
+    int s_idx {static_cast<int>(std::ssize(s)) - 1};
+    int t_idx {static_cast<int>(std::ssize(t)) - 1};
+
+    int s_num_backspaces {};
+    int t_num_backspaces {};
+
+    //! While there are chars in s or t
+    while (s_idx >= 0 || t_idx >= 0)
+    {
+        //! Find position of next non-backspace char in s
+        while (s_idx >= 0)
+        {
+            if (s[s_idx] == '#')
+            {
+                ++s_num_backspaces;
+                --s_idx;
+            }
+            else if (s_num_backspaces > 0)
+            {
+                --s_num_backspaces;
+                --s_idx;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //! Find position of next non-backspace char in t
+        while (t_idx >= 0)
+        {
+            if (t[t_idx] == '#')
+            {
+                ++t_num_backspaces;
+                --t_idx;
+            }
+            else if (t_num_backspaces > 0)
+            {
+                --t_num_backspaces;
+                --t_idx;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //! If one index is < 0 while the other is >= 0
+        if ((s_idx >= 0) != (t_idx >= 0))
+        {
+            return false;
+        }
+
+        //! If two non-backspace chars are different
+        if (s_idx >= 0 && t_idx >= 0 && s[s_idx] != t[t_idx])
+        {
+            return false;
+        }
+
+        --s_idx;
+        --t_idx;
+
+    } // while (s_idx >= 0 || t_idx >= 0)
+
+    return true;
+
+} // static bool backspaceCompareDS2( ...
+
 TEST(BackspaceCompareTest, SampleTest1)
 {
     EXPECT_TRUE(backspaceCompareFA("ab#c", "ad#c"));
     EXPECT_TRUE(backspaceCompareDS1("ab#c", "ad#c"));
+    EXPECT_TRUE(backspaceCompareDS2("ab#c", "ad#c"));
 }
 
 TEST(BackspaceCompareTest, SampleTest2)
 {
     EXPECT_TRUE(backspaceCompareFA("ab##", "c#d#"));
     EXPECT_TRUE(backspaceCompareDS1("ab##", "c#d#"));
+    EXPECT_TRUE(backspaceCompareDS2("ab##", "c#d#"));
 }
 
 TEST(backspaceCompareTest, SampleTest3)
 {
     EXPECT_FALSE(backspaceCompareFA("a#c", "b"));
     EXPECT_FALSE(backspaceCompareDS1("a#c", "b"));
+    EXPECT_FALSE(backspaceCompareDS2("a#c", "b"));
 }
