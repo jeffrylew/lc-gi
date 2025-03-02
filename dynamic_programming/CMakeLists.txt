@@ -1,6 +1,7 @@
 set (
     cpp_files
     "longest_palindromic_substring"
+    "maximum_subarray"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
