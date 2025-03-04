@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <limits>
 #include <vector>
 
 //! @brief First attempt to get the sum of the subarray with the largest sum
@@ -50,6 +52,7 @@ static int maxSubArrayFA(const std::vector<int>& nums)
     int                            right_idx,
     std::vector<std::vector<int>>& subarr_sums)
 {
+    //! @note Decided to look at discussion solutions
 
 } // [[nodiscard]] static int get_max_subarr_sum_SA( ...
 
@@ -83,6 +86,36 @@ static int maxSubArraySA(const std::vector<int>& nums)
 
 } // static int maxSubArraySA( ...
 
+//! @brief Optimized brute force discussion solution
+//! @param[in] nums Reference to vector of integers
+//! @return Sum of the subarray with the largest sum
+static int maxSubArrayDS1(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/maximum-subarray/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = nums.size(). Two nested for
+    //!          loops iterate through nums.
+    //!          Space complexity O(1) for integer variables.
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    int max_subarray_sum {std::numeric_limits<int>::min()};
+
+    for (int start_idx = 0; start_idx < nums_size; ++start_idx)
+    {
+        int curr_subarray_sum {};
+
+        for (int subarr_idx = start_idx; subarr_idx < nums_size; ++subarr_idx)
+        {
+            curr_subarray_sum += nums[subarr_idx];
+            max_subarray_sum = std::max(max_subarray_sum, curr_subarray_sum);
+        }
+    }
+
+    return max_subarray_sum;
+
+} // static int maxSubArrayDS1( ...
+
 TEST(MaxSubArrayTest, SampleTest1)
 {
     //! nums:       -1  1 -3 4 -1 2 1 -5 4
@@ -90,7 +123,8 @@ TEST(MaxSubArrayTest, SampleTest1)
     constexpr std::vector<int> nums {-2, 1, -3, 4, -1, 2, 1, -5, 4};
 
     EXPECT_EQ(6, maxSubArrayFA(nums));
-    EXPECT_EQ(6, maxSubArraySA(nums));
+    // EXPECT_EQ(6, maxSubArraySA(nums));
+    EXPECT_EQ(6, maxSubArrayDS1(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest2)
@@ -98,7 +132,8 @@ TEST(MaxSubArrayTest, SampleTest2)
     constexpr std::vector<int> nums {1};
 
     EXPECT_EQ(1, maxSubArrayFA(nums));
-    EXPECT_EQ(1, maxSubArraySA(nums));
+    // EXPECT_EQ(1, maxSubArraySA(nums));
+    EXPECT_EQ(1, maxSubArrayDS1(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest3)
@@ -108,7 +143,8 @@ TEST(MaxSubArrayTest, SampleTest3)
     constexpr std::vector<int> nums {5, 4, -1, 7, 8};
 
     EXPECT_EQ(23, maxSubArrayFA(nums));
-    EXPECT_EQ(23, maxSubArraySA(nums));
+    // EXPECT_EQ(23, maxSubArraySA(nums));
+    EXPECT_EQ(23, maxSubArrayDS1(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest4)
@@ -119,5 +155,6 @@ TEST(MaxSubArrayTest, SampleTest4)
 
     EXPECT_NE(-1, maxSubArrayFA(nums));
     EXPECT_EQ(1, maxSubArrayFA(nums));
-    EXPECT_EQ(-1, maxSubArraySA(nums));
+    // EXPECT_EQ(-1, maxSubArraySA(nums));
+    EXPECT_EQ(-1, maxSubArrayDS1(nums));
 }
