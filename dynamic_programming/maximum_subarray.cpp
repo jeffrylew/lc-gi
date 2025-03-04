@@ -45,6 +45,44 @@ static int maxSubArrayFA(const std::vector<int>& nums)
 
 } // static int maxSubArrayFA( ...
 
+[[nodiscard]] static void get_max_subarr_sum_SA(
+    int                            left_idx,
+    int                            right_idx,
+    std::vector<std::vector<int>>& subarr_sums)
+{
+
+} // [[nodiscard]] static int get_max_subarr_sum_SA( ...
+
+//! @brief Second attempt to get the sum of the subarray with the largest sum
+//! @param[in] nums Reference to vector of integers
+//! @return Sum of the subarray with the largest sum
+static int maxSubArraySA(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/explore/interview/card/google/64
+    //!          /dynamic-programming-4/3085/
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+    if (nums_size == 1)
+    {
+        return nums[0];
+    }
+
+    std::vector<int> prefix_sum(nums.size());
+    prefix_sum[0] = nums[0];
+    for (int idx = 1; idx < nums_size; ++idx)
+    {
+        prefix_sum[idx] = prefix_sum[idx - 1] + nums[idx];
+    }
+
+    std::vector<std::vector<int>> subarr_sums(
+        nums.size(), std::vector<int>(nums.size(), -1E5));
+
+    get_max_subarr_sum_SA(0, nums_size - 1, subarr_sums);
+
+    return subarr_sums[0][nums_size - 1];
+
+} // static int maxSubArraySA( ...
+
 TEST(MaxSubArrayTest, SampleTest1)
 {
     //! nums:       -1  1 -3 4 -1 2 1 -5 4
@@ -52,6 +90,7 @@ TEST(MaxSubArrayTest, SampleTest1)
     constexpr std::vector<int> nums {-2, 1, -3, 4, -1, 2, 1, -5, 4};
 
     EXPECT_EQ(6, maxSubArrayFA(nums));
+    EXPECT_EQ(6, maxSubArraySA(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest2)
@@ -59,6 +98,7 @@ TEST(MaxSubArrayTest, SampleTest2)
     constexpr std::vector<int> nums {1};
 
     EXPECT_EQ(1, maxSubArrayFA(nums));
+    EXPECT_EQ(1, maxSubArraySA(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest3)
@@ -68,6 +108,7 @@ TEST(MaxSubArrayTest, SampleTest3)
     constexpr std::vector<int> nums {5, 4, -1, 7, 8};
 
     EXPECT_EQ(23, maxSubArrayFA(nums));
+    EXPECT_EQ(23, maxSubArraySA(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest4)
@@ -78,4 +119,5 @@ TEST(MaxSubArrayTest, SampleTest4)
 
     EXPECT_NE(-1, maxSubArrayFA(nums));
     EXPECT_EQ(1, maxSubArrayFA(nums));
+    EXPECT_EQ(-1, maxSubArraySA(nums));
 }
