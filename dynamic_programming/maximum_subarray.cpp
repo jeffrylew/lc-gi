@@ -116,6 +116,36 @@ static int maxSubArrayDS1(const std::vector<int>& nums)
 
 } // static int maxSubArrayDS1( ...
 
+//! @brief Dynamic programming (Kadane's Algorithm) discussion solution
+//! @param[in] nums Reference to vector of integers
+//! @return Sum of the subarray with the largest sum
+static int maxSubArrayDS2(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/maximum-subarray/editorial/
+    //!
+    //!          Time complexity O(N) where N = nums.size(). We iterate through
+    //!          each element of nums once.
+    //!          Space complexity O(1) for integer variables
+
+    //! Initialize sums with the first element
+    int curr_subarray_sum {nums[0]};
+    int max_subarray_sum {nums[0]};
+
+    //! Any subarray whose sum is positive is worth keeping. Whenever the sum is
+    //! negative, the subarray is not worth keeping.
+    for (int idx = 1; idx < std::ssize(nums); ++idx)
+    {
+        //! If curr_subarray_sum is negative, reset it to nums[idx].
+        //! Using max() leads to nums[idx] > curr_subarray_sum + nums[idx].
+        //! Otherwise, keep adding to it.
+        curr_subarray_sum = std::max(nums[idx], curr_subarray_sum + nums[idx]);
+        max_subarray_sum  = std::max(max_subarray_sum, curr_subarray_sum);
+    }
+
+    return max_subarray_sum;
+
+} // static int maxSubArrayDS2( ...
+
 TEST(MaxSubArrayTest, SampleTest1)
 {
     //! nums:       -1  1 -3 4 -1 2 1 -5 4
@@ -125,6 +155,7 @@ TEST(MaxSubArrayTest, SampleTest1)
     EXPECT_EQ(6, maxSubArrayFA(nums));
     // EXPECT_EQ(6, maxSubArraySA(nums));
     EXPECT_EQ(6, maxSubArrayDS1(nums));
+    EXPECT_EQ(6, maxSubArrayDS2(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest2)
@@ -134,6 +165,7 @@ TEST(MaxSubArrayTest, SampleTest2)
     EXPECT_EQ(1, maxSubArrayFA(nums));
     // EXPECT_EQ(1, maxSubArraySA(nums));
     EXPECT_EQ(1, maxSubArrayDS1(nums));
+    EXPECT_EQ(1, maxSubArrayDS2(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest3)
@@ -145,6 +177,7 @@ TEST(MaxSubArrayTest, SampleTest3)
     EXPECT_EQ(23, maxSubArrayFA(nums));
     // EXPECT_EQ(23, maxSubArraySA(nums));
     EXPECT_EQ(23, maxSubArrayDS1(nums));
+    EXPECT_EQ(23, maxSubArrayDS2(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest4)
@@ -157,4 +190,5 @@ TEST(MaxSubArrayTest, SampleTest4)
     EXPECT_EQ(1, maxSubArrayFA(nums));
     // EXPECT_EQ(-1, maxSubArraySA(nums));
     EXPECT_EQ(-1, maxSubArrayDS1(nums));
+    EXPECT_EQ(-1, maxSubArrayDS2(nums));
 }
