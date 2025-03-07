@@ -146,6 +146,17 @@ static int maxSubArrayDS2(const std::vector<int>& nums)
 
 } // static int maxSubArrayDS2( ...
 
+//! @brief Divide and conquer discussion solution
+//! @param[in] nums Reference to vector of integers
+//! @return Sum of the subarray with the largest sum
+static int maxSubArrayDS3(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/maximum-subarray/editorial/
+
+    //! @todo
+
+} // static int maxSubArrayDS3( ...
+
 TEST(MaxSubArrayTest, SampleTest1)
 {
     //! nums:       -1  1 -3 4 -1 2 1 -5 4
@@ -156,6 +167,7 @@ TEST(MaxSubArrayTest, SampleTest1)
     // EXPECT_EQ(6, maxSubArraySA(nums));
     EXPECT_EQ(6, maxSubArrayDS1(nums));
     EXPECT_EQ(6, maxSubArrayDS2(nums));
+    EXPECT_EQ(6, maxSubArrayDS3(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest2)
@@ -166,6 +178,7 @@ TEST(MaxSubArrayTest, SampleTest2)
     // EXPECT_EQ(1, maxSubArraySA(nums));
     EXPECT_EQ(1, maxSubArrayDS1(nums));
     EXPECT_EQ(1, maxSubArrayDS2(nums));
+    EXPECT_EQ(1, maxSubArrayDS3(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest3)
@@ -178,6 +191,7 @@ TEST(MaxSubArrayTest, SampleTest3)
     // EXPECT_EQ(23, maxSubArraySA(nums));
     EXPECT_EQ(23, maxSubArrayDS1(nums));
     EXPECT_EQ(23, maxSubArrayDS2(nums));
+    EXPECT_EQ(23, maxSubArrayDS3(nums));
 }
 
 TEST(MaxSubArrayTest, SampleTest4)
@@ -191,4 +205,5 @@ TEST(MaxSubArrayTest, SampleTest4)
     // EXPECT_EQ(-1, maxSubArraySA(nums));
     EXPECT_EQ(-1, maxSubArrayDS1(nums));
     EXPECT_EQ(-1, maxSubArrayDS2(nums));
+    EXPECT_EQ(-1, maxSubArrayDS3(nums));
 }
