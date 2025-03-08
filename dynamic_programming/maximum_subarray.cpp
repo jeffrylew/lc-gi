@@ -146,6 +146,13 @@ static int maxSubArrayDS2(const std::vector<int>& nums)
 
 } // static int maxSubArrayDS2( ...
 
+[[nodiscard]] static int find_best_subarray(const std::vector<int>& nums,
+                                            int                     left_idx,
+                                            int                     right_idx)
+{
+    //! @todo
+}
+
 //! @brief Divide and conquer discussion solution
 //! @param[in] nums Reference to vector of integers
 //! @return Sum of the subarray with the largest sum
@@ -153,7 +160,9 @@ static int maxSubArrayDS3(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/maximum-subarray/editorial/
 
-    //! @todo
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    return find_best_subarray(nums, 0, nums_size - 1);
 
 } // static int maxSubArrayDS3( ...
 
