@@ -146,12 +146,68 @@ static int maxSubArrayDS2(const std::vector<int>& nums)
 
 } // static int maxSubArrayDS2( ...
 
-[[nodiscard]] static int find_best_subarray(const std::vector<int>& nums,
+//! @brief Recursive helper to get max sum for vector between left_idx/right_idx
+//! @param[in] nums      Reference to vector of ints to check subarray sums from
+//! @param[in] left_idx  Left index of subarray
+//! @param[in] right_idx Right index of subarray
+//! @return Max sum for subarray between left_idx and right_idx in nums
+[[nodiscard]] static int get_max_subarr_sum(const std::vector<int>& nums,
                                             int                     left_idx,
                                             int                     right_idx)
 {
-    //! @todo
-}
+    //! @details https://leetcode.com/problems/maximum-subarray/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = nums.size(). The first
+    //!          call visits every element of nums. Then we split the vector in
+    //!          half and call get_max_subarr_sum on each half. Both of these
+    //!          calls iterate through every element in their half, which is
+    //!          every element in nums when combined. Thus, we iterate over all
+    //!          elements in nums log N times since that is how many times the
+    //!          vector can be split in half.
+    //!          Space complexity O(log N) for the recursion stack. Every time
+    //!          the vector is split in half, another call of get_max_subarr_sum
+    //!          is added to the stack until calls are resolved by the base case
+    //!          which is an empty vector that occurs after log N calls.
+
+    //! Base case: empty vector
+    if (left_idx > right_idx)
+    {
+        return std::numeric_limits<int>::min();
+    }
+
+    const int mid_idx {left_idx + (right_idx - left_idx) / 2};
+
+    int curr_sum {};
+    int max_left_sum {};
+    int max_right_sum {};
+
+    //! Iterate from the middle to the beginning
+    for (int idx = mid_idx - 1; idx >= left_idx; --idx)
+    {
+        curr_sum += nums[idx];
+        max_left_sum = std::max(max_left_sum, curr_sum);
+    }
+
+    //! Reset curr_sum and iterate from the middle to the end
+    curr_sum = 0;
+    for (int idx = mid_idx + 1; idx <= right_idx; ++idx)
+    {
+        curr_sum += nums[idx];
+        max_right_sum = std::max(max_right_sum, curr_sum);
+    }
+
+    //! max_combined_sum uses the middle element
+    //! and the best possible sum from each half
+    const int max_combined_sum {max_left_sum + nums[mid_idx] + max_right_sum};
+
+    //! Find the best possible subarray from both halves
+    const int left_half_sum {get_max_subarr_sum(nums, left_idx, mid_idx - 1)};
+    const int right_half_sum {get_max_subarr_sum(nums, mid_idx + 1, right_idx)};
+
+    //! The largest sum of the three is the answer
+    return std::max({left_half_sum, max_combined_sum, right_half_sum});
+
+} // [[nodiscard]] static int get_max_subarr_sum( ...
 
 //! @brief Divide and conquer discussion solution
 //! @param[in] nums Reference to vector of integers
@@ -162,7 +218,7 @@ static int maxSubArrayDS3(const std::vector<int>& nums)
 
     const auto nums_size = static_cast<int>(std::ssize(nums));
 
-    return find_best_subarray(nums, 0, nums_size - 1);
+    return get_max_subarr_sum(nums, 0, nums_size - 1);
 
 } // static int maxSubArrayDS3( ...
 
