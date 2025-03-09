@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "best_time_to_buy_and_sell_stock"
     "longest_palindromic_substring"
     "maximum_subarray"
 )
