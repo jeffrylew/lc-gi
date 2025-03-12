@@ -52,6 +52,11 @@ static int maxProfitFA(std::vector<int> prices)
 } // static int maxProfitFA( ...
 
 //! @brief Get max profit we can achieve if on curr_day with is_holding stock
+//! @param[in]      prices       Reference to vector of prices
+//! @param[in, out] profit_state Reference to cached profit for day/is_holding
+//! @param[in]      curr_day     Current day
+//! @param[in]      is_holding   Flag indicating if holding stock on current day
+//! @return Max profit on curr_day with is_holding stock
 [[nodiscard]] static int get_max_profit_SA(
     const std::vector<int>&        prices,
     std::vector<std::vector<int>>& profit_state,
