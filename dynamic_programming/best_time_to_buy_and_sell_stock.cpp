@@ -139,14 +139,47 @@ static int maxProfitSA(std::vector<int> prices)
     return get_max_profit_SA(prices, profit_state, 0, false);
 }
 
+//! @brief Brute force discussion solution
+//! @param[in] prices Vector of prices where prices[i] is price on the ith day
+//! @return Max profit achieved from transaction
+static int maxProfitDS1(std::vector<int> prices)
+{
+    //! @details leetcode.com/problems/best-time-to-buy-and-sell-stock/editorial
+    //!
+    //!          Time complexity O(N ^ 2) where N = prices.size(). The loop runs
+    //!          N * (N - 1) / 2 times.
+    //!          Space complexity O(1) for integer variables.
+
+    const auto prices_size = static_cast<int>(std::ssize(prices));
+
+    int max_profit {};
+
+    for (int buy_idx = 0; buy_idx < prices_size - 1; ++buy_idx)
+    {
+        for (int sell_idx = buy_idx + 1; sell_idx < prices_size; ++sell_idx)
+        {
+            const int curr_profit {prices[sell_idx] - prices[buy_idx]};
+            if (curr_profit > max_profit)
+            {
+                max_profit = curr_profit;
+            }
+        }
+    }
+
+    return max_profit;
+
+} // static int maxProfitDS1( ...
+
 TEST(MaxProfitTest, SampleTest1)
 {
     // EXPECT_EQ(5, maxProfitFA({7, 1, 5, 3, 6, 4}));
     // EXPECT_EQ(5, maxProfitSA({7, 1, 5, 3, 6, 4}));
+    EXPECT_EQ(5, maxProfitDS1({7, 1, 5, 3, 6, 4}));
 }
 
 TEST(MaxProfitTest, SampleTest2)
 {
     // EXPECT_EQ(0, maxProfitFA({7, 6, 4, 3, 1}));
     // EXPECT_EQ(0, maxProfitSA({7, 6, 4, 3, 1}));
+    EXPECT_EQ(0, maxProfitDS1({7, 6, 4, 3, 1}));
 }
