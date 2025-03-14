@@ -177,6 +177,9 @@ static int maxProfitDS1(std::vector<int> prices)
 static int maxProfitDS2(std::vector<int> prices)
 {
     //! @details leetcode.com/problems/best-time-to-buy-and-sell-stock/editorial
+    //!
+    //!          Time complexity O(N) where N = prices.size() for a single pass.
+    //!          Space complexity O(1) for two integer variables.
 
     int min_price {std::numeric_limits<int>::max()};
     int max_profit {};
