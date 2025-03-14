@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
 #include <vector>
 
 static int get_max_profit_FA(const std::vector<int>&        prices,
@@ -170,11 +171,38 @@ static int maxProfitDS1(std::vector<int> prices)
 
 } // static int maxProfitDS1( ...
 
+//! @brief One pass discussion solution
+//! @param[in] prices Vector of prices where prices[i] is price on the ith day
+//! @return Max profit achieved from transaction
+static int maxProfitDS2(std::vector<int> prices)
+{
+    //! @details leetcode.com/problems/best-time-to-buy-and-sell-stock/editorial
+
+    int min_price {std::numeric_limits<int>::max()};
+    int max_profit {};
+
+    for (const int curr_price : prices)
+    {
+        if (curr_price < min_price)
+        {
+            min_price = curr_price;
+        }
+        else if (curr_price - min_price > max_profit)
+        {
+            max_profit = curr_price - min_price;
+        }
+    }
+
+    return max_profit;
+
+} // static int maxProfitDS2( ...
+
 TEST(MaxProfitTest, SampleTest1)
 {
     // EXPECT_EQ(5, maxProfitFA({7, 1, 5, 3, 6, 4}));
     // EXPECT_EQ(5, maxProfitSA({7, 1, 5, 3, 6, 4}));
     EXPECT_EQ(5, maxProfitDS1({7, 1, 5, 3, 6, 4}));
+    EXPECT_EQ(5, maxProfitDS2({7, 1, 5, 3, 6, 4}));
 }
 
 TEST(MaxProfitTest, SampleTest2)
@@ -182,4 +210,5 @@ TEST(MaxProfitTest, SampleTest2)
     // EXPECT_EQ(0, maxProfitFA({7, 6, 4, 3, 1}));
     // EXPECT_EQ(0, maxProfitSA({7, 6, 4, 3, 1}));
     EXPECT_EQ(0, maxProfitDS1({7, 6, 4, 3, 1}));
+    EXPECT_EQ(0, maxProfitDS2({7, 6, 4, 3, 1}));
 }
