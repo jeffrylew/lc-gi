@@ -3,7 +3,9 @@
 #include <functional>
 #include <set>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -11,6 +13,9 @@
 //! @brief Defines a node in a trie/prefix tree
 struct TrieNode
 {
+    //! If TrieNode is at the end of a complete word, stores the word
+    std::string_view complete_word;
+
     std::unordered_map<char, TrieNode> children;
 };
 
@@ -32,12 +37,13 @@ struct TrieNode
         for (const char ch : word)
         {
             const auto& [ch_it, did_insert] =
-                curr_node.children.try_emplace(ch, TrieNode {});
+                curr_node->children.try_emplace(ch, TrieNode {});
 
             curr_node = &(ch_it->second);
         }
 
         //! At this point, have a complete word
+        curr_node->complete_word = word;
     }
 
     return root;
@@ -53,6 +59,11 @@ static std::vector<std::string> findWordsFA(
     const std::vector<std::string>&       words)
 {
     //! @details leetcode.com/explore/interview/card/google/62/recursion-4/462
+    //!
+    //!          First attempt solution does not pass SampleTest5. Need to use
+    //!          backtracking to "unvisit" a position because DFS searches the
+    //!          incorrect direction first and prevents the corresponding cell
+    //!          from being traversed in another path.
 
     //! Build trie from words
     const auto root_of_trie = build_trie_FA(words);
@@ -70,13 +81,16 @@ static std::vector<std::string> findWordsFA(
     //! Keep track of visited positions
     std::set<std::pair<int, int>> visited_pos;
 
-    //! Output vector storing all words on the board
-    std::vector<std::string> words_on_board;
+    //! Output set storing all words on the board
+    std::unordered_set<std::string> words_on_board;
 
     //! Helper function to get all words at given position
-    std::function<void(int, int, TrieNode*)> get_words_at_pos =
-        [&](int row, int col, TrieNode* curr_node) {
-            //! @todo Do I need to handle base case(s)?
+    std::function<void(int, int, const TrieNode*)> get_words_at_pos =
+        [&](int row, int col, const TrieNode* curr_node) {
+            if (!curr_node->complete_word.empty())
+            {
+                words_on_board.emplace(curr_node->complete_word);
+            }
 
             for (const auto& [drow, dcol] : directions)
             {
@@ -92,7 +106,6 @@ static std::vector<std::string> findWordsFA(
                     const char next_ch {board.at(next_row).at(next_col)};
                     if (curr_node->children.contains(next_ch))
                     {
-                        //! @todo How do I know when to add to words_on_board?
                         get_words_at_pos(next_row,
                                          next_col,
                                          &curr_node->children.at(next_ch));
@@ -106,7 +119,9 @@ static std::vector<std::string> findWordsFA(
     {
         for (int col = 0; col < ncols; ++col)
         {
-            if (!root_of_trie.children.contains(board[row][col]))
+            const char init_ch {board[row][col]};
+
+            if (!root_of_trie.children.contains(init_ch))
             {
                 //! No words start with current char so skip it
                 continue;
@@ -114,11 +129,12 @@ static std::vector<std::string> findWordsFA(
 
             //! Reset visited positions at each starting position
             visited_pos = {std::make_pair(row, col)};
-            get_words_at_pos(row, col, &root_of_trie);
+            get_words_at_pos(row, col, &root_of_trie.children.at(init_ch));
         }
     }
 
-    return words_on_board;
+    return std::vector<std::string> {words_on_board.begin(),
+                                     words_on_board.end()};
 
 } // static std::vector<std::string> findWordsFA( ...
 
@@ -142,4 +158,42 @@ TEST(FindWordsTest, SampleTest2)
     const std::vector<std::string>       words {"abcb"};
 
     EXPECT_TRUE(findWordsFA(board, words).empty());
+}
+
+TEST(FindWordsTest, SampleTest3)
+{
+    const std::vector<std::vector<char>> board {{'a'}};
+    const std::vector<std::string>       words {"a"};
+    const std::vector<std::string>       expected_output {"a"};
+
+    EXPECT_EQ(expected_output, findWordsFA(board, words));
+}
+
+TEST(FindWordsTest, SampleTest4)
+{
+    const std::vector<std::vector<char>> board {
+        {'o', 'a', 'b', 'n'},
+        {'o', 't', 'a', 'e'},
+        {'a', 'h', 'k', 'r'},
+        {'a', 'f', 'l', 'v'}};
+
+    const std::vector<std::string> words {"oa", "oaa"};
+    const std::vector<std::string> expected_output {"oa", "oaa"};
+
+    EXPECT_EQ(expected_output, findWordsFA(board, words));
+}
+
+TEST(FindWordsTest, SampleTest5)
+{
+    const std::vector<std::vector<char>> board {
+        {'a', 'b', 'c', 'e'},
+        {'x', 'x', 'c', 'd'},
+        {'x', 'x', 'b', 'a'}};
+
+    const std::vector<std::string> words {"abc", "abcd"};
+    const std::vector<std::string> expected_output {"abc", "abcd"};
+    const std::vector<std::string> FA_output {"abc"};
+
+    EXPECT_NE(expected_output, findWordsFA(board, words));
+    EXPECT_EQ(FA_output, findWordsFA(board, words));
 }
