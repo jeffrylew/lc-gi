@@ -101,7 +101,7 @@ static std::vector<std::string> findWordsFA(
                 if (is_valid(next_row, next_col)
                     && !visited_pos.contains(next_pos))
                 {
-                    visited_pos.insert(std::move(next_pos));
+                    visited_pos.insert(next_pos);
 
                     const char next_ch {board.at(next_row).at(next_col)};
                     if (curr_node->children.contains(next_ch))
@@ -109,6 +109,7 @@ static std::vector<std::string> findWordsFA(
                         get_words_at_pos(next_row,
                                          next_col,
                                          &curr_node->children.at(next_ch));
+                        visited_pos.erase(std::move(next_pos));
                     }
                 }
             }
