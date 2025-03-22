@@ -213,6 +213,18 @@ static std::vector<std::string> findWordsDS(
     const std::vector<std::string>&       words)
 {
     //! @details https://leetcode.com/problems/word-search-ii/
+    //!
+    //!          Time complexity O(M * (4 * 3 ^ (L - 1))) where M = number of
+    //!          cells in the board and L is the max length of words. The alg
+    //!          loops over all cells in the board in O(M). The max number of
+    //!          steps we need for each starting cell is 4 * 3 ^ (L - 1). From
+    //!          each cell, there are initially 4 directions to explore. Assume
+    //!          each direction is valid in the worst case. In the following
+    //!          exploration, there are 3 neighbor cells to explore excluding
+    //!          the cell where we came from. Thus, we traverse
+    //!          O(4 * 3 ^ (L - 1)) cells during the backtracking exploration.
+    //!          The worst case scenario is when all cells in the board contain
+    //!          'a' and the word dictionary contains a single word 'aaaa'.
 
     //! Step 1) Construct the Trie
     Trie_node root;
