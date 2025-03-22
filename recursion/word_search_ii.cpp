@@ -225,6 +225,12 @@ static std::vector<std::string> findWordsDS(
     //!          O(4 * 3 ^ (L - 1)) cells during the backtracking exploration.
     //!          The worst case scenario is when all cells in the board contain
     //!          'a' and the word dictionary contains a single word 'aaaa'.
+    //!          Space complexity O(N) where N = total number of letters in the
+    //!          dictionary. The main space is for the Trie data structure. In
+    //!          the worst case where there are no overlapping prefixes, the
+    //!          Trie would have as many nodes as the letters of all words. One
+    //!          might also keep a copy of the words in the Trie as well so as a
+    //!          result, the Trie would require O(2 * N) space.
 
     //! Step 1) Construct the Trie
     Trie_node root;
