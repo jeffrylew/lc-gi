@@ -92,7 +92,7 @@ struct NodeDS1
 class LRUCacheDS1
 {
 public:
-    LRUCache(int capacity)
+    LRUCacheDS1(int capacity)
         : cache_capacity {capacity}
     {
         head.next = &tail;
@@ -188,6 +188,19 @@ TEST(LRUCacheTest, SampleTest1)
     EXPECT_EQ(-1, lru_cache_fa.get(1)); // returns -1 (not found)
     EXPECT_EQ(3, lru_cache_fa.get(3));  // returns 3
     EXPECT_EQ(4, lru_cache_fa.get(4));  // returns 4
+
+    LRUCacheDS1 lru_cache_ds1(2);
+    lru_cache_ds1.put(1, 1);
+    lru_cache_ds1.put(2, 2);
+    EXPECT_EQ(1, lru_cache_ds1.get(1));
+
+    lru_cache_ds1.put(3, 3);
+    EXPECT_EQ(-1, lru_cache_ds1.get(2));
+
+    lru_cache_ds1.put(4, 4);
+    EXPECT_EQ(-1, lru_cache_ds1.get(1));
+    EXPECT_EQ(3, lru_cache_ds1.get(3));
+    EXPECT_EQ(4, lru_cache_ds1.get(4));
 }
 
 TEST(LRUCacheTest, SampleTest2)
@@ -199,6 +212,14 @@ TEST(LRUCacheTest, SampleTest2)
     lru_cache_fa.put(3, 2); // cache is {3: 2}
     EXPECT_EQ(-1, lru_cache_fa.get(2)); // returns -1 (not found)
     EXPECT_EQ(2, lru_cache_fa.get(3));  // returns 2
+
+    LRUCacheDS1 lru_cache_ds1(1);
+    lru_cache_ds1.put(2, 1);
+    EXPECT_EQ(1, lru_cache_ds1.get(2));
+
+    lru_cache_ds1.put(3, 2);
+    EXPECT_EQ(-1, lru_cache_ds1.get(2));
+    EXPECT_EQ(2, lru_cache_ds1.get(3));
 }
 
 TEST(LRUCacheTest, SampleTestTest3)
@@ -224,4 +245,21 @@ TEST(LRUCacheTest, SampleTestTest3)
     EXPECT_EQ(4, lru_cache_fa.get(4));
 
     EXPECT_EQ(5, lru_cache_fa.get(5));
+
+    LRUCacheDS1 lru_cache_ds1(3);
+    lru_cache_ds1.put(1, 1);
+    lru_cache_ds1.put(2, 2);
+    lru_cache_ds1.put(3, 3);
+    lru_cache_ds1.put(4, 4);
+    EXPECT_EQ(4, lru_cache_ds1.get(4));
+    EXPECT_EQ(3, lru_cache_ds1.get(3));
+    EXPECT_EQ(2, lru_cache_ds1.get(2));
+    EXPECT_EQ(-1, lru_cache_ds1.get(1));
+
+    lru_cache_ds1.put(5, 5);
+    EXPECT_EQ(-1, lru_cache_ds1.get(1));
+    EXPECT_EQ(2, lru_cache_ds1.get(2));
+    EXPECT_EQ(3, lru_cache_ds1.get(3));
+    EXPECT_EQ(-1, lru_cache_ds1.get(4));
+    EXPECT_EQ(5, lru_cache_ds1.get(5));
 }
