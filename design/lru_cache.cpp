@@ -86,6 +86,9 @@ struct NodeDS1
 
 //! @class LRUCacheDS1
 //! @brief Doubly linked list discussion solution
+//! @details Time complexity O(1) for both get and put.
+//!          Space complexity O(capacity). We use up to O(capacity) for the hash
+//!          map and for the linked list.
 class LRUCacheDS1
 {
 public:
