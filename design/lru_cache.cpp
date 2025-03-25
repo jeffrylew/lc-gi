@@ -68,6 +68,109 @@ private:
     std::queue<int> key_order;
 };
 
+struct NodeDS1
+{
+    int      key {};
+    int      val {};
+    NodeDS1* prev {nullptr};
+    NodeDS1* next {nullptr};
+
+    NodeDS1() = default;
+
+    explicit NodeDS1(int key_in, int val_in)
+        : key {key_in}
+        , val {val_in}
+    {
+    }
+};
+
+//! @class LRUCacheDS1
+//! @brief Doubly linked list discussion solution
+class LRUCacheDS1
+{
+public:
+    LRUCache(int capacity)
+        : cache_capacity {capacity}
+    {
+        head.next = &tail;
+        tail.prev = &head;
+    }
+
+    int get(int key)
+    {
+        if (!key_node_map.contains(key))
+        {
+            return -1;
+        }
+
+        //! Move node associated with key to back of linked list
+        auto& node = key_node_map[key];
+        remove(node);
+        add(node);
+
+        return node.val;
+    }
+
+    void put(int key, int value)
+    {
+        //! Check if key already exists. If it does, remove its associated node.
+        //! We will move the node to the back of the list.
+        if (key_node_map.contains(key))
+        {
+            remove(key_node_map[key]);
+        }
+
+        //! Create new node, add it to the hash map, and add it to linked list
+        key_node_map[key] = NodeDS1 {key, value};
+        add(key_node_map[key]);
+
+        if (std::ssize(key_node_map) > cache_capacity)
+        {
+            //! If capacity exceeded, delete first real node from linked list
+            auto& node_to_delete = *head.next;
+            remove(node_to_delete);
+            key_node_map.erase(node_to_delete.key);
+        }
+    }
+
+private:
+    //! Store capacity of LRU cache
+    int cache_capacity {};
+
+    //! Map of <key, corresponding NodeDS1>
+    std::unordered_map<int, NodeDS1> key_node_map;
+
+    //! Sentinel nodes for linked list
+    NodeDS1 head;
+    NodeDS1 tail;
+
+    //! @brief Add node to end of linked list
+    //! @param[in, out] node Reference to NodeDS1 to add
+    void add(NodeDS1& node)
+    {
+        //! Get current (non-sentinel) node at end of linked list
+        auto* prev_end = tail.prev;
+
+        //! Insert node after prev_end
+        prev_end->next = &node;
+
+        //! Now set pointers of node
+        node.prev = prev_end;
+        node.next = &tail;
+
+        //! Finally, update tail.prev
+        tail.prev = &node;
+    }
+
+    //! @brief Remove node from linked list
+    //! @param[in, out] node Reference to NodeDS1 to add
+    void remove(NodeDS1& node)
+    {
+        node.prev->next = node.next;
+        node.next->prev = node.prev;
+    }
+};
+
 TEST(LRUCacheTest, SampleTest1)
 {
     LRUCacheFA lru_cache_fa(2);
