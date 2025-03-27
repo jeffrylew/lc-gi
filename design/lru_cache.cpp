@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <iterator>
+#include <list>
 #include <queue>
 #include <unordered_map>
 
@@ -172,6 +174,74 @@ private:
         node.prev->next = node.next;
         node.next->prev = node.prev;
     }
+};
+
+using NodeDS2  = std::pair<int, int>;
+using Node_DLL = std::list<NodeDS2>;
+
+//! @class LRUCacheDS2
+//! @brief Built-in data structure discussion solution
+//! @details Time complexity O(1) for both get and put.
+//!          Space complexity O(capacity). We use up to O(capacity) for the hash
+//!          map and for the linked list.
+class LRUCacheDS2
+{
+public:
+    LRUCacheDS2(int capacity)
+        : cache_capacity {capacity}
+    {
+    }
+
+    int get(int key)
+    {
+        auto key_node_it = key_node_map.find(key);
+        if (key_node_it == key_node_map.end())
+        {
+            return -1;
+        }
+
+        //! Move node associated with key to back of linked list
+        auto      node_dll_it = key_node_it->second;
+        const int value {node_dll_it->second};
+        node_dll.erase(node_dll_it);
+        node_dll.emplace_back(key, value);
+
+        key_node_it->second = std::prev(node_dll.end());
+        return value;
+    }
+
+    void put(int key, int value)
+    {
+        //! Check if key already exists. If it does, remove its associated node.
+        //! We will move the node to the back of the linked list.
+        auto key_node_it = key_node_map.find(key);
+        if (key_node_it != key_node_map.end())
+        {
+            node_dll.erase(key_node_it->second);
+        }
+
+        //! Create new node and add it to the end of the linked list
+        node_dll.emplace_back(key, value);
+        key_node_it->second = std::prev(node_dll.end());
+
+        if (std::ssize(key_node_map) > cache_capacity)
+        {
+            //! If capacity exceeded, delete first node from linked list
+            const int oldest_key {node_dll.front().first};
+            key_node_map.erase(oldest_key);
+            node_dll.pop_front();
+        }
+    }
+
+private:
+    //! Store capacity of LRU cache
+    int cache_capacity {};
+
+    //! Doubly-linked list of <key, value> pairs
+    Node_DLL node_dll;
+
+    //! Map of <key, iterator to corresponding NodeDS2 in doubly-linked list>
+    std::unordered_map<int, Node_DLL::iterator> key_node_map;
 };
 
 TEST(LRUCacheTest, SampleTest1)
