@@ -271,6 +271,19 @@ TEST(LRUCacheTest, SampleTest1)
     EXPECT_EQ(-1, lru_cache_ds1.get(1));
     EXPECT_EQ(3, lru_cache_ds1.get(3));
     EXPECT_EQ(4, lru_cache_ds1.get(4));
+
+    LRUCacheDS2 lru_cache_ds2(2);
+    lru_cache_ds2.put(1, 1);
+    lru_cache_ds2.put(2, 2);
+    EXPECT_EQ(1, lru_cache_ds2.get(1));
+
+    lru_cache_ds2.put(3, 3);
+    EXPECT_EQ(-1, lru_cache_ds2.get(2));
+
+    lru_cache_ds2.put(4, 4);
+    EXPECT_EQ(-1, lru_cache_ds2.get(1));
+    EXPECT_EQ(3, lru_cache_ds2.get(3));
+    EXPECT_EQ(4, lru_cache_ds2.get(4));
 }
 
 TEST(LRUCacheTest, SampleTest2)
@@ -290,6 +303,14 @@ TEST(LRUCacheTest, SampleTest2)
     lru_cache_ds1.put(3, 2);
     EXPECT_EQ(-1, lru_cache_ds1.get(2));
     EXPECT_EQ(2, lru_cache_ds1.get(3));
+
+    LRUCacheDS2 lru_cache_ds2(1);
+    lru_cache_ds2.put(2, 1);
+    EXPECT_EQ(1, lru_cache_ds2.get(2));
+
+    lru_cache_ds2.put(3, 2);
+    EXPECT_EQ(-1, lru_cache_ds2.get(2));
+    EXPECT_EQ(2, lru_cache_ds2.get(3));
 }
 
 TEST(LRUCacheTest, SampleTestTest3)
@@ -332,4 +353,21 @@ TEST(LRUCacheTest, SampleTestTest3)
     EXPECT_EQ(3, lru_cache_ds1.get(3));
     EXPECT_EQ(-1, lru_cache_ds1.get(4));
     EXPECT_EQ(5, lru_cache_ds1.get(5));
+
+    LRUCacheDS2 lru_cache_ds2(3);
+    lru_cache_ds2.put(1, 1);
+    lru_cache_ds2.put(2, 2);
+    lru_cache_ds2.put(3, 3);
+    lru_cache_ds2.put(4, 4);
+    EXPECT_EQ(4, lru_cache_ds2.get(4));
+    EXPECT_EQ(3, lru_cache_ds2.get(3));
+    EXPECT_EQ(2, lru_cache_ds2.get(2));
+    EXPECT_EQ(-1, lru_cache_ds2.get(1));
+
+    lru_cache_ds2.put(5, 5);
+    EXPECT_EQ(-1, lru_cache_ds2.get(1));
+    EXPECT_EQ(2, lru_cache_ds2.get(2));
+    EXPECT_EQ(3, lru_cache_ds2.get(3));
+    EXPECT_EQ(-1, lru_cache_ds2.get(4));
+    EXPECT_EQ(5, lru_cache_ds2.get(5));
 }
