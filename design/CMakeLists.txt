@@ -1,6 +1,7 @@
 set (
     cpp_files
     "lru_cache"
+    "min_stack"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
