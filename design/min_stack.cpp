@@ -54,6 +54,52 @@ private:
 
 }; // class MinStackFA
 
+//! @class MinStackDS1
+//! @brief Stack of value and min pairs discussion solution
+//! @details https://leetcode.com/problems/min-stack/editorial
+//!
+//!          Time complexity O(1) for all operations.
+//!          Space complexity O(N). Worst case is that all operations are push
+//!          so there will be O(2 * N) = O(N) space used, where N = the total
+//!          number of operations performed.
+class MinStackDS1
+{
+public:
+    MinStackDS1() = default;
+
+    void push(int x)
+    {
+        //! If the stack is empty then the min value is the first value we add
+        if (stack.empty())
+        {
+            stack.emplace(x, x);
+            return;
+        }
+
+        const int curr_min {stack.top().second};
+        stack.emplace(x, std::min(x, curr_min));
+    }
+
+    void pop()
+    {
+        stack.pop();
+    }
+
+    int top()
+    {
+        return stack.top().first;
+    }
+
+    int getMin()
+    {
+        return stack.top().second;
+    }
+
+private:
+    std::stack<std::pair<int, int>> stack;
+
+}; // class MinStackDS1
+
 TEST(MinStackTest, SampleTest1)
 {
     MinStackFA min_stack_FA;
@@ -65,4 +111,14 @@ TEST(MinStackTest, SampleTest1)
     min_stack_FA.pop();
     EXPECT_EQ(0, min_stack_FA.top());
     EXPECT_EQ(-2, min_stack_FA.getMin());
+
+    MinStackDS1 min_stack_DS1;
+    min_stack_DS1.push(-2);
+    min_stack_DS1.push(0);
+    min_stack_DS1.push(-3);
+    EXPECT_EQ(-3, min_stack_DS1.getMin());
+
+    min_stack_DS1.pop();
+    EXPECT_EQ(0, min_stack_DS1.top());
+    EXPECT_EQ(-2, min_stack_DS1.getMin());
 }
