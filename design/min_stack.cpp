@@ -67,6 +67,8 @@ class MinStackDS1
 public:
     MinStackDS1() = default;
 
+    //! @brief Push element val onto the stack in O(1) time complexity
+    //! @param[in] x Element to push onto the stack
     void push(int x)
     {
         //! If the stack is empty then the min value is the first value we add
@@ -80,22 +82,28 @@ public:
         stack.emplace(x, std::min(x, curr_min));
     }
 
+    //! @brief Remove element on the top of the stack in O(1) time complexity
     void pop()
     {
         stack.pop();
     }
 
+    //! @brief Get top element of the stack in O(1) time complexity
+    //! @return Top element of the stack
     int top()
     {
         return stack.top().first;
     }
 
+    //! @brief Retrieve min element in the stack in O(1) time complexity
+    //! @return Min element in the stack
     int getMin()
     {
         return stack.top().second;
     }
 
 private:
+    //! Stack storing an element and the minimum element seen so far
     std::stack<std::pair<int, int>> stack;
 
 }; // class MinStackDS1
