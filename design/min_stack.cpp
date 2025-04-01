@@ -108,6 +108,60 @@ private:
 
 }; // class MinStackDS1
 
+//! @class MinStackDS2
+//! @brief Two stacks discussion solution
+//! @details https://leetcode.com/problems/min-stack/editorial
+//!
+//!          Time complexity O(1) for all operations.
+//!          Space complexity O(N) where N = total number of operations.
+class MinStackDS2
+{
+public:
+    MinStackDS2() = default;
+
+    void push(int x)
+    {
+        //! Push element to stack
+        stack.push(x);
+
+        //! Push min element so far to min_stack
+        if (min_stack.empty() || x <= min_stack.top())
+        {
+            min_stack.push(x);
+        }
+    }
+
+    void pop()
+    {
+        //! Remove top element of min_stack if it is equal to the top of stack
+        if (stack.top() == min_stack.top())
+        {
+            min_stack.pop();
+        }
+
+        //! Remove top element of stack
+        stack.pop();
+    }
+
+    int top()
+    {
+        return stack.top();
+    }
+
+    int getMin()
+    {
+        return min_stack.top();
+    }
+
+    private:
+    //! Stack storing elements
+    std::stack<int> stack;
+
+    //! Stack storing minimum elements
+    std::stack<int> min_stack;
+
+}; // class MinStackDS2
+
 TEST(MinStackTest, SampleTest1)
 {
     MinStackFA min_stack_FA;
@@ -129,4 +183,14 @@ TEST(MinStackTest, SampleTest1)
     min_stack_DS1.pop();
     EXPECT_EQ(0, min_stack_DS1.top());
     EXPECT_EQ(-2, min_stack_DS1.getMin());
+
+    MinStackDS2 min_stack_DS2;
+    min_stack_DS2.push(-2);
+    min_stack_DS2.push(0);
+    min_stack_DS2.push(-3);
+    EXPECT_EQ(-3, min_stack_DS2.getMin());
+
+    min_stack_DS2.pop();
+    EXPECT_EQ(0, min_stack_DS2.top());
+    EXPECT_EQ(-2, min_stack_DS2.getMin());
 }
