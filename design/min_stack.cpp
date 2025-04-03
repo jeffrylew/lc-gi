@@ -180,10 +180,13 @@ public:
 
         if (min_stack.empty() || x < min_stack.top().first)
         {
+            //! If min stack is empty or x is smaller than the top of the min
+            //! stack then push x with a count of 1
             min_stack.emplace(x, 1);
         }
         else if (x == min_stack.top().first)
         {
+            //! If x is equal to the top of the min stack then increment count
             ++min_stack.top().second;
         }
     }
@@ -192,14 +195,17 @@ public:
     {
         if (stack.top() == min_stack.top().first)
         {
+            //! If top of stack is same as top of min stack then decrement count
             --min_stack.top().second;
         }
 
         if (min_stack.top().second == 0)
         {
+            //! If count at top of min stack is 0 then pop
             min_stack.pop();
         }
 
+        //! Like before, pop element from stack
         stack.pop();
     }
 
@@ -216,6 +222,7 @@ public:
 private:
     std::stack<int> stack;
 
+    //! Stack of <min value, num instances of min value>
     std::stack<std::pair<int, int>> min_stack;
 
 }; // class MinStackDS3
