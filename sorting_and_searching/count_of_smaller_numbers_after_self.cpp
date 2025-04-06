@@ -77,10 +77,10 @@ static std::vector<int> countSmallerDS1(std::vector<int> nums)
     //!          number of buckets, which is 2 * (M + 1) = 2 * M + 2.
 
     //! Offset negative to non-negative
-    constexpr int offset {1E4};
+    constexpr int offset {10000};
 
     //! Total possible values in nums
-    constexpr int size {2 * 1E4 + 1};
+    constexpr int size {2 * 10000 + 1};
 
     //! Since segment tree is initialized with all zeros, only need to implement
     //! update and query
