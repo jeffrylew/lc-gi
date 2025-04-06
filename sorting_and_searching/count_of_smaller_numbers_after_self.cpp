@@ -15,7 +15,7 @@ static void update(int idx, int val, std::vector<int>& tree, int size)
     while (idx > 1)
     {
         idx /= 2;
-        tree[idx] = tree[idx * 2] + tree[idx * 2 + 1];
+        tree[idx] = tree[2 * idx] + tree[2 * idx + 1];
     }
 }
 
@@ -64,6 +64,17 @@ static std::vector<int> countSmallerDS1(std::vector<int> nums)
 {
     //! @details https://leetcode.com/explore/interview/card/google/63
     //!          /sorting-and-searching-4/3083/
+    //!
+    //!          Time complexity O(N * log M) where N = nums.size() and M = the
+    //!          difference between the max and min values in nums. In the above
+    //!          implementations, we fix M = 2 * 10 ^ 4. We need to iterate over
+    //!          nums. For each element, finding the number of smaller elements
+    //!          after it takes O(log M) and updating the counts takes O(log M).
+    //!          In total, we need O(N * log M).
+    //!          Space complexity O(M) to store the segment tree in a vector of
+    //!          size up to 2 * M + 2. We need at most M + 1 buckets (the +1 is
+    //!          for the value of 0). For the segment tree, we need twice the
+    //!          number of buckets, which is 2 * (M + 1) = 2 * M + 2.
 
     //! Offset negative to non-negative
     constexpr int offset {1E4};
@@ -71,12 +82,17 @@ static std::vector<int> countSmallerDS1(std::vector<int> nums)
     //! Total possible values in nums
     constexpr int size {2 * 1E4 + 1};
 
+    //! Since segment tree is initialized with all zeros, only need to implement
+    //! update and query
     std::vector<int> tree(size * 2);
     std::vector<int> result;
 
-    for (int idx = static_cast<int>(std::ssize(nums)); idx >= 0; --idx)
+    for (int idx = static_cast<int>(std::ssize(nums)) - 1; idx >= 0; --idx)
     {
+        //! Query the number of elements in segment tree smaller than nums[idx]
         result.push_back(query(0, nums[idx] + offset, tree, size));
+
+        //! Update the count of nums[idx] in the segment tree
         update(nums[idx] + offset, 1, tree, size);
     }
 
