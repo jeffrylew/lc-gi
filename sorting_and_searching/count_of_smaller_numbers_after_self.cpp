@@ -4,7 +4,7 @@
 #include <vector>
 
 //! @brief Implement segment tree
-static void update(int idx, int val, std::vector<int>& tree, int size)
+static void update_DS1(int idx, int val, std::vector<int>& tree, int size)
 {
     //! Shift the index to the leaf
     idx += size;
@@ -19,10 +19,10 @@ static void update(int idx, int val, std::vector<int>& tree, int size)
     }
 }
 
-[[nodiscard]] static int query(int                     left,
-                               int                     right,
-                               const std::vector<int>& tree,
-                               int                     size)
+[[nodiscard]] static int query_DS1(int                     left,
+                                   int                     right,
+                                   const std::vector<int>& tree,
+                                   int                     size)
 {
     //! Return sum of [left, right)
     int result {};
@@ -90,10 +90,10 @@ static std::vector<int> countSmallerDS1(std::vector<int> nums)
     for (int idx = static_cast<int>(std::ssize(nums)) - 1; idx >= 0; --idx)
     {
         //! Query the number of elements in segment tree smaller than nums[idx]
-        result.push_back(query(0, nums[idx] + offset, tree, size));
+        result.push_back(query_DS1(0, nums[idx] + offset, tree, size));
 
         //! Update the count of nums[idx] in the segment tree
-        update(nums[idx] + offset, 1, tree, size);
+        update_DS1(nums[idx] + offset, 1, tree, size);
     }
 
     std::reverse(result.begin(), result.end());
@@ -101,11 +101,68 @@ static std::vector<int> countSmallerDS1(std::vector<int> nums)
 
 } // static std::vector<int> countSmallerDS1( ...
 
+//! Implement Binary Index Tree
+static void update_DS2(int idx, int val, std::vector<int>& tree, int size)
+{
+    //! Index in BIT is 1 more than the original index
+    ++idx;
+
+    while (idx < size)
+    {
+        tree[idx] += val;
+        index += index & -index;
+    }
+}
+
+[[nodiscard]] static int query_DS2(int idx, const std::vector<int>& tree)
+{
+    //! Return sum of [0, idx)
+    int result {};
+
+    while (idx >= 1)
+    {
+        result += tree.at(idx);
+        idx -= idx & -idx;
+    }
+
+    return result;
+}
+
+//! @brief Binary Indexed Tree (Fenwick Tree) discussion solution
+//! @param[in] nums Vector of integers
+//! @return Vector where counts[i] is num smaller elements to right of nums[i]
+static std::vector<int> countSmallerDS2(std::vector<int> nums)
+{
+    //! @details https://leetcode.com/problems
+    //!          /count-of-smaller-numbers-after-self/editorial/
+
+    //! Offset negative to non-negative
+    constexpr int offset {10000};
+
+    //! Total possible values in nums plus one dummy
+    constexpr int size {2 * 10000 + 2};
+
+    std::vector<int> tree(size);
+    std::vector<int> result;
+
+    for (int idx = static_cast<int>(std::ssize(nums)) - 1; idx >= 0; --idx)
+    {
+        result.push_back(query_DS2(nums[idx] + offset, tree));
+
+        update_DS2(nums[idx] + offset, 1, tree, size);
+    }
+
+    std::reverse(result.begin(), result.end());
+    return result;
+
+} // static std::vector<int> countSmallerDS2( ...
+
 TEST(CountSmallerTest, SampleTest1)
 {
     const std::vector<int> expected_output {2, 1, 1, 0};
 
     EXPECT_EQ(expected_output, countSmallerDS1({5, 2, 6, 1}));
+    EXPECT_EQ(expected_output, countSmallerDS2({5, 2, 6, 1}));
 }
 
 TEST(CountSmallerTest, SampleTest2)
@@ -113,6 +170,7 @@ TEST(CountSmallerTest, SampleTest2)
     const std::vector<int> expected_output {0};
 
     EXPECT_EQ(expected_output, countSmallerDS1({-1}));
+    EXPECT_EQ(expected_output, countSmallerDS2({-1}));
 }
 
 TEST(CountSmallerTest, SampleTest3)
@@ -120,4 +178,5 @@ TEST(CountSmallerTest, SampleTest3)
     const std::vector<int> expected_output {0, 0};
 
     EXPECT_EQ(expected_output, countSmallerDS1({-1, -1}));
+    EXPECT_EQ(expected_output, countSmallerDS2({-1, -1}));
 }
