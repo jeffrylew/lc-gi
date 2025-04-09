@@ -15,6 +15,7 @@ set (
     "merge_nodes_in_between_zeros"
     "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
+    "minimum_operations_to_make_array_values_equal_to_k"
     "palindrome_number"
     "pass_the_pillow"
     "remove_element"
