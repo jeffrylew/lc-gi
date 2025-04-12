@@ -17,6 +17,7 @@ set (
     "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "minimum_operations_to_make_array_values_equal_to_k"
+    "n_ary_tree_preorder_traversal"
     "palindrome_number"
     "pass_the_pillow"
     "remove_element"
