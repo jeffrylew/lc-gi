@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <bitset>
 #include <string>
 
 //! @brief First attempt to get sum of binary strings a and b
@@ -102,12 +103,41 @@ static std::string addBinaryFA(std::string a, std::string b)
 
 } // static std::string addBinaryFA( ...
 
+//! @brief Built-in function discussion solution
+//! @param[in] a First binary string
+//! @param[in] b Second binary string
+//! @return Binary string for sum of a and b
+static std::string addBinaryDS1(std::string a, std::string b)
+{
+    //! @details https://leetcode.com/problems/add-binary/editorial/
+    //!
+    //!          Time complexity O(A + B) where A = a.size() and B = b.size()
+    //!          Space complexity O(max(A, B)) for the answer
+
+    //! Convert binary strings to integers
+    const int num_a {std::stoi(a, nullptr, 2)};
+    const int num_b {std::stoi(b, nullptr, 2)};
+
+    const int sum {num_a + num_b};
+    if (sum == 0)
+    {
+        return "0";
+    }
+
+    //! Convert sum to binary string
+    std::string binary {std::bitset<32>(sum).to_string()};
+
+    return binary.substr(binary.find('1'));
+}
+
 TEST(AddBinaryTest, SampleTest1)
 {
     EXPECT_EQ("100", addBinaryFA("11", "1"));
+    EXPECT_EQ("100", addBinaryDS1("11", "1"));
 }
 
 TEST(AddBinaryTest, SampleTest2)
 {
     EXPECT_EQ("10101", addBinaryFA("1010", "1011"));
+    EXPECT_EQ("10101", addBinaryDS1("1010", "1011"));
 }
