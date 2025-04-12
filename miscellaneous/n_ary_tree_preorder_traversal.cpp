@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <stack>
 #include <vector>
 
 //! @brief First attempt helper function for preorder traversal of an n-ary tree
@@ -41,6 +42,47 @@ static std::vector<int> preorderFA(NaryNode* root)
 
 } // static std::vector<int> preorderFA( ...
 
+//! @brief Iterative discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a preorder traversal
+static std::vector<int> preorderDS1(NaryNode* root)
+{
+    //! @details leetcode.com/explore/learn/card/n-ary-tree/130/traversal/1786
+    //!
+    //!          Time complexity O(N) where N = number of nodes (size of tree).
+    //!          We visit each node exactly once and for each visit, the time
+    //!          complexity is proportional to the number of child nodes.
+    //!          Space complexity O(N). Depending on the tree structure, we
+    //!          could keep up to the entire tree.
+
+    std::vector<int>      node_values;
+    std::stack<NaryNode*> nary_nodes;
+
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    nary_nodes.push(root);
+    while (!nary_nodes.empty())
+    {
+        const auto node_ptr = nary_nodes.top();
+        nary_nodes.pop();
+
+        node_values.push(node_ptr->val);
+
+        for (auto child_rit = node_ptr->children.rbegin();
+             child_rit != node_ptr->children.rend();
+             ++child_rit)
+        {
+            nary_nodes.push(*child_rit);
+        }
+    }
+
+    return node_values;
+
+} // static std::vector<int> preorderDS1( ...
+
 TEST(NaryPreorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -54,6 +96,7 @@ TEST(NaryPreorderTest, SampleTest1)
     const std::vector<int> expected_output {1, 3, 5, 6, 2, 4};
 
     EXPECT_EQ(expected_output, preorderFA(&one));
+    EXPECT_EQ(expected_output, preorderDS1(&one));
 }
 
 TEST(NaryPreorderTest, SampleTest2)
@@ -81,4 +124,5 @@ TEST(NaryPreorderTest, SampleTest2)
         1, 2, 3, 6, 7, 11, 14, 4, 8, 12, 5, 9, 13, 10};
 
     EXPECT_EQ(expected_output, preorderFA(&one));
+    EXPECT_EQ(expected_output, preorderDS1(&one));
 }
