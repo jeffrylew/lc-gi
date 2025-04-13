@@ -2,6 +2,8 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <stack>
 #include <vector>
 
 //! @brief First attempt helper function for postorder traversal of n-ary tree
@@ -14,7 +16,7 @@ static void postorder_traversalFA(NaryNode* node, std::vector<int>& values)
         return;
     }
 
-    for (auto& child_ptr : node->children)
+    for (const auto& child_ptr : node->children)
     {
         postorder_traversalFA(child_ptr, values);
     }
@@ -42,6 +44,44 @@ static std::vector<int> postorderFA(NaryNode* root)
 
 } // static std::vector<int> postorderFA( ...
 
+//! @brief Iterative first attempt to get the postorder traversal
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a postorder traversal
+static std::vector<int> postorderFAIterative(NaryNode* root)
+{
+    //! @details leetcode.com/explore/learn/card/n-ary-tree/130/traversal/926
+    //!
+    //!          Time complexity O(N) where N = number of nodes in n-ary tree.
+    //!          Space complexity O(N) in the worst case where the stack stores
+    //!          the entire tree, which is a singly-linked list.
+
+    std::vector<int>      node_values;
+    std::stack<NaryNode*> nary_nodes;
+
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    nary_nodes.push(root);
+    while (!nary_nodes.empty())
+    {
+        const auto node_ptr = nary_nodes.top();
+        nary_nodes.pop();
+
+        node_values.push_back(node_ptr->val);
+
+        for (const auto& child_ptr : node_ptr->children)
+        {
+            nary_nodes.push(child_ptr);
+        }
+    }
+
+    std::reverse(node_values.begin(), node_values.end());
+    return node_values;
+
+} // static std::vector<int> postorderFAIterative( ...
+
 TEST(NaryPostorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -55,6 +95,7 @@ TEST(NaryPostorderTest, SampleTest1)
     const std::vector<int> expected_output {5, 6, 3, 2, 4, 1};
 
     EXPECT_EQ(expected_output, postorderFA(&one));
+    EXPECT_EQ(expected_output, postorderFAIterative(&one));
 }
 
 TEST(NaryPostorderTest, SampleTest2)
@@ -82,4 +123,5 @@ TEST(NaryPostorderTest, SampleTest2)
         2, 6, 14, 11, 7, 3, 12, 8, 4, 13, 9, 10, 5, 1};
 
     EXPECT_EQ(expected_output, postorderFA(&one));
+    EXPECT_EQ(expected_output, postorderFAIterative(&one));
 }
