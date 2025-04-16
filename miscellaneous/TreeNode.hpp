@@ -6,9 +6,9 @@ struct TreeNode
 
     TreeNode() = default;
 
-    TreeNode(int x) : val {x} {}
+    constexpr explicit TreeNode(int x) : val {x} {}
 
-    TreeNode(int x, TreeNode* left_in, TreeNode* right_in)
+    explicit TreeNode(int x, TreeNode* left_in, TreeNode* right_in)
         : val {x}
         , left {left_in}
         , right {right_in}
