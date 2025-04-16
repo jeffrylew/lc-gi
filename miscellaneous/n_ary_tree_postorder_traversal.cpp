@@ -82,6 +82,47 @@ static std::vector<int> postorderFAIterative(NaryNode* root)
 
 } // static std::vector<int> postorderFAIterative( ...
 
+static void traverse_postorderDS1(NaryNode*         curr_node,
+                                  std::vector<int>& values)
+{
+    if (curr_node == nullptr)
+    {
+        return;
+    }
+
+    //! Visit all children first
+    for (const auto& child_node : curr_node->children)
+    {
+        traverse_postorderDS1(child_node, values);
+    }
+
+    //! Then add the current node's value
+    values.push_back(curr_node->val);
+}
+
+//! @brief Recursive discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a postorder traversal
+static std::vector<int> postorderDS1(NaryNode* root)
+{
+    //! @details leetcode.com/problems/n-ary-tree-postorder-traversal/editorial
+    //!
+    //!          Time complexity O(N) where N = number of nodes in the tree.
+    //!          traverse_postorderDS1 visits each node in the tree once.
+    //!          Space complexity O(N). The max depth of recursion is the height
+    //!          which is O(N) in the worst case for a skewed tree.
+
+    std::vector<int> node_values;
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    traverse_postorderDS1(root, node_values);
+    return node_values;
+
+} // static std::vector<int> postorderDS1( ...
+
 TEST(NaryPostorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -96,6 +137,7 @@ TEST(NaryPostorderTest, SampleTest1)
 
     EXPECT_EQ(expected_output, postorderFA(&one));
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
+    EXPECT_EQ(expected_output, postorderDS1(&one));
 }
 
 TEST(NaryPostorderTest, SampleTest2)
@@ -124,4 +166,5 @@ TEST(NaryPostorderTest, SampleTest2)
 
     EXPECT_EQ(expected_output, postorderFA(&one));
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
+    EXPECT_EQ(expected_output, postorderDS1(&one));
 }
