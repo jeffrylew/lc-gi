@@ -50,6 +50,30 @@ static int maxDepthFATopDown(TreeNode* root)
 
 } // static int maxDepthFATopDown( ...
 
+//! @brief Bottom up recursive first attempt solution to get max depth of tree
+//! @param[in] root Pointer to root of binary tree
+//! @return Max depth of binary tree
+static int maxDepthFABottomUp(TreeNode* root)
+{
+    //! @details https://leetcode.com/explore/learn/card/data-structure-tree/17
+    //!          /solve-problems-recursively/534/
+    //!
+    //!          Time complexity O(N) where N = number of nodes in tree.
+    //!          Space complexity O(N) in the worst case for a skewed binary
+    //!          tree that resembles a singly linked list.
+
+    if (root == nullptr)
+    {
+        return 0;
+    }
+
+    const int left_depth {maxDepthFABottomUp(root->left)};
+    const int right_depth {maxDepthFABottomUp(root->right)};
+
+    return std::max(left_depth, right_depth) + 1;
+
+} // static int maxDepthFABottomUp( ...
+
 TEST(MaxDepthTest, SampleTest1)
 {
     constexpr TreeNode seven {7};
@@ -60,6 +84,7 @@ TEST(MaxDepthTest, SampleTest1)
     const TreeNode three {3, &nine, &twenty};
 
     EXPECT_EQ(3, maxDepthFATopDown(&three));
+    EXPECT_EQ(3, maxDepthFABottomUp(&three));
 }
 
 TEST(MaxDepthTest, SampleTest2)
@@ -68,4 +93,5 @@ TEST(MaxDepthTest, SampleTest2)
     const     TreeNode one {1, nullptr, &two};
 
     EXPECT_EQ(2, maxDepthFATopDown(&one));
+    EXPECT_EQ(2, maxDepthFABottomUp(&one));
 }
