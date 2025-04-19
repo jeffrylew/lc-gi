@@ -62,7 +62,13 @@ static std::vector<std::vector<int>> levelOrderDS1(NaryNode* root)
     //!          Time complexity O(N) where N = number of nodes. Each node is
     //!          added to the queue, removed from the queue, and added to the
     //!          node_values output once.
-    //!          Space complexity O(N).
+    //!          Space complexity O(N). The nary_nodes queue will have 2 layers
+    //!          of the tree on it at any given time. In the worst case, this is
+    //!          all of the nodes. In the best case, it is just 1 node when the
+    //!          tree is a singly linked list. For balanced trees, half or more
+    //!          of the nodes are often in the lowest 2 layers in the average
+    //!          case. Thus, we go with the worst case of O(N) since the average
+    //!          case is probably similar.
 
     std::vector<std::vector<int>> node_values;
     if (root == nullptr)
