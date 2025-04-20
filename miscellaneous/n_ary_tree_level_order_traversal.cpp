@@ -145,6 +145,46 @@ static std::vector<std::vector<int>> levelOrderDS2(NaryNode* root)
 
 } // static std::vector<std::vector<int>> levelOrderDS2( ...
 
+//! @brief Helper function for recursive discussion solution
+static void traverse_nary_tree(NaryNode*                      node,
+                               int                            level,
+                               std::vector<std::vector<int>>& values)
+{
+    if (std::ssize(values) <= level)
+    {
+        values.emplace_back();
+    }
+
+    values[level].push_back(node->val);
+
+    for (const auto& child : node->children)
+    {
+        traverse_nary_tree(child, level + 1, values);
+    }
+}
+
+//! @brief Recursive discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values per level
+static std::vector<std::vector<int>> levelOrderDS3(NaryNode* root)
+{
+    //! @details https://leetcode.com/problems/n-ary-tree-level-order-traversal
+    //!
+    //!          Time complexity O(N) where N = number of nodes.
+    //!          Space complexity O(log N) in the average case and O(N) in the
+    //!          worst case for he space used on the runtime stack.
+
+    std::vector<std::vector<int>> node_values;
+
+    if (root != nullptr)
+    {
+        traverse_nary_tree(root, 0, node_values);
+    }
+
+    return node_values;
+
+} // static std::vector<std::vector<int>> levelOrderDS3( ...
+
 TEST(NaryLevelOrderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -161,6 +201,7 @@ TEST(NaryLevelOrderTest, SampleTest1)
     EXPECT_EQ(expected_output, levelOrderFA(&one));
     EXPECT_EQ(expected_output, levelOrderDS1(&one));
     EXPECT_EQ(expected_output, levelOrderDS2(&one));
+    EXPECT_EQ(expected_output, levelOrderDS3(&one));
 }
 
 TEST(NaryLevelOrderTest, SampleTest2)
@@ -190,4 +231,5 @@ TEST(NaryLevelOrderTest, SampleTest2)
     EXPECT_EQ(expected_output, levelOrderFA(&one));
     EXPECT_EQ(expected_output, levelOrderDS1(&one));
     EXPECT_EQ(expected_output, levelOrderDS2(&one));
+    EXPECT_EQ(expected_output, levelOrderDS3(&one));
 }
