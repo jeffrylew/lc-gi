@@ -104,6 +104,47 @@ static std::vector<std::vector<int>> levelOrderDS1(NaryNode* root)
     return node_values;
 }
 
+//! @brief Simplified BFS discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values per level
+static std::vector<std::vector<int>> levelOrderDS2(NaryNode* root)
+{
+    //! @details https://leetcode.com/problems/n-ary-tree-level-order-traversal
+    //!
+    //!          Time complexity O(N) where N = number of nodes.
+    //!          Space complexity O(N) since we always have vectors containing
+    //!          levels of nodes.
+
+    if (root == nullptr)
+    {
+        return {};
+    }
+
+    std::vector<std::vector<int>> node_values;
+    std::vector<NaryNode*>        prev_layer {root};
+
+    while (!prev_layer.empty())
+    {
+        std::vector<NaryNode*> curr_layer;
+        auto& prev_vals = node_values.emplace_back();
+
+        for (const auto& node : prev_layer)
+        {
+            prev_vals.push_back(node->val);
+
+            for (const auto& child : node->children)
+            {
+                curr_layer.push_back(child);
+            }
+        }
+
+        prev_layer = std::move(curr_layer);
+    }
+
+    return node_values;
+
+} // static std::vector<std::vector<int>> levelOrderDS2( ...
+
 TEST(NaryLevelOrderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -119,6 +160,7 @@ TEST(NaryLevelOrderTest, SampleTest1)
 
     EXPECT_EQ(expected_output, levelOrderFA(&one));
     EXPECT_EQ(expected_output, levelOrderDS1(&one));
+    EXPECT_EQ(expected_output, levelOrderDS2(&one));
 }
 
 TEST(NaryLevelOrderTest, SampleTest2)
@@ -147,4 +189,5 @@ TEST(NaryLevelOrderTest, SampleTest2)
 
     EXPECT_EQ(expected_output, levelOrderFA(&one));
     EXPECT_EQ(expected_output, levelOrderDS1(&one));
+    EXPECT_EQ(expected_output, levelOrderDS2(&one));
 }
