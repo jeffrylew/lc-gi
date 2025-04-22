@@ -139,7 +139,7 @@ static std::vector<int> postorderDS2(NaryNode* root)
 
     std::vector<int> node_values;
 
-    //! If the root is null, return the empty vector
+    //! If the root is nullptr, return the empty vector
     if (root == nullptr)
     {
         return node_values;
@@ -169,6 +169,64 @@ static std::vector<int> postorderDS2(NaryNode* root)
 
 } // static std::vector<int> postorderDS2( ...
 
+//! @brief Iterative (two stacks) discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a postorder traversal
+static std::vector<int> postorderDS3(NaryNode* root)
+{
+    //! @details leetcode.com/problems/n-ary-tree-postorder-traversal/editorial
+    //!
+    //!          Time complexity O(N) where N = number of nodes in the tree. The
+    //!          first loop iterates over each node in the tree exactly once.
+    //!          The second loop also processes each node exactly once, adding
+    //!          their values to node_values. Thus the overall time complexity
+    //!          is O(N) + O(N) = O(N).
+    //!          Space complexity O(N). nary_nodes and reverse_nary_nodes can
+    //!          hold up to N nodes in the worst case.
+
+    std::vector<int> node_values;
+
+    //! If the root is nullptr, return the empty vector
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    //! Stack for traversal
+    std::stack<NaryNode*> nary_nodes;
+    nary_nodes.push(root);
+
+    //! Stack to reverse the order
+    std::stack<NaryNode*> reverse_nary_nodes;
+
+    //! Traverse the tree using nary_nodes
+    while (!nary_nodes.empty())
+    {
+        const auto curr_node = nary_nodes.top();
+        nary_nodes.pop();
+
+        reverse_nary_nodes.push(curr_node);
+
+        //! Push all the children of the current node onto nary_nodes
+        for (const auto& child : curr_node->children)
+        {
+            nary_nodes.push(child);
+        }
+    }
+
+    //! Pop nodes from reverse_nary_nodes and add their values to node_values
+    while (!reverse_nary_nodes.empty())
+    {
+        const auto curr_node = reverse_nary_nodes.top();
+        reverse_nary_nodes.pop();
+
+        node_values.push_back(curr_node->val);
+    }
+
+    return node_values;
+
+} // static std::vector<int> postorderDS3( ...
+
 TEST(NaryPostorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -185,6 +243,7 @@ TEST(NaryPostorderTest, SampleTest1)
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
     EXPECT_EQ(expected_output, postorderDS1(&one));
     EXPECT_EQ(expected_output, postorderDS2(&one));
+    EXPECT_EQ(expected_output, postorderDS3(&one));
 }
 
 TEST(NaryPostorderTest, SampleTest2)
@@ -215,4 +274,5 @@ TEST(NaryPostorderTest, SampleTest2)
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
     EXPECT_EQ(expected_output, postorderDS1(&one));
     EXPECT_EQ(expected_output, postorderDS2(&one));
+    EXPECT_EQ(expected_output, postorderDS3(&one));
 }
