@@ -123,6 +123,52 @@ static std::vector<int> postorderDS1(NaryNode* root)
 
 } // static std::vector<int> postorderDS1( ...
 
+//! @brief Iterative (explicit reversal) discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a postorder traversal
+static std::vector<int> postorderDS2(NaryNode* root)
+{
+    //! @details leetcode.com/problems/n-ary-tree-postorder-traversal/editorial
+    //!
+    //!          Time complexity O(N) where N = number of nodes in the tree. The
+    //!          main loop iterates over every node in the tree. Each stack
+    //!          operation inside the loop takes contant time and reversing the
+    //!          result vector takes additional linear time.
+    //!          Space complexity O(N). In the worst case, the stack can store
+    //!          all nodes for a highly unbalanced tree (i.e. skewed tree).
+
+    std::vector<int> node_values;
+
+    //! If the root is null, return the empty vector
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    std::stack<NaryNode*> nary_nodes;
+    nary_nodes.push(root);
+
+    //! Traverse the tree using the stack
+    while (!nary_nodes.empty())
+    {
+        const auto curr_node = nary_nodes.top();
+        nary_nodes.pop();
+
+        node_values.push_back(curr_node->val);
+
+        //! Push all the children of the current node onto the stack
+        for (const auto& child : curr_node->children)
+        {
+            nary_nodes.push(child);
+        }
+    }
+
+    //! Reverse the result list to get the correct postorder traversal
+    std::reverse(node_values.begin(), node_values.end());
+    return node_values;
+
+} // static std::vector<int> postorderDS2( ...
+
 TEST(NaryPostorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -138,6 +184,7 @@ TEST(NaryPostorderTest, SampleTest1)
     EXPECT_EQ(expected_output, postorderFA(&one));
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
     EXPECT_EQ(expected_output, postorderDS1(&one));
+    EXPECT_EQ(expected_output, postorderDS2(&one));
 }
 
 TEST(NaryPostorderTest, SampleTest2)
@@ -167,4 +214,5 @@ TEST(NaryPostorderTest, SampleTest2)
     EXPECT_EQ(expected_output, postorderFA(&one));
     EXPECT_EQ(expected_output, postorderFAIterative(&one));
     EXPECT_EQ(expected_output, postorderDS1(&one));
+    EXPECT_EQ(expected_output, postorderDS2(&one));
 }
