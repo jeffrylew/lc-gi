@@ -227,6 +227,74 @@ static std::vector<int> postorderDS3(NaryNode* root)
 
 } // static std::vector<int> postorderDS3( ...
 
+//! @struct VisitNode
+//! @brief Helper struct to pair a node with its visited status
+struct VisitNode
+{
+    NaryNode* node {nullptr};
+    bool      is_visited {};
+
+    explicit VisitNode(NaryNode* node_in, bool visited)
+        : node {node_in}
+        , is_visited {visited}
+    {
+    }
+};
+
+//! @brief Iterative (without reverse) discussion solution
+//! @param[in] root Pointer to an NaryNode that is the root of an n-ary tree
+//! @return Vector of node values from a postorder traversal
+static std::vector<int> postorderDS4(NaryNode* root)
+{
+    //! @details leetcode.com/problems/n-ary-tree-postorder-traversal/editorial
+    //!
+    //!          Time complexity O(N) where N = number of nodes in the tree.
+    //!          Each node is pushed onto the stack twice - once with is_visited
+    //!          = false and once with it true. Consequently, each node is
+    //!          popped from the stack twice so the overall time complexity is
+    //!          O(4 * N) = O(N).
+    //!          Space complexity O(N). The visit_nodes stack will contain all
+    //!          N nodes for a skewed tree in the worst case.
+
+    std::vector<int> node_values;
+
+    //! If the root is nullptr, return the empty vector
+    if (root == nullptr)
+    {
+        return node_values;
+    }
+
+    std::stack<VisitNode> visit_nodes;
+    visit_nodes.emplace(root, false);
+
+    while (!visit_nodes.empty())
+    {
+        const auto [curr_node, is_visited] = visit_nodes.top();
+        visit_nodes.pop();
+
+        if (is_visited)
+        {
+            //! If the node has been visited, add its value to node_values
+            node_values.push_back(curr_node->val);
+            continue;
+        }
+
+        //! Mark the current node as visited and push it back onto visit_nodes
+        visit_nodes.emplace(curr_node, true);
+
+        //! Push all children to the visit_nodes stack in reverse order
+        for (auto rit = curr_node->children.rbegin();
+             rit != curr_node->children.rend();
+             ++rit)
+        {
+            visit_nodes.emplace(*rit, false);
+        }
+    }
+
+    return node_values;
+
+} // static std::vector<int> postorderDS4( ...
+
 TEST(NaryPostorderTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -244,6 +312,7 @@ TEST(NaryPostorderTest, SampleTest1)
     EXPECT_EQ(expected_output, postorderDS1(&one));
     EXPECT_EQ(expected_output, postorderDS2(&one));
     EXPECT_EQ(expected_output, postorderDS3(&one));
+    EXPECT_EQ(expected_output, postorderDS4(&one));
 }
 
 TEST(NaryPostorderTest, SampleTest2)
@@ -275,4 +344,5 @@ TEST(NaryPostorderTest, SampleTest2)
     EXPECT_EQ(expected_output, postorderDS1(&one));
     EXPECT_EQ(expected_output, postorderDS2(&one));
     EXPECT_EQ(expected_output, postorderDS3(&one));
+    EXPECT_EQ(expected_output, postorderDS4(&one));
 }
