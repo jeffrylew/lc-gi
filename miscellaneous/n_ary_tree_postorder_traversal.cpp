@@ -82,6 +82,9 @@ static std::vector<int> postorderFAIterative(NaryNode* root)
 
 } // static std::vector<int> postorderFAIterative( ...
 
+//! @brief Recursive helper traverses all subtrees and adds value to values
+//! @param[in]  curr_node Pointer to current NaryNode
+//! @param[out] values    Reference to vector of node values
 static void traverse_postorderDS1(NaryNode*         curr_node,
                                   std::vector<int>& values)
 {
