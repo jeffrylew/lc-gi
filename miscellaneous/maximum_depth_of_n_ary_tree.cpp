@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <functional>
 
-//! @brief First attempt to recursively find the max depth of an n-ary tree
+//! @brief First attempt top down recursive solution to find the max depth
 //! @param[in] root Pointer to root NaryNode
 //! @return Max num of nodes along longest path from root to farthest leaf node
 static int maxDepthFARecursive(NaryNode* root)
@@ -48,6 +48,33 @@ static int maxDepthFARecursive(NaryNode* root)
 
 } // static int maxDepthFARecursive( ...
 
+//! @brief Second attempt bottom up recursive solution to find the max depth
+//! @param[in] root Pointer to root NaryNode
+//! @return Max num of nodes along longest path from root to farthest leaf node
+static int maxDepthSARecursive(NaryNode* root)
+{
+    //! @details leetcode.com/explore/learn/card/n-ary-tree/131/recursion/919/
+    //!
+    //!          Time complexity O(N) where N = number of nodes in n-ary tree
+    //!          Space complexity O(N) in the worst case when n-ary tree is
+    //!          skewed like a singly linked list
+
+    if (root == nullptr)
+    {
+        return 0;
+    }
+
+    int max_depth {};
+
+    for (const auto& child : root->children)
+    {
+        max_depth = std::max(max_depth, maxDepthSARecursive(child));
+    }
+
+    return max_depth + 1;
+
+} // static int maxDepthSARecursive( ...
+
 TEST(MaxDepthTest, SampleTest1)
 {
     constexpr NaryNode two {2};
@@ -59,6 +86,7 @@ TEST(MaxDepthTest, SampleTest1)
     const NaryNode one {1, std::vector<NaryNode*> {&three, &two, &four}};
 
     EXPECT_EQ(3, maxDepthFARecursive(&one));
+    EXPECT_EQ(3, maxDepthSARecursive(&one));
 }
 
 TEST(MaxDepthTest, SampleTest2)
@@ -83,4 +111,5 @@ TEST(MaxDepthTest, SampleTest2)
     const NaryNode one {1, std::vector<NaryNode*> {&two, &three, &four, &five}};
 
     EXPECT_EQ(5, maxDepthFARecursive(&one));
+    EXPECT_EQ(5, maxDepthSARecursive(&one));
 }
