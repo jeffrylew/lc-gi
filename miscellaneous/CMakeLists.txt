@@ -14,6 +14,7 @@ set (
     "longest_substring_with_at_most_k_distinct_characters"
     "lucky_numbers_in_a_matrix"
     "maximum_depth_of_binary_tree"
+    "maximum_depth_of_n_ary_tree"
     "merge_nodes_in_between_zeros"
     "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
