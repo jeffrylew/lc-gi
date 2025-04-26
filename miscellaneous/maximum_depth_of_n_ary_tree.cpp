@@ -2,14 +2,49 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <functional>
+
 //! @brief First attempt to recursively find the max depth of an n-ary tree
 //! @param[in] root Pointer to root NaryNode
 //! @return Max num of nodes along longest path from root to farthest leaf node
 static int maxDepthFARecursive(NaryNode* root)
 {
     //! @details leetcode.com/explore/learn/card/n-ary-tree/131/recursion/919/
+    //!
+    //!          Time complexity O(N) where N = number of nodes in n-ary tree
+    //!          Space complexity O(N) in the worst case when n-ary tree is
+    //!          skewed like a singly linked list
 
-    //! @todo
+    if (root == nullptr)
+    {
+        return 0;
+    }
+
+    int max_depth {};
+
+    const std::function<void(NaryNode*, int)> find_max_depth =
+        [&](NaryNode* node, int curr_depth) {
+            if (node == nullptr)
+            {
+                return;
+            }
+
+            if (node->children.empty())
+            {
+                max_depth = std::max(max_depth, curr_depth);
+                return;
+            }
+
+            for (const auto& child : node->children)
+            {
+                find_max_depth(child, curr_depth + 1);
+            }
+        };
+
+    find_max_depth(root, 1);
+
+    return max_depth;
 
 } // static int maxDepthFARecursive( ...
 
