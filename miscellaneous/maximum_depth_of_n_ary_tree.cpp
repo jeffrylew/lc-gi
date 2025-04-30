@@ -120,6 +120,9 @@ static int maxDepthDS1(NaryNode* root)
 static int maxDepthDS2(NaryNode* root)
 {
     //! @details https://leetcode.com/problems/maximum-depth-of-n-ary-tree
+    //!
+    //!          Time complexity O(N) where N = number of nodes in n-ary tree.
+    //!          Space complexity O(N).
 
     if (root == nullptr)
     {
