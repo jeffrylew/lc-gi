@@ -3,6 +3,7 @@ set (
     "add_binary"
     "crawler_log_folder"
     "create_binary_tree_from_descriptions"
+    "encode_n_ary_tree_to_binary_tree"
     "find_the_index_of_the_first_occurrence_in_a_string"
     "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
     "fruits_into_baskets"
