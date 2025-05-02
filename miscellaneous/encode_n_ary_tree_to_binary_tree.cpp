@@ -42,7 +42,30 @@ TEST(CodecTest, SampleTest1)
 
 TEST(CodecTest, SampleTest2)
 {
-    //! @todo
+    NaryNode two {2};
+    NaryNode six {6};
+    NaryNode ten {10};
+    NaryNode twelve {12};
+    NaryNode thirteen {13};
+    NaryNode fourteen {14};
+
+    NaryNode eight {8, std::vector<NaryNode*> {&twelve}};
+    NaryNode nine {9, std::vector<NaryNode*> {&thirteen}};
+    NaryNode eleven {11, std::vector<NaryNode*> {&fourteen}};
+
+    NaryNode four {4, std::vector<NaryNode*> {&eight}};
+    NaryNode seven {7, std::vector<NaryNode*> {&eleven}};
+
+    NaryNode three {3, std::vector<NaryNode*> {&six, &seven}};
+    NaryNode five {5, std::vector<NaryNode*> {&nine, &ten}};
+
+    NaryNode one {1, std::vector<NaryNode*> {&two, &three, &four, &five}};
+
+    CodecFA    codec_fa;
+    const auto root_fa = codec_fa.decode(codec_fa.encode(&one));
+    EXPECT_NE(nullptr, root_fa);
+    EXPECT_EQ(one.val, root_fa->val);
+    EXPECT_EQ(on.children, root_fa->children);
 }
 
 TEST(CodecTest, SampleTest3)
