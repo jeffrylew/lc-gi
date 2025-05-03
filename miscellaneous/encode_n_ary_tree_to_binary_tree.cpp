@@ -6,7 +6,9 @@
 #include <vector>
 
 //! @class CodecFA
-//! @brief First attempt solution
+//! @brief First attempt solution to encode an n-ary tree into a binary tree and
+//!        decode the binary tree back to the original n-ary tree
+//! @details leetcode.com/explore/learn/card/n-ary-tree/131/recursion/920
 class CodecFA
 {
 public:
