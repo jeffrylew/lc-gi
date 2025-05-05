@@ -14,13 +14,14 @@ class CodecFA
 {
 public:
     //! @brief Recursive helper function to encode n-ary tree to a binary tree
-    //! @param[in, out] parent_nary_node Pointer to parent of current NaryNode
+    //! @pre LC handles deletion of dynamically allocated memory
     //! @param[in, out] curr_nary_node   Pointer to current NaryNode
+    //! @param[in, out] parent_nary_node Pointer to parent of current NaryNode
     //! @param[in]      curr_idx         Index of current NaryNode in parent
     //! @return Pointer to TreeNode
-    TreeNode* encode(NaryNode* parent_nary_node,
-                     NaryNode* curr_nary_node,
-                     int       curr_idx)
+    [[nodiscard]] TreeNode* encode(NaryNode* curr_nary_node,
+                                   NaryNode* parent_nary_node,
+                                   int       curr_idx)
     {
         if (curr_nary_node == nullptr)
         {
@@ -28,101 +29,70 @@ public:
         }
 
         auto* tree_node = new TreeNode {curr_nary_node->val};
-        if (parent_nary_node != nullptr)
+        if (parent_nary_node != nullptr
+            && std::ssize(parent_nary_node->children) > curr_idx + 1)
         {
-            if (std::ssize(parent_nary_node->children) > 1)
-            {
-                //! Left child of each TreeNode is next sibling of curr NaryNode
-                tree_node->left =
-                    encode(parent_nary_node->children[1], parent_nary_node);
-            }
+            //! Left child of each TreeNode is next sibling of curr NaryNode
+            tree_node->left = encode(parent_nary_node->children[curr_idx + 1],
+                                     parent_nary_node,
+                                     curr_idx + 1);
         }
 
         if (!curr_nary_node->children.empty())
         {
             //! Right child of each TreeNode is first child of current NaryNode
-            tree_node->right =
-                encode(curr_nary_node->children[0], curr_nary_node);
+            tree_node->right = encode(curr_nary_node->children[0],
+                                      curr_nary_node,
+                                      curr_idx);
         }
+
+        return tree_node;
     }
 
     //! Encodes an n-ary tree to a binary tree
     //! @pre LC handles deletion of dynamically allocated memory
     TreeNode* encode(NaryNode* root)
     {
-        return encode(nullptr, root, 0);
-        if (root == nullptr)
-        {
-            return nullptr;
-        }
-
-        auto* tree_node = new TreeNode {root->val};
-        if (root->children.empty())
-        {
-            return tree_node;
-        }
-
-        //! Right child of each TreeNode is first child of NaryNode
-        tree_node->right = encode(root->children[0]);
-
-        //! Left child of each TreeNode is the next sibling of NaryNode
-        for (int sibling = 1; sibling < std::ssize(root->children); ++sibling)
-        {
-            tree_node->left = encode(root->children[sibling]);
-        }
-
-        return tree_node;
+        return encode(root, nullptr, 0);
     }
 
     //! @brief Recursive helper function to decode binary tree to an n-ary tree
-    //! @param[in, out] root   Pointer to TreeNode
-    //! @param[in, out] parent Pointer to NaryNode that is current node's parent
-    //! @return Pointer to the root NaryNode
-    NaryNode* decode(TreeNode* root, NaryNode* parent)
+    //! @pre LC handles deletion of dynamically allocated memory
+    //! @param[in, out] curr_tree_node   Pointer to current TreeNode
+    //! @param[in, out] parent_nary_node Pointer to parent of current NaryNode
+    //! @return Pointer to NaryNode
+    [[nodiscard]] NaryNode*
+        decode(TreeNode* curr_tree_node, NaryNode* parent_nary_node)
     {
-        if (root == nullptr)
+        if (curr_tree_node == nullptr)
         {
             return nullptr;
         }
 
-        auto* node = new NaryNode {root->val};
-        if (root->left != nullptr)
+        auto* nary_node = new NaryNode {curr_tree_node->val};
+        if (curr_tree_node->left != nullptr && parent_nary_node != nullptr)
         {
             //! Add TreeNode left child as next child of NaryNode's parent
-            parent->children.emplace_back(decode(root->left, parent));
+            parent_nary_node->children.emplace_back(
+                decode(curr_tree_node->left, parent_nary_node));
         }
 
-        if (root->right != nullptr)
+        if (curr_tree_node->right != nullptr)
         {
             //! Add TreeNode right child as first child of NaryNode
-            node->children.insert(node->children.begin(),
-                                  decode(root->right, ));
+            nary_node->children.insert(
+                nary_node->children.begin(),
+                decode(curr_tree_node->right, nary_node));
         }
+
+        return nary_node;
     }
 
     //! Decodes a binary tree to an n-ary tree
     //! @pre LC handles deletion of dynamically allocated memory
     NaryNode* decode(TreeNode* root)
     {
-        if (root == nullptr)
-        {
-            return nullptr;
-        }
-
-        auto* node = new NaryNode {root->val};
-        if (root->left != nullptr)
-        {
-            //! Add TreeNode left child as next child of NaryNode's parent
-            node->children.emplace_back(decode(root->left));
-        }
-
-        if (root->right != nullptr)
-        {
-            //! Add TreeNode right child as first child of NaryNode
-            node->children.insert(node->children.begin(), decode(root->right));
-        }
-
-        return node;
+        return decode(root, nullptr);
     }
 };
 
