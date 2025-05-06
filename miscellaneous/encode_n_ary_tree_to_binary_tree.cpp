@@ -10,6 +10,7 @@
 //!        decode the binary tree back to the original n-ary tree
 //! @details leetcode.com/explore/learn/card/n-ary-tree/131/recursion/920
 //!          Used leetcode.com/explore/learn/card/n-ary-tree/131/recursion/922
+//!          Solution has UB due to incrementing nullptr somewhere.
 class CodecFA
 {
 public:
@@ -96,6 +97,25 @@ public:
     }
 };
 
+//! @class CodecDS1
+//! @brief BFS discussion solution
+//! @details leetcode.com/problems/encode-n-ary-tree-to-binary-tree/editorial
+class CodecDS1
+{
+public:
+    //! Encodes an n-ary tree to a binary tree
+    TreeNode* encode(NaryNode* root)
+    {
+        //! @todo
+    }
+
+    //! Decodes a binary tree to an n-ary tree
+    NaryNode* decode(TreeNode* root)
+    {
+        //! @todo
+    }
+};
+
 TEST(CodecTest, SampleTest1)
 {
     NaryNode two {2};
@@ -106,11 +126,19 @@ TEST(CodecTest, SampleTest1)
     NaryNode three {3, std::vector<NaryNode*> {&five, &six}};
     NaryNode one {1, std::vector<NaryNode*> {&three, &two, &four}};
 
+    /*
     CodecFA    codec_fa;
     const auto root_fa = codec_fa.decode(codec_fa.encode(&one));
     EXPECT_NE(nullptr, root_fa);
     EXPECT_EQ(one.val, root_fa->val);
     EXPECT_EQ(one.children, root_fa->children);
+     */
+
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.decode(codec_ds1.encode(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.children, root_ds1->children);
 }
 
 TEST(CodecTest, SampleTest2)
@@ -134,15 +162,26 @@ TEST(CodecTest, SampleTest2)
 
     NaryNode one {1, std::vector<NaryNode*> {&two, &three, &four, &five}};
 
+    /*
     CodecFA    codec_fa;
     const auto root_fa = codec_fa.decode(codec_fa.encode(&one));
     EXPECT_NE(nullptr, root_fa);
     EXPECT_EQ(one.val, root_fa->val);
     EXPECT_EQ(on.children, root_fa->children);
+     */
+
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.decode(codec_ds1.encode(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.children, root_ds1->children);
 }
 
 TEST(CodecTest, SampleTest3)
 {
     CodecFA codec_fa;
     EXPECT_EQ(nullptr, codec_fa.decode(codec_fa.encode(nullptr)));
+
+    CodecDS1 codec_ds1;
+    EXPECT_EQ(nullptr, codec_ds1.decode(codec_ds1.encode(nullptr)));
 }
