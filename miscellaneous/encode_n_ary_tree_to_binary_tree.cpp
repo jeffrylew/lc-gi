@@ -3,6 +3,8 @@
 
 #include <gtest/gtest.h>
 
+#include <queue>
+#include <utility>
 #include <vector>
 
 //! @class CodecFA
@@ -106,7 +108,47 @@ public:
     //! Encodes an n-ary tree to a binary tree
     TreeNode* encode(NaryNode* root)
     {
-        //! @todo
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto* new_root = new TreeNode {root->val};
+
+        std::queue<std::pair<TreeNode*, NaryNode*>> node_queue;
+        node_queue.emplace(new_root, root);
+
+        while (!node_queue.empty())
+        {
+            auto [curr_tree_node, curr_nary_node] = node_queue.front();
+            node_queue.pop();
+
+            //! Encode the child NaryNodes into a list of TreeNode
+            TreeNode* prev_tree_node {nullptr};
+            TreeNode* head_tree_node {nullptr};
+            for (const auto& child_nary_node : curr_nary_node->children)
+            {
+                auto* new_tree_node = new TreeNode {child_nary_node->val};
+
+                if (prev_tree_node == nullptr)
+                {
+                    head_tree_node = new_tree_node;
+                }
+                else
+                {
+                    prev_tree_node->right = new_tree_node;
+                }
+
+                prev_tree_node = new_tree_node;
+
+                node_queue.emplace(new_tree_node, child_nary_node);
+            }
+
+            //! Attach the list of children to the left node
+            curr_tree_node->left = head_tree_node;
+        }
+
+        return new_root;
     }
 
     //! Decodes a binary tree to an n-ary tree
