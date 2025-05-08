@@ -154,7 +154,35 @@ public:
     //! Decodes a binary tree to an n-ary tree
     NaryNode* decode(TreeNode* root)
     {
-        //! @todo
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto* new_root = new NaryNode {root->val};
+
+        std::queue<std::pair<NaryNode*, TreeNode*>> node_queue;
+        node_queue.emplace(new_root, root);
+
+        while (!node_queue.empty())
+        {
+            auto [curr_nary_node, curr_tree_node] = node_queue.front();
+            node_queue.pop();
+
+            //! Decode the children list
+            TreeNode* first_child = curr_tree_node->left;
+            TreeNode* sibling     = first_child;
+            while (sibling != nullptr)
+            {
+                auto* child_nary_node = new NaryNode {sibling->val};
+                curr_nary_node->children.emplace_back(child_nary_node);
+
+                node_queue.emplace(child_nary_node, sibling);
+                sibling = sibling->right;
+            }
+        }
+
+        return new_root;
     }
 };
 
