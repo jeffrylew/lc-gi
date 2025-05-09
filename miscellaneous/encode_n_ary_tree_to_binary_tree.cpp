@@ -102,6 +102,15 @@ public:
 //! @class CodecDS1
 //! @brief BFS discussion solution
 //! @details leetcode.com/problems/encode-n-ary-tree-to-binary-tree/editorial
+//!
+//!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+//!          We traverse each node in the tree once and only once.
+//!          Space complexity O(L) where L = max number of nodes that reside in
+//!          the same level. Since L is proportional to N in the worst case, we
+//!          can generalize to O(N). We use a queue for level by level traversal
+//!          and at any moment, the queue contains nodes that are at most spread
+//!          into two levels. Assuming the max number of nodes at one level is L
+//!          then the size of the queue would be less than 2L at any time.
 class CodecDS1
 {
 public:
