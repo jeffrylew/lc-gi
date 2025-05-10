@@ -132,7 +132,7 @@ public:
             auto [curr_tree_node, curr_nary_node] = node_queue.front();
             node_queue.pop();
 
-            //! Encode the child NaryNodes into a list of TreeNode
+            //! Encode the child NaryNodes into a singly linked list of TreeNode
             TreeNode* prev_tree_node {nullptr};
             TreeNode* head_tree_node {nullptr};
             for (const auto& child_nary_node : curr_nary_node->children)
@@ -153,7 +153,7 @@ public:
                 node_queue.emplace(new_tree_node, child_nary_node);
             }
 
-            //! Attach the list of children to the left node
+            //! Attach the singly linked list of children to the left node
             curr_tree_node->left = head_tree_node;
         }
 
@@ -178,9 +178,8 @@ public:
             auto [curr_nary_node, curr_tree_node] = node_queue.front();
             node_queue.pop();
 
-            //! Decode the children list
-            TreeNode* first_child = curr_tree_node->left;
-            TreeNode* sibling     = first_child;
+            //! Decode the children list (curr_tree_node->left is first child)
+            TreeNode* sibling = curr_tree_node->left;
             while (sibling != nullptr)
             {
                 auto* child_nary_node = new NaryNode {sibling->val};
@@ -198,19 +197,64 @@ public:
 //! @class CodecDS2
 //! @brief DFS discussion solution
 //! @details leetcode.com/problems/encode-n-ary-tree-to-binary-tree/editorial
+//!
+//!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+//!          We traverse each node in the tree once and only once.
+//!          Space complexity O(D) where D = depth of the N-ary tree. In the
+//!          worst case, we can generalize to O(N). The size of the call stack
+//!          at any moment is exactly the level where the current node resides.
 class CodecDS2
 {
 public:
     //! Encodes an n-ary tree to a binary tree
     TreeNode* encode(NaryNode* root)
     {
-        //! @todo
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto* new_root = new TreeNode {root->val};
+
+        //! Encode the first child NaryNode as the left TreeNode of binary tree
+        if (!root->children.empty())
+        {
+            auto* first_child_nary_node = root->children.front();
+            new_root->left              = encode(first_child_nary_node);
+        }
+
+        //! Encode the rest of the sibling nodes (new_root->left is first child)
+        auto* sibling_tree_node = new_root->left;
+        for (int child_idx = 1;
+             child_idx < std::ssize(root->children);
+             ++child_idx)
+        {
+            sibling_tree_node->right = encode(root->children[child_idx]);
+            sibling_tree_node        = sibling_tree_node->right;
+        }
+
+        return new_root;
     }
 
     //! Decodes a binary tree to an n-ary tree
     NaryNode* decode(TreeNode* root)
     {
-        //! @todo
+        if (root == nullptr)
+        {
+            return nullptr;
+        }
+
+        auto* new_root = new NaryNode {root->val};
+
+        //! Decode all children nodes
+        auto* sibling_tree_node = root->left;
+        while (sibling_tree_node != nullptr)
+        {
+            new_root->children.push_back(decode(sibling_tree_node));
+            sibling_tree_node = sibling_tree_node->right;
+        }
+
+        return new_root;
     }
 };
 
