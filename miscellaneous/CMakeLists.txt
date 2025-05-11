@@ -29,6 +29,7 @@ set (
     "reverse_substrings_between_each_pair_of_parentheses"
     "sort_the_people"
     "sum_of_digits_of_string_after_convert"
+    "symmetric_tree"
     "three_consecutive_odds"
     "valid_parentheses"
     "water_bottles"
