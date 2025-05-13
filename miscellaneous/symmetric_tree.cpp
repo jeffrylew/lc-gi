@@ -2,6 +2,40 @@
 
 #include <gtest/gtest.h>
 
+#include <queue>
+
+static void preorder_traversal_FA(TreeNode* root, std::queue<int>& node_values)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    node_values.push(root->val);
+    preorder_traversal_FA(root->left);
+    preorder_traversal_FA(root->right);
+}
+
+static void postorder_traversal_FA(TreeNode* root, std::queue<int>& node_values)
+{
+    if (root == nullptr)
+    {
+        return;
+    }
+
+    if (node_values.empty())
+    {
+        return;
+    }
+
+    if (root->val == node_values.front())
+    {
+        node_values.pop();
+        postorder_traversal_FA(root->right);
+        postorder_traversal_FA(root->left);  
+    }
+}
+
 //! @brief First attempt to check if binary tree is a mirror of itself
 //! @param[in] root Pointer to root TreeNode
 //! @return True if binary tree is symmetric around its center, else false
@@ -9,6 +43,21 @@ static bool isSymmetricFA(TreeNode* root)
 {
     //! @details https://leetcode.com/explore/learn/card
     //!          /data-structure-tree/17/solve-problems-recursively/536
+
+    if (root->left == nullptr && root->right == nullptr)
+    {
+        return true;
+    }
+
+    if (root->left == nullptr || root->right == nullptr)
+    {
+        return false;
+    }
+
+    std::queue<int> node_values {};
+    preorder_traversal_FA(root->left, node_values);
+    postorder_traversal_FA(root->right, node_values);
+    return node_values.empty();
 
 } // static bool isSymmetricFA( ...
 
