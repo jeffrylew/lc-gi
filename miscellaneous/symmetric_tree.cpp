@@ -73,6 +73,43 @@ static bool isSymmetricFA(TreeNode* root)
 
 } // static bool isSymmetricFA( ...
 
+//! @brief Recursive discussion solution helper
+//! @param[in] t1 Pointer to TreeNode root of first binary tree
+//! @param[in] t2 Pointer to TreeNode root of second binary tree
+//! @return True if tree rooted at t1 is a mirror of the tree rooted at t2
+[[nodiscard]] static bool is_mirror_DS1(TreeNode* t1, TreeNode* t2)
+{
+    if (t1 == nullptr && t2 == nullptr)
+    {
+        return true;
+    }
+
+    if (t1 == nullptr || t2 == nullptr)
+    {
+        return false;
+    }
+
+    return t1->val == t2->val
+        && is_mirror_DS1(t1->right, t2->left)
+        && is_mirror_DS1(t1->left, t2->right);
+}
+
+//! @brief Recursive discussion solution to check if binary tree is a mirror
+//! @param[in] root Pointer to root TreeNode
+//! @return True if binary tree is symmetric around its center, else false
+static bool isSymmetricDS1(TreeNode* root)
+{
+    //! @details https://leetcode.com/problems/symmetric-tree/editorial/
+    //!
+    //!          Time complexity O(N) where N = total number of nodes in tree.
+    //!          We have to traverse the entire input tree once.
+    //!          Space complexity O(N). The number of recursive calls is bound
+    //!          by the height of the tree. In the worst case, the tree is
+    //!          linear and the height is O(N).
+
+    return is_mirror_DS1(root, root);
+}
+
 TEST(IsSymmetricTest, SampleTest1)
 {
     constexpr TreeNode three_lhs {3};
@@ -85,6 +122,7 @@ TEST(IsSymmetricTest, SampleTest1)
     const TreeNode one {1, &two_lhs, &two_rhs};
 
     EXPECT_TRUE(isSymmetricFA(&one));
+    EXPECT_TRUE(isSymmetricDS1(&one));
 }
 
 TEST(IsSymmetricTest, SampleTest2)
@@ -98,4 +136,5 @@ TEST(IsSymmetricTest, SampleTest2)
 
     EXPECT_TRUE(isSymmetricFA(&one));
     // EXPECT_FALSE(isSymmetricFA(&one));
+    EXPECT_FALSE(isSymmetricDS1(&one));
 }
