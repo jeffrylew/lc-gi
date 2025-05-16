@@ -25,6 +25,7 @@ set (
     "n_ary_tree_postorder_traversal"
     "palindrome_number"
     "pass_the_pillow"
+    "path_sum"
     "remove_element"
     "reverse_substrings_between_each_pair_of_parentheses"
     "sort_the_people"
