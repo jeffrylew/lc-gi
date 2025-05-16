@@ -110,6 +110,55 @@ static bool isSymmetricDS1(TreeNode* root)
     return is_mirror_DS1(root, root);
 }
 
+//! @brief Iterative discussion solution to check if binary tree is a mirror
+//! @param[in] root Pointer to root TreeNode
+//! @return True if binary tree is symmetric around its center, else false
+static bool isSymmetricDS2(TreeNode* root)
+{
+    //! @details https://leetcode.com/problems/symmetric-tree/editorial/
+    //!
+    //!          Time complexity O(N) where N = total number of nodes in tree.
+    //!          We traverse the entire input tree once.
+    //!          Space complexity O(N) for the search queue. In the worst case,
+    //!          we have to insert O(N) nodes in the queue.
+
+    std::queue<TreeNode*> node_queue;
+    node_queue.push(root);
+    node_queue.push(root);
+
+    while (!node_queue.empty())
+    {
+        auto* t1 = node_queue.front();
+        node_queue.pop();
+    
+        auto* t2 = node_queue.front();
+        node_queue.pop();
+
+        if (t1 == nullptr && t2 == nullptr)
+        {
+            continue;
+        }
+
+        if (t1 == nullptr || t2 == nullptr)
+        {
+            return false;
+        }
+
+        if (t1->val != t2->val)
+        {
+            return false;
+        }
+
+        node_queue.push(t1->left);
+        node_queue.push(t2->right);
+        node_queue.push(t1->right);
+        node_queue.push(t2->left);
+    }
+
+    return true;
+
+} // static bool isSymmetricDS2( ...
+
 TEST(IsSymmetricTest, SampleTest1)
 {
     constexpr TreeNode three_lhs {3};
@@ -123,6 +172,7 @@ TEST(IsSymmetricTest, SampleTest1)
 
     EXPECT_TRUE(isSymmetricFA(&one));
     EXPECT_TRUE(isSymmetricDS1(&one));
+    EXPECT_TRUE(isSymmetricDS2(&one));
 }
 
 TEST(IsSymmetricTest, SampleTest2)
@@ -137,4 +187,5 @@ TEST(IsSymmetricTest, SampleTest2)
     EXPECT_TRUE(isSymmetricFA(&one));
     // EXPECT_FALSE(isSymmetricFA(&one));
     EXPECT_FALSE(isSymmetricDS1(&one));
+    EXPECT_FALSE(isSymmetricDS2(&one));
 }
