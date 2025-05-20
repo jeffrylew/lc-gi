@@ -141,6 +141,76 @@ public:
     }
 };
 
+//! @class CodecDS1
+//! @brief Parent child relationships discussion solution
+//! @details https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree
+//!
+//!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+class CodecDS1
+{
+public:
+    //! Encodes a tree to a single string
+    std::string serialize(NaryNode* root)
+    {
+        std::string serialized_tree;
+
+        //! Unique node IDs begin at 1. Root node has a parent ID of 0.
+        int node_id {1};
+        serialize_node(root, serialized_tree, node_id, 0);
+
+        if (!serialized_tree.empty())
+        {
+            //! If N-ary tree has at least one element, serialized_tree will end
+            //! with an extra comma so remove it
+            serialized_tree.pop_back();
+        }
+
+        return serialized_tree;
+    }
+
+    //! Decodes your encoded data to a tree
+    //! @pre LC handles memory deallocation
+    NaryNode* deserialize(std::string data)
+    {
+        //! @todo
+    }
+
+private:
+    //! @brief Add node ID, node value, parent ID to str with comma delimiters
+    //! @param[in]      node      Pointer to current NaryNode
+    //! @param[out]     str       Output serialized string
+    //! @param[in, out] node_id   Unique ID of current node
+    //! @param[in]      parent_id Unique ID of parent node
+    void serialize_node(NaryNode*    node,
+                        std::string& str,
+                        int&         node_id,
+                        int          parent_id)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        //! Add node ID
+        str += std::to_string(node_id) + ',';
+
+        //! Add node value
+        str += std::to_string(node->val) + ',';
+
+        //! Add parent ID
+        str += std::to_string(parent_id) + ',';
+
+        //! Set parent_id to current node_id
+        parent_id = node_id;
+
+        for (auto* child : node->children)
+        {
+            ++node_id;
+            serialize_node(child, str, node_id, parent_id);
+        }
+    }
+};
+
 TEST(CodecSerializeDeserializeTest, SampleTest1)
 {
     NaryNode two {2};
@@ -169,6 +239,12 @@ TEST(CodecSerializeDeserializeTest, SampleTest1)
     EXPECT_EQ(one.val, root_fa->val);
     EXPECT_EQ(one.children, root_fa->children);
      */
+
+     CodecDS1   codec_ds1;
+     const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+     EXPECT_NE(nullptr, root_ds1);
+     EXPECT_EQ(one.val, root_ds1->val);
+     EXPECT_EQ(one.children, root_ds1->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest2)
@@ -188,10 +264,19 @@ TEST(CodecSerializeDeserializeTest, SampleTest2)
     EXPECT_EQ(one.val, root_fa->val);
     EXPECT_EQ(one.children, root_fa->children);
      */
+
+     CodecDS1   codec_ds1;
+     const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+     EXPECT_NE(nullptr, root_ds1);
+     EXPECT_EQ(one.val, root_ds1->val);
+     EXPECT_EQ(one.children, root_ds1->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest3)
 {
     CodecFA codec_fa;
     EXPECT_EQ(nullptr, codec_fa.deserialize(codec_fa.serialize(nullptr)));
+
+    CodecDS1 codec_ds1;
+    EXPECT_EQ(nullptr, codec_ds1.deserialize(codec_ds1.serialize(nullptr)));
 }
