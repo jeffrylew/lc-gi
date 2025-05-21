@@ -60,6 +60,39 @@ static bool hasPathSumFA(TreeNode* root, int targetSum)
 
 } // static bool hasPathSumFA( ...
 
+//! @brief Recursive discussion solution
+//! @param[in] root      Pointer to root TreeNode
+//! @param[in] targetSum Sum that the root-to-leaf path should have
+//! @return True if tree has a root-to-leaf path with targetSum, else false.
+static bool hasPathSumDS1(TreeNode* root, int targetSum)
+{
+    //! @details https://leetcode.com/problems/path-sum/editorial/
+    //!
+    //!          Time complexity O(N) where N = number of nodes. We visit each
+    //!          node exactly once.
+    //!          Space complexity O(log N). In the worst case, the tree is
+    //!          completely unbalanced - each node has only one child node so
+    //!          the recursion call occurs N times (the height of the tree) and
+    //!          the call stack requires O(N). In the best case, the tree is
+    //!          completely balanced and the height of the tree is O(log N).
+
+    if (root == nullptr)
+    {
+        return false;
+    }
+
+    targetSum -= root->val;
+
+    //! If reached a leaf
+    if (root->left == nullptr && root->right == nullptr)
+    {
+        return targetSum == 0;
+    }
+
+    return hasPathSumDS1(root->left, targetSum)
+        || hasPathSumDS1(root->right, targetSum);
+}
+
 TEST(HasPathSumTest, SampleTest1)
 {
     constexpr TreeNode one {1};
@@ -75,6 +108,7 @@ TEST(HasPathSumTest, SampleTest1)
     const TreeNode five {5, &four_lhs, &eight};
 
     EXPECT_TRUE(hasPathSumFA(&five, 22));
+    EXPECT_TRUE(hasPathSumDS1(&five, 22));
 }
 
 TEST(HasPathSumTest, SampleTest2)
@@ -84,11 +118,13 @@ TEST(HasPathSumTest, SampleTest2)
     const TreeNode     one {1, &two, &three};
 
     EXPECT_FALSE(hasPathSumFA(&one, 5));
+    EXPECT_FALSE(hasPathSumDS1(&one, 5));
 }
 
 TEST(HasPathSumTest, SampleTest3)
 {
     EXPECT_FALSE(hasPathSumFA(nullptr, 0));
+    EXPECT_FALSE(hasPathSumDS1(nullptr, 0));
 }
 
 TEST(HasPathSumTest, SampleTest4)
@@ -97,4 +133,5 @@ TEST(HasPathSumTest, SampleTest4)
     const TreeNode     one {1, &two, nullptr};
 
     EXPECT_FALSE(hasPathSumFA(&one, 1));
+    EXPECT_FALSE(hasPathSumDS1(&one, 1));
 }
