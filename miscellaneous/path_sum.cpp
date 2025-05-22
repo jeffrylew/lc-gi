@@ -93,6 +93,17 @@ static bool hasPathSumDS1(TreeNode* root, int targetSum)
         || hasPathSumDS1(root->right, targetSum);
 }
 
+//! @brief Iterative discussion solution
+//! @param[in] root      Pointer to root TreeNode
+//! @param[in] targetSum Sum that the root-to-leaf path should have
+//! @return True if tree has a root-to-leaf path with targetSum, else false.
+static bool hasPathSumDS2(TreeNode* root, int targetSum)
+{
+    //! @details https://leetcode.com/problems/path-sum/editorial/
+
+    //! @todo
+}
+
 TEST(HasPathSumTest, SampleTest1)
 {
     constexpr TreeNode one {1};
@@ -109,6 +120,7 @@ TEST(HasPathSumTest, SampleTest1)
 
     EXPECT_TRUE(hasPathSumFA(&five, 22));
     EXPECT_TRUE(hasPathSumDS1(&five, 22));
+    EXPECT_TRUE(hasPathSumDS2(&five, 22));
 }
 
 TEST(HasPathSumTest, SampleTest2)
@@ -119,12 +131,14 @@ TEST(HasPathSumTest, SampleTest2)
 
     EXPECT_FALSE(hasPathSumFA(&one, 5));
     EXPECT_FALSE(hasPathSumDS1(&one, 5));
+    EXPECT_FALSE(hasPathSumDS2(&one, 5));
 }
 
 TEST(HasPathSumTest, SampleTest3)
 {
     EXPECT_FALSE(hasPathSumFA(nullptr, 0));
     EXPECT_FALSE(hasPathSumDS1(nullptr, 0));
+    EXPECT_FALSE(hasPathSumDS2(nullptr, 0));
 }
 
 TEST(HasPathSumTest, SampleTest4)
@@ -134,4 +148,5 @@ TEST(HasPathSumTest, SampleTest4)
 
     EXPECT_FALSE(hasPathSumFA(&one, 1));
     EXPECT_FALSE(hasPathSumDS1(&one, 1));
+    EXPECT_FALSE(hasPathSumDS2(&one, 1));
 }
