@@ -3,6 +3,7 @@
 #include <gtest/gtest.h>
 
 #include <functional>
+#include <stack>
 
 //! @brief First attempt to check if tree has a root-to-leaf path with targetSum
 //! @param[in] root      Pointer to root TreeNode
@@ -101,8 +102,45 @@ static bool hasPathSumDS2(TreeNode* root, int targetSum)
 {
     //! @details https://leetcode.com/problems/path-sum/editorial/
 
-    //! @todo
-}
+    if (root == nullptr)
+    {
+        return false;
+    }
+
+    std::stack<TreeNode*> node_stack;
+    std::stack<int>       sum_stack;
+    node_stack.push(root);
+    sum_sum.push(targetSum - root->val);
+
+    while (!node_stack.empty())
+    {
+        auto* node = node_stack.top();
+        node_stack.pop();
+
+        const int curr_sum {sum_stack.top()};
+        sum_stack.pop();
+
+        if (node->right == nullptr && node->left == nullptr && curr_sum == 0)
+        {
+            return true;
+        }
+
+        if (node->right != nullptr)
+        {
+            node_stack.push(node->right);
+            sum_stack.push(curr_sum - node->right->val);
+        }
+
+        if (node->left != nullptr)
+        {
+            node_stack.push(node->left);
+            sum_stack.push(curr_sum - node->left->val);
+        }
+    }
+
+    return false;
+
+} // static bool hasPathSumDS2( ...
 
 TEST(HasPathSumTest, SampleTest1)
 {
