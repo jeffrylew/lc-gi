@@ -103,6 +103,10 @@ static bool hasPathSumDS2(TreeNode* root, int targetSum)
     //! @details https://leetcode.com/problems/path-sum/editorial/
     //!
     //!          Time complexity O(N) where N = number of nodes.
+    //!          Space complexity O(N) in the worst case when the tree is
+    //!          completely unbalanced (each node has one child) and all N nodes
+    //!          are kept in the stack. In the best case, the tree is balanced
+    //!          and the height of the tree is log N, giving O(log N).
 
     if (root == nullptr)
     {
