@@ -101,6 +101,8 @@ static bool hasPathSumDS1(TreeNode* root, int targetSum)
 static bool hasPathSumDS2(TreeNode* root, int targetSum)
 {
     //! @details https://leetcode.com/problems/path-sum/editorial/
+    //!
+    //!          Time complexity O(N) where N = number of nodes.
 
     if (root == nullptr)
     {
