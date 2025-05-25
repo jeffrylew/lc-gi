@@ -1,9 +1,18 @@
 #include "NaryNode.hpp"
 
 #include <cctype>
+#include <charconv>
+#include <iterator>
 #include <queue>
+#include <ranges>
 #include <string>
+#include <string_view>
+#include <system_error>
+#include <unordered_map>
+#include <utility>
 #include <vector>
+
+using namespace std::string_view_literals;
 
 //! @class CodecFA
 //! @brief First attempt solution to serialize and deserialize an N-ary tree
@@ -172,7 +181,12 @@ public:
     //! @pre LC handles memory deallocation
     NaryNode* deserialize(std::string data)
     {
-        //! @todo
+        if (data.empty())
+        {
+            return nullptr;
+        }
+
+        return deserialize_string(data);
     }
 
 private:
@@ -208,6 +222,98 @@ private:
             ++node_id;
             serialize_node(child, str, node_id, parent_id);
         }
+    }
+
+    //! @brief Deserialize comma-delimited string_view of serialized tree
+    //! @param[in] serialized_tree Comma-delimited std::string_view of tree
+    //! @return Pointer to root NaryNode
+    NaryNode* deserialize_string(std::string_view serialized_tree)
+    {
+        //! Map of <unique node ID, <unique parent ID, current NaryNode*>>
+        std::unordered_map<int, std::pair<int, NaryNode*>> ids_nodes {};
+
+        //! Queue of <parent ID, child ID>
+        std::queue<std::pair<int, int>> parent_child_ids {};
+
+        //! https://stackoverflow.com/questions/14265581
+        //!     /parse-split-a-string-in-c-using-string-delimiter-standard-c
+        auto ids_and_node_vals =
+            serialized_tree
+                | std::ranges::views::split(","sv)
+                | std::ranges::views::transform([](auto&& str) {
+                    return std::string_view(str.data(),
+                                            std::ranges::distance(str));
+                });
+
+        //! Index of current element in ids_and_node_vals view
+        int element_idx {};
+
+        //! Unique ID of current node
+        int node_id {};
+
+        //! Value of current node
+        int node_val {};
+
+        //! String value converted to an int
+        int string_val {};
+
+        for (auto&& id_or_val : ids_and_node_vals)
+        {
+            auto [ptr, ec] =
+                std::from_chars(id_or_val.data(),
+                                id_or_val.data() + id_or_val.size(),
+                                string_val);
+
+            if (ec == std::errc())
+            {
+                const int ids_nodes_subidx {element_idx % 3};
+                if (ids_nodes_subidx == 0)
+                {
+                    node_id = string_val;
+                }
+                else if (ids_nodes_subidx == 1)
+                {
+                    node_val = string_val;
+                }
+                else
+                {
+                    auto* curr_node = new NaryNode {node_val};
+
+                    //! string_val = Parent ID here
+                    ids_nodes.try_emplace(node_id, string_val, curr_node);
+                    parent_child_ids.emplace(string_val, node_id);
+
+                    ++element_idx;
+                }
+            }
+            else
+            /*
+            else if (ec == std::errc::invalid_argument
+                     || ec == std::errc::result_out_of_range)
+             */
+            {
+                //! Should not encounter this
+                return nullptr;
+            }
+        }
+
+        //! parent_child_ids should not be empty
+        const auto [root_parent_id, root_id] = parent_child_ids.front();
+        parent_child_ids.pop();
+
+        //! Second pass over parent_child_ids queue to connect parent to child
+        while (!parent_child_ids.empty())
+        {
+            const auto [parent_id, child_id] = parent_child_ids.front();
+            parent_child_ids.pop();
+
+            auto* child_node  = ids_nodes[child_id].second;
+            auto* parent_node = ids_nodes[parent_id].second;
+
+            parent_node->children.push_back(child_node);
+        }
+
+        return ids_nodes[root_id].second;
     }
 };
 
