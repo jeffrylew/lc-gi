@@ -155,6 +155,13 @@ public:
 //! @details https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree
 //!
 //!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+//!          For every node, we add 3 values to the serialized string. When
+//!          deserializing, the first loop is O(3 * N) and second loop is O(N).
+//!          Space complexity O(N). The space occupied by the serialize_node
+//!          helper is through the recursion stack and the final string, which
+//!          usually isn't considered but its size is not fixed in this case.
+//!          Deserialization has a space complexity of O(N) for the hash map and
+//!          queue.
 class CodecDS1
 {
 public:
