@@ -282,9 +282,9 @@ private:
                     //! string_val = Parent ID here
                     ids_nodes.try_emplace(node_id, string_val, curr_node);
                     parent_child_ids.emplace(string_val, node_id);
-
-                    ++element_idx;
                 }
+
+                ++element_idx;
             }
             else
             /*
@@ -346,6 +346,23 @@ TEST(CodecSerializeDeserializeTest, SampleTest1)
     EXPECT_EQ(one.children, root_fa->children);
      */
 
+     /*
+      * Serialization of tree
+      * 1,1,0,
+      * 2,2,1,
+      * 3,3,1,
+      * 4,6,3,
+      * 5,7,3,
+      * 6,11,5,
+      * 7,14,6,
+      * 8,4,1,
+      * 9,8,8,
+      * 10,12,9,
+      * 11,5,1,
+      * 12,9,11,
+      * 13,13,12,
+      * 14,10,11
+      */
      CodecDS1   codec_ds1;
      const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
      EXPECT_NE(nullptr, root_ds1);
