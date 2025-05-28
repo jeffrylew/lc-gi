@@ -324,6 +324,130 @@ private:
     }
 };
 
+//! @class CodecDS2
+//! @brief DFS with children sizes discussion solution
+//! @details https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree
+//!
+//!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+//!          For every node, we add 3 values to the serialized string. When
+//!          deserializing, the first loop is O(3 * N) and second loop is O(N).
+//!          Space complexity O(N). The space occupied by the serialize_node
+//!          helper is through the recursion stack and the final string, which
+//!          usually isn't considered but its size is not fixed in this case.
+//!          Deserialization has a space complexity of O(N) for hash map/queue.
+class CodecDS2
+{
+public:
+    //! Encodes a tree to a single string
+    std::string serialize(NaryNode* root)
+    {
+        std::string serialized_tree;
+
+        serialize_node(root, serialized_tree);
+
+        if (!serialized_tree.empty())
+        {
+            //! If N-ary tree has at least one element, serialized_tree will end
+            //! with an extra comma so remove it
+            serialized_tree.pop_back();
+        }
+
+        return serialized_tree;
+    }
+
+    //! Decodes your encoded data to a tree
+    //! @pre LC handles memory deallocation
+    NaryNode* deserialize(std::string data)
+    {
+        if (data.empty())
+        {
+            return nullptr;
+        }
+
+        //! https://stackoverflow.com/questions/14265581
+        //!     /parse-split-a-string-in-c-using-string-delimiter-standard-c
+        auto val_num_children =
+            serialized_tree
+                | std::ranges::views::split(","sv)
+                | std::ranges::views::transform([](auto&& str) {
+                    return std::string_view(str.data(),
+                                            std::ranges::distance(str));
+                });
+
+        return deserialize_string(data, 0);
+    }
+
+private:
+    //! @brief Add node value and number of children to str with comma delimiter
+    //! @param[in]  node Pointer to current NaryNode
+    //! @param[out] str  Output serialized string
+    void serialize_node(NaryNode* node, std::string& str)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        //! Add node value
+        str += std::to_string(node->val) + ',';
+
+        //! Add number of children
+        str += std::to_string(std::ssize(node->children)) + ',';
+
+        for (auto* child : node->children)
+        {
+            serialize_node(child, str);
+        }
+    }
+
+    //! @brief Deserialize comma-delimited string_view of serialized tree
+    //! @param[in] serialized_tree_view View of elements from serialized tree
+    //! @param[in] index                Index keeps track of processed chars 
+    //! @return Pointer to root NaryNode
+    NaryNode* deserialize_string(auto& serialized_tree_view, int index)
+    {
+        if (index == std::ssize(serialized_tree))
+        {
+            return nullptr;
+        }
+
+        //! Node value or num children string converted to an int
+        int node_val_or_num_children {};
+
+        auto curr_node_view = serialized_tree_view.begin() + index;
+        if (std::from_chars(curr_node_view,
+                            curr_node_view + curr_node_view.size(),
+                            node_val_or_num_children).ec
+            != std::errc {})
+        {
+            return nullptr;
+        }
+
+        //! Invariant here is that index points to a node and index + 1 is
+        //! the number of children it has
+        auto* node = new NaryNode(node_val_or_num_children);
+
+        ++index;
+        auto num_children_view = serialized_tree_view.begin() + index;
+        if (std::from_chars(num_children_view,
+                            num_children_view + num_children_view.size(),
+                            node_val_or_num_children).ec
+            != std::errc {})
+        {
+            return nullptr;
+        }
+
+        for (int child = 0; child < node_val_or_num_children; ++child)
+        {
+            ++index;
+            node->children.push_back(
+                deserialize_string(serialized_tree_view, index));
+        }
+
+        return node;
+    }
+};
+
 TEST(CodecSerializeDeserializeTest, SampleTest1)
 {
     NaryNode two {2};
@@ -370,11 +494,17 @@ TEST(CodecSerializeDeserializeTest, SampleTest1)
       * 13,13,12,
       * 14,10,11
       */
-     CodecDS1   codec_ds1;
-     const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
-     EXPECT_NE(nullptr, root_ds1);
-     EXPECT_EQ(one.val, root_ds1->val);
-     EXPECT_EQ(one.children, root_ds1->children);
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.children, root_ds1->children);
+
+    CodecDS2   codec_ds2;
+    const auto root_ds2 = codec_ds2.deserialize(codec_ds2.serialize(&one));
+    EXPECT_NE(nullptr, root_ds2);
+    EXPECT_EQ(one.val, root_ds2->val);
+    EXPECT_EQ(one.children, root_ds2->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest2)
@@ -395,11 +525,17 @@ TEST(CodecSerializeDeserializeTest, SampleTest2)
     EXPECT_EQ(one.children, root_fa->children);
      */
 
-     CodecDS1   codec_ds1;
-     const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
-     EXPECT_NE(nullptr, root_ds1);
-     EXPECT_EQ(one.val, root_ds1->val);
-     EXPECT_EQ(one.children, root_ds1->children);
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.children, root_ds1->children);
+
+    CodecDS2   codec_ds2;
+    const auto root_ds2 = codec_ds2.deserialize(codec_ds2.serialize(&one));
+    EXPECT_NE(nullptr, root_ds2);
+    EXPECT_EQ(one.val, root_ds2->val);
+    EXPECT_EQ(one.children, root_ds2->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest3)
@@ -409,4 +545,7 @@ TEST(CodecSerializeDeserializeTest, SampleTest3)
 
     CodecDS1 codec_ds1;
     EXPECT_EQ(nullptr, codec_ds1.deserialize(codec_ds1.serialize(nullptr)));
+
+    CodecDS2 codec_ds2;
+    EXPECT_EQ(nullptr, codec_ds2.deserialize(codec_ds2.serialize(nullptr)));
 }
