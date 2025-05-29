@@ -367,14 +367,17 @@ public:
         //! https://stackoverflow.com/questions/14265581
         //!     /parse-split-a-string-in-c-using-string-delimiter-standard-c
         auto val_num_children =
-            serialized_tree
+            std::string_view {data}
                 | std::ranges::views::split(","sv)
                 | std::ranges::views::transform([](auto&& str) {
                     return std::string_view(str.data(),
                                             std::ranges::distance(str));
                 });
 
-        return deserialize_string(data, 0);
+        //! Index in val_num_children view
+        int view_idx {};
+
+        return deserialize_string(val_num_children, view_idx);
     }
 
 private:
@@ -400,13 +403,13 @@ private:
         }
     }
 
-    //! @brief Deserialize comma-delimited string_view of serialized tree
-    //! @param[in] serialized_tree_view View of elements from serialized tree
-    //! @param[in] index                Index keeps track of processed chars 
+    //! @brief Deserialize tokenized view of serialized tree
+    //! @param[in, out] serialized_tree_view View of serialized tree elements
+    //! @param[in, out] index                Index tracks processed chars 
     //! @return Pointer to root NaryNode
-    NaryNode* deserialize_string(auto& serialized_tree_view, int index)
+    NaryNode* deserialize_string(auto& serialized_tree_view, int& index)
     {
-        if (index == std::ssize(serialized_tree))
+        if (index == std::ssize(serialized_tree_view))
         {
             return nullptr;
         }
@@ -414,9 +417,9 @@ private:
         //! Node value or num children string converted to an int
         int node_val_or_num_children {};
 
-        auto curr_node_view = serialized_tree_view.begin() + index;
-        if (std::from_chars(curr_node_view,
-                            curr_node_view + curr_node_view.size(),
+        auto curr_node_it = serialized_tree_view.begin() + index;
+        if (std::from_chars(curr_node_it,
+                            curr_node_it + curr_node_it->size(),
                             node_val_or_num_children).ec
             != std::errc {})
         {
@@ -428,9 +431,9 @@ private:
         auto* node = new NaryNode(node_val_or_num_children);
 
         ++index;
-        auto num_children_view = serialized_tree_view.begin() + index;
-        if (std::from_chars(num_children_view,
-                            num_children_view + num_children_view.size(),
+        auto num_children_it = serialized_tree_view.begin() + index;
+        if (std::from_chars(num_children_it,
+                            num_children_it + num_children_it->size(),
                             node_val_or_num_children).ec
             != std::errc {})
         {
