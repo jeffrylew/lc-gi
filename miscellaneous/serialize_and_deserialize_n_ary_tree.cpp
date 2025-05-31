@@ -418,7 +418,10 @@ private:
         //! Node value or num children string converted to an int
         int node_val_or_num_children {};
 
-        auto curr_node_it = serialized_tree_view.begin() + index;
+        auto curr_node_it = std::ranges::begin(serialized_tree_view);
+        std::ranges::advance(curr_node_it, index);
+
+        //! @todo Compiler error here, need to figure it out
         if (std::from_chars(curr_node_it,
                             curr_node_it + curr_node_it->size(),
                             node_val_or_num_children).ec
@@ -432,7 +435,10 @@ private:
         auto* node = new NaryNode(node_val_or_num_children);
 
         ++index;
-        auto num_children_it = serialized_tree_view.begin() + index;
+        auto num_children_it = std::ranges::begin(serialized_tree_view);
+        std::ranges::advance(num_children_it, index);
+
+        //! @todo Compiler error here
         if (std::from_chars(num_children_it,
                             num_children_it + num_children_it->size(),
                             node_val_or_num_children).ec
@@ -457,20 +463,122 @@ private:
 //! @details https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree
 //!
 //!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+//!          For every node, we add 2 different values to the final string. For
+//!          deserialization, we process the entire string one char at a time
+//!          and construct the tree along the way.
+//!          Space complexity O(N). The space occupied by the serialize_node
+//!          helper is through the recursion stack and the final string, which
+//!          has size 2N. For deserialization, the space occupied is by the
+//!          recursion stack.
 class CodecDS3
 {
 public:
     //! Encodes a tree to a single string
     std::string serialize(NaryNode* root)
     {
-        //! @todo
+        std::string serialized_tree;
+
+        serialize_node(root, serialized_tree);
+
+        if (!serialized_tree.empty())
+        {
+            //! If N-ary tree has at least one element, serialized_tree will end
+            //! with an extra comma so remove it
+            serialized_tree.pop_back();
+        }
+
+        return serialized_tree;
     }
 
     //! Decodes your encoded data to a tree
     //! @pre LC handles memory deallocation
     NaryNode* deserialize(std::string data)
     {
-        //! @todo
+        if (data.empty())
+        {
+            return nullptr;
+        }
+
+        auto data_tokens_view =
+            std::string_view {data}
+                | std::ranges::views::split(","sv)
+                | std::ranges::views::transform([](auto&& str) {
+                    return std::string_view(str.data(),
+                                            std::ranges::distance(str));
+                });
+
+        //! Index in data_tokens_view
+        int view_idx {};
+
+        return deserialize_string(data_tokens_view, view_idx);
+    }
+
+private:
+    //! @brief Add node value and sentinels to str with comma delimiters
+    //! @param[in]  node Pointer to current NaryNode
+    //! @param[out] str  Output serialized string
+    void serialize_node(NaryNode* node, std::string& str)
+    {
+        if (node == nullptr)
+        {
+            return;
+        }
+
+        //! Add the node value
+        str += std::to_string(node->val) + ',';
+
+        //! Recurse on subtrees and build string
+        for (auto* child : node->children)
+        {
+            serialize_node(child, str);
+        }
+
+        //! Add the sentinel to indicate that all children of the current node
+        //! have been processed.
+        str += "#,";
+    }
+
+    //! @brief Deserialize tokenized view of serialized tree
+    //! @param[in, out] serialized_tree_view View of serialized tree elements
+    //! @param[in, out] index                Index tracks processed chars 
+    //! @return Pointer to root NaryNode
+    NaryNode* deserialize_string(auto& serialized_tree_view, int& index)
+    {
+        if (index == std::ssize(serialized_tree_view))
+        {
+            return nullptr;
+        }
+
+        //! Node value or sentinel value converted to an int
+        int node_val_or_sentinel {};
+
+        auto curr_node_it = std::ranges::begin(serialized_tree_view);
+        std::ranges::advance(curr_node_it, index);
+
+        //! @todo Compiler error here, need to figure out
+        if (std::from_chars(curr_node_it,
+                            curr_node_it + curr_node_it->size(),
+                            node_val_or_sentinel).ec
+            != std::errc {})
+        {
+            return nullptr;
+        }
+
+        auto* node = new NaryNode(node_val_or_sentinel);
+
+        ++index;
+        auto view_it = std::ranges::begin(serialized_tree_view);
+        std::ranges::advance(view_it, index);
+        while (view_it != serialized_tree_view.end() && *view_it != "#")
+        {
+            node->children.push_back(
+                deserialize_string(serialized_tree_view, index));
+        }
+
+        //! Discard the sentinel and move forward in the input view.
+        ++index;
+
+        return node;
     }
 };
 
