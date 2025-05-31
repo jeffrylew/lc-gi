@@ -452,6 +452,28 @@ private:
     }
 };
 
+//! @class CodecDS3
+//! @brief DFS with a sentinel discussion solution
+//! @details https://leetcode.com/problems/serialize-and-deserialize-n-ary-tree
+//!
+//!          Time complexity O(N) where N = number of nodes in the N-ary tree.
+class CodecDS3
+{
+public:
+    //! Encodes a tree to a single string
+    std::string serialize(NaryNode* root)
+    {
+        //! @todo
+    }
+
+    //! Decodes your encoded data to a tree
+    //! @pre LC handles memory deallocation
+    NaryNode* deserialize(std::string data)
+    {
+        //! @todo
+    }
+};
+
 TEST(CodecSerializeDeserializeTest, SampleTest1)
 {
     NaryNode two {2};
@@ -509,6 +531,12 @@ TEST(CodecSerializeDeserializeTest, SampleTest1)
     EXPECT_NE(nullptr, root_ds2);
     EXPECT_EQ(one.val, root_ds2->val);
     EXPECT_EQ(one.children, root_ds2->children);
+
+    CodecDS3   codec_ds3;
+    const auto root_ds3 = codec_ds3.deserialize(codec_ds3.serialize(&one));
+    EXPECT_NE(nullptr, root_ds3);
+    EXPECT_EQ(one.val, root_ds3->val);
+    EXPECT_EQ(one.children, root_ds3->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest2)
@@ -540,6 +568,12 @@ TEST(CodecSerializeDeserializeTest, SampleTest2)
     EXPECT_NE(nullptr, root_ds2);
     EXPECT_EQ(one.val, root_ds2->val);
     EXPECT_EQ(one.children, root_ds2->children);
+
+    CodecDS3   codec_ds3;
+    const auto root_ds3 = codec_ds3.deserialize(codec_ds3.serialize(&one));
+    EXPECT_NE(nullptr, root_ds3);
+    EXPECT_EQ(one.val, root_ds3->val);
+    EXPECT_EQ(one.children, root_ds3->children);
 }
 
 TEST(CodecSerializeDeserializeTest, SampleTest3)
@@ -552,4 +586,7 @@ TEST(CodecSerializeDeserializeTest, SampleTest3)
 
     CodecDS2 codec_ds2;
     EXPECT_EQ(nullptr, codec_ds2.deserialize(codec_ds2.serialize(nullptr)));
+
+    CodecDS3 codec_ds3;
+    EXPECT_EQ(nullptr, codec_ds3.deserialize(codec_ds3.serialize(nullptr)));
 }
