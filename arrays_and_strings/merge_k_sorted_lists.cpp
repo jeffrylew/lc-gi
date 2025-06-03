@@ -2,6 +2,7 @@
 
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <queue>
 #include <vector>
 
@@ -79,6 +80,44 @@ static ListNode* mergeKListsFA(std::vector<ListNode*>& lists)
     return sentinel_head.next;
 }
 
+//! @brief Brute force discussion solution
+//! @pre LC handles deallocation of memory.
+//! @param[in, out] lists Reference to vector of k sorted linked-lists
+//! @return Pointer to ListNode head of sorted linked list
+static ListNode* mergeKListsDS1(std::vector<ListNode*>& lists)
+{
+    //! @details https://leetcode.com/problems/merge-k-sorted-lists/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = total number of nodes.
+    //!          Collecting all values costs O(N). A stable sorting algorithm
+    //!          costs O(N * log N) and iterating to create the linked list
+    //!          costs O(N).
+    //!          Space complexity O(log N) on average for std::sort (quicksort).
+    //!          Creating a new linked list costs O(N).
+
+    ListNode head {0};
+    auto*    curr_node = &head;
+
+    std::vector<int> node_vals;
+    for (auto* list_node : lists)
+    {
+        while (list_node != nullptr)
+        {
+            node_vals.push_back(list_node->val);
+            list_node = list_node->next;
+        }
+    }
+
+    std::sort(node_vals.begin(), node_vals.end());
+    for (const int node_val : node_vals)
+    {
+        curr_node->next = new ListNode(node_val);
+        curr_node       = curr_node->next;
+    }
+
+    return head.next;
+}
+
 TEST(MergeKListsTest, SampleTest1)
 {
     ListNode l1_five {5};
@@ -99,6 +138,12 @@ TEST(MergeKListsTest, SampleTest1)
     EXPECT_EQ(1, root_fa->val);
     EXPECT_NE(root_fa->next, nullptr);
     EXPECT_EQ(1, root_fa->next->val);
+
+    auto* root_ds1 = mergeKListsDS1(lists);
+    EXPECT_NE(root_ds1, nullptr);
+    EXPECT_EQ(1, root_ds1->val);
+    EXPECT_NE(root_ds1->next, nullptr);
+    EXPECT_EQ(1, root_ds1->next->val);
 }
 
 TEST(MergeKListsTest, SampleTest2)
@@ -107,6 +152,9 @@ TEST(MergeKListsTest, SampleTest2)
 
     auto* root_fa = mergeKListsFA(lists);
     EXPECT_EQ(root_fa, nullptr);
+
+    auto* root_ds1 = mergeKListsDS1(lists);
+    EXPECT_EQ(root_ds1, nullptr);
 }
 
 TEST(MergeKListsTest, SampleTest3)
@@ -115,4 +163,7 @@ TEST(MergeKListsTest, SampleTest3)
 
     auto* root_fa = mergeKListsFA(lists);
     EXPECT_EQ(root_fa, nullptr);
+
+    auto* root_ds1 = mergeKListsDS1(lists);
+    EXPECT_EQ(root_ds1, nullptr);
 }
