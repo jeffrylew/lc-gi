@@ -118,6 +118,55 @@ static ListNode* mergeKListsDS1(std::vector<ListNode*>& lists)
     return head.next;
 }
 
+//! @brief Compare one by one using priority queue discussion solution
+//! @pre LC handles deallocation of memory.
+//! @param[in, out] lists Reference to vector of k sorted linked-lists
+//! @return Pointer to ListNode head of sorted linked list
+static ListNode* mergeKListsDS2(std::vector<ListNode*>& lists)
+{
+    //! @details https://leetcode.com/problems/merge-k-sorted-lists/editorial/
+    //!
+    //!          Time complexity O(N * log k) where N = total number of nodes
+    //!          and k = number of linked lists. The comparison cost is O(log k)
+    //!          for every pop and insertion to the priority queue. Finding the
+    //!          node with the smallest value costs O(1). There are N nodes in
+    //!          the final linked list.
+    //!          Space complexity O(N) for creating a new linked list and O(k)
+    //!          for the priority queue initially. This implementation uses an
+    //!          in-place method, which costs O(1) after the initial O(k).
+
+    auto cmp = [](ListNode* lhs, ListNode* rhs) { return lhs->val > rhs->val; };
+
+    std::priority_queue<ListNode*, std::vector<ListNode*>, decltype(cmp)>
+        node_min_heap(cmp);
+
+    for (auto* list_head : lists)
+    {
+        if (list_head != nullptr)
+        {
+            node_min_heap.push(list_head);
+        }
+    }
+
+    ListNode head {0};
+    auto*    curr_node = &head;
+
+    while (!node_min_heap.empty())
+    {
+        curr_node->next = node_min_heap.top();
+        node_min_heap.pop();
+
+        curr_node = curr_node->next;
+
+        if (curr_node->next != nullptr)
+        {
+            node_min_heap.push(curr_node->next);
+        }
+    }
+
+    return head.next;
+}
+
 TEST(MergeKListsTest, SampleTest1)
 {
     ListNode l1_five {5};
@@ -144,6 +193,14 @@ TEST(MergeKListsTest, SampleTest1)
     EXPECT_EQ(1, root_ds1->val);
     EXPECT_NE(root_ds1->next, nullptr);
     EXPECT_EQ(1, root_ds1->next->val);
+
+    /*
+    auto* root_ds2 = mergeKListsDS2(lists);
+    EXPECT_NE(root_ds2, nullptr);
+    EXPECT_EQ(1, root_ds2->val);
+    EXPECT_NE(root_ds2->next, nullptr);
+    EXPECT_EQ(1, root_ds2->next->val);
+     */
 }
 
 TEST(MergeKListsTest, SampleTest2)
@@ -155,6 +212,11 @@ TEST(MergeKListsTest, SampleTest2)
 
     auto* root_ds1 = mergeKListsDS1(lists);
     EXPECT_EQ(root_ds1, nullptr);
+
+    /*
+    auto* root_ds2 = mergeKListsDS2(lists);
+    EXPECT_EQ(root_ds2, nullptr);
+     */
 }
 
 TEST(MergeKListsTest, SampleTest3)
@@ -166,4 +228,9 @@ TEST(MergeKListsTest, SampleTest3)
 
     auto* root_ds1 = mergeKListsDS1(lists);
     EXPECT_EQ(root_ds1, nullptr);
+
+    /*
+    auto* root_ds2 = mergeKListsDS2(lists);
+    EXPECT_EQ(root_ds2, nullptr);
+     */
 }
