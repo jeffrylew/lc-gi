@@ -167,6 +167,35 @@ static ListNode* mergeKListsDS2(std::vector<ListNode*>& lists)
     return head.next;
 }
 
+[[nodiscard]] static merge2Lists(ListNode* l1, ListNode* l2)
+{
+    //! @todo
+}
+
+//! @brief Merge with divide and conquer discussion solution
+//! @pre LC handles deallocation of memory.
+//! @param[in, out] lists Reference to vector of k sorted linked-lists
+//! @return Pointer to ListNode head of sorted linked list
+static ListNode* mergeKListsDS3(std::vector<ListNode*>& lists)
+{
+    //! @details https://leetcode.com/problems/merge-k-sorted-lists/editorial/
+
+    const auto num_lists = static_cast<int>(std::ssize(lists));
+    int        interval {1};
+
+    while (interval < num_lists)
+    {
+        for (int idx = 0; idx < num_lists - interval; idx += interval * 2)
+        {
+            lists[idx] = merge2Lists(lists[idx], lists[idx + interval]);
+        }
+
+        interval *= 2;
+    }
+
+    return num_lists > 0 ? lists[0] : nullptr;
+}
+
 TEST(MergeKListsTest, SampleTest1)
 {
     ListNode l1_five {5};
@@ -200,6 +229,12 @@ TEST(MergeKListsTest, SampleTest1)
     EXPECT_EQ(1, root_ds2->val);
     EXPECT_NE(root_ds2->next, nullptr);
     EXPECT_EQ(1, root_ds2->next->val);
+
+    auto* root_ds3 = mergeKListsDS3(lists);
+    EXPECT_NE(root_ds3, nullptr);
+    EXPECT_EQ(1, root_ds3->val);
+    EXPECT_NE(root_ds3->next, nullptr);
+    EXPECT_EQ(1, root_ds3->next->val);
      */
 }
 
@@ -213,10 +248,11 @@ TEST(MergeKListsTest, SampleTest2)
     auto* root_ds1 = mergeKListsDS1(lists);
     EXPECT_EQ(root_ds1, nullptr);
 
-    /*
     auto* root_ds2 = mergeKListsDS2(lists);
     EXPECT_EQ(root_ds2, nullptr);
-     */
+
+    auto* root_ds3 = mergeKListsDS3(lists);
+    EXPECT_EQ(root_ds3, nullptr);
 }
 
 TEST(MergeKListsTest, SampleTest3)
@@ -229,8 +265,9 @@ TEST(MergeKListsTest, SampleTest3)
     auto* root_ds1 = mergeKListsDS1(lists);
     EXPECT_EQ(root_ds1, nullptr);
 
-    /*
     auto* root_ds2 = mergeKListsDS2(lists);
     EXPECT_EQ(root_ds2, nullptr);
-     */
+
+    auto* root_ds3 = mergeKListsDS3(lists);
+    EXPECT_EQ(root_ds3, nullptr);
 }
