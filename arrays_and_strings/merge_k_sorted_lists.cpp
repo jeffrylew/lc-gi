@@ -169,7 +169,38 @@ static ListNode* mergeKListsDS2(std::vector<ListNode*>& lists)
 
 [[nodiscard]] static merge2Lists(ListNode* l1, ListNode* l2)
 {
-    //! @todo
+    ListNode  head {0};
+    ListNode* curr_node = &head;
+
+    while (l1 != nullptr && l2 != nullptr)
+    {
+        if (l1->val <= l2->val)
+        {
+            curr_node->next = l1;
+
+            l1 = l1->next;
+        }
+        else
+        {
+            curr_node->next = l2;
+
+            l2 = l1;
+            l1 = curr_node->next->next;
+        }
+
+        curr_node = curr_node->next;
+    }
+
+    if (l1 == nullptr)
+    {
+        curr_node->next = l2;
+    }
+    else
+    {
+        curr_node->next = l1;
+    }
+
+    return head.next;
 }
 
 //! @brief Merge with divide and conquer discussion solution
