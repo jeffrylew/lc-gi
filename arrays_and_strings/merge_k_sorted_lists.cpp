@@ -210,6 +210,14 @@ static ListNode* mergeKListsDS2(std::vector<ListNode*>& lists)
 static ListNode* mergeKListsDS3(std::vector<ListNode*>& lists)
 {
     //! @details https://leetcode.com/problems/merge-k-sorted-lists/editorial/
+    //!
+    //!          Time complexity O(N * log k) where N = total number of nodes
+    //!          and k = number of linked lists. We can merge two sorted linked
+    //!          lists in O(n) where n = total number of nodes in two lists. Sum
+    //!          the merge process and get O(sum i = 1 to log k of N) =
+    //!          O(N * log k).
+    //!          Space complexity O(1). We can merge two sorted linked lists in
+    //!          O(1) space.
 
     const auto num_lists = static_cast<int>(std::ssize(lists));
     int        interval {1};
