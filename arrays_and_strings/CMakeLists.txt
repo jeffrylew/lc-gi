@@ -18,6 +18,7 @@ set (
     "plus_one"
     "read_N_characters_given_read4_ii"
     "rotate_image"
+    "trapping_rain_water"
     "valid_parentheses"
 )
 
