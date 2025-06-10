@@ -61,11 +61,50 @@ static int trapFA(const std::vector<int>& height)
 
 } // static int trapFA( ...
 
+//! @brief Brute force discussion solution
+//! @param[in] height Vector of N non-negative ints representing elevation map
+//! @return Units of rain water that can be trapped
+static int trapDS1(const std::vector<int>& height)
+{
+    //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+    //!
+    //!          Time complexity O(N ^ 2). For each element of height vector, we
+    //!          iterate the left and right hand sides.
+    //!          Space complexity O(1).
+
+    int water_units {};
+
+    const auto num_heights = static_cast<int>(std::ssize(height));
+
+    for (int curr_idx = 1; curr_idx < num_heights - 1; ++curr_idx)
+    {
+        int left_max {};
+        int right_max {};
+
+        //! Find the max height on the left side
+        for (int lhs_idx = curr_idx; lhs_idx >= 0; --lhs_idx)
+        {
+            left_max = std::max(left_max, height[lhs_idx]);
+        }
+
+        //! Find the max height on the right side
+        for (int rhs_idx = curr_idx; rhs_idx < num_heights; ++rhs_idx)
+        {
+            right_max = std::max(right_max, height[rhs_idx]);
+        }
+
+        num_heights += std::min(left_max, right_max) - height[curr_idx];
+    }
+
+    return water_units;
+}
+
 TEST(TrapTest, SampleTest1)
 {
     const std::vector<int> height {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
 
     EXPECT_EQ(6, trapFA(height));
+    EXPECT_EQ(6, trapDS1(height));
 }
 
 TEST(TrapTest, SampleTest2)
@@ -78,6 +117,7 @@ TEST(TrapTest, SampleTest2)
     const std::vector<int> height {4, 2, 0, 3, 2, 5};
 
     EXPECT_EQ(9, trapFA(height));
+    EXPECT_EQ(9, trapDS1(height));
 }
 
 TEST(TrapTest, SampleTest3)
@@ -93,4 +133,5 @@ TEST(TrapTest, SampleTest3)
 
     EXPECT_NE(7, trapFA(height));
     EXPECT_EQ(5, trapFA(height));
+    EXPECT_EQ(7, trapDS1(height));
 }
