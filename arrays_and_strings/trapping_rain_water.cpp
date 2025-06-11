@@ -99,12 +99,52 @@ static int trapDS1(const std::vector<int>& height)
     return water_units;
 }
 
+//! @brief Dynamic programming discussion solution
+//! @param[in] height Vector of N non-negative ints representing elevation map
+//! @return Units of rain water that can be trapped
+static int trapDS2(const std::vector<int>& height)
+{
+    //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+
+    if (height.empty())
+    {
+        return 0;
+    }
+
+    int water_units {};
+
+    const auto num_heights = static_cast<int>(std::ssize(height));
+
+    std::vector<int> left_max(height.size());
+    std::vector<int> right_max(height.size());
+
+    left_max[0] = height[0];
+    for (int lhs_idx = 1; lhs_idx < num_heights; ++lhs_idx)
+    {
+        left_max[lhs_idx] = std::max(height[lhs_idx], left_max[lhs_idx - 1]);
+    }
+
+    right_max[num_heights - 1] = height[num_heights - 1];
+    for (int rhs_idx = num_heights - 2; rhs_idx >= 0; --rhs_idx)
+    {
+        right_max[rhs_idx] = std::max(height[rhs_idx], right_max[rhs_idx + 1]);
+    }
+
+    for (int idx = 1; idx < num_heights - 1; ++idx)
+    {
+        water_units += std::min(left_max[idx], right_max[idx]) - height[idx];
+    }
+
+    return water_units;
+}
+
 TEST(TrapTest, SampleTest1)
 {
     const std::vector<int> height {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
 
     EXPECT_EQ(6, trapFA(height));
     EXPECT_EQ(6, trapDS1(height));
+    EXPECT_EQ(6, trapDS2(height));
 }
 
 TEST(TrapTest, SampleTest2)
@@ -118,6 +158,7 @@ TEST(TrapTest, SampleTest2)
 
     EXPECT_EQ(9, trapFA(height));
     EXPECT_EQ(9, trapDS1(height));
+    EXPECT_EQ(9, trapDS2(height));
 }
 
 TEST(TrapTest, SampleTest3)
@@ -134,4 +175,5 @@ TEST(TrapTest, SampleTest3)
     EXPECT_NE(7, trapFA(height));
     EXPECT_EQ(5, trapFA(height));
     EXPECT_EQ(7, trapDS1(height));
+    EXPECT_EQ(7, trapDS2(height));
 }
