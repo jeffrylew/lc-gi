@@ -105,6 +105,11 @@ static int trapDS1(const std::vector<int>& height)
 static int trapDS2(const std::vector<int>& height)
 {
     //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+    //!
+    //!          Time complexity O(N) where N = number of heights. We store the
+    //!          max heights using two iterations of O(N). Then we update the
+    //!          final water_units using the stored values in O(N).
+    //!          Space complexity O(N) for left_max and right_max vectors.
 
     if (height.empty())
     {
