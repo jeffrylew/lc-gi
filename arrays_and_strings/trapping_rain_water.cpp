@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <deque>
 #include <iterator>
+#include <stack>
 #include <vector>
 
 //! @brief First attempt to compute how much water can be trapped after rain
@@ -143,6 +144,43 @@ static int trapDS2(const std::vector<int>& height)
     return water_units;
 }
 
+//! @brief Using stacks discussion solution
+//! @param[in] height Vector of N non-negative ints representing elevation map
+//! @return Units of rain water that can be trapped
+static int trapDS3(const std::vector<int>& height)
+{
+    //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+
+    int water_units {};
+    int curr_idx {};
+
+    std::stack<int> idx_stack {};
+
+    while (curr_idx < std::ssize(height))
+    {
+        while (!idx_stack.empty() && height[curr_idx] > height[idx_stack.top()])
+        {
+            const int top_idx {idx_stack.top()};
+            idx_stack.pop();
+
+            if (idx_stack.empty())
+            {
+                break;
+            }
+
+            const int distance {curr_idx - idx_stack.top() - 1};
+            const int bounded_height {
+                std::min(height[curr_idx], height[idx_stack.top()])
+                - height[top_idx]};
+            water_units += distance * bounded_height;
+        }
+
+        idx_stack.push(curr_idx++);
+    }
+
+    return water_units;
+}
+
 TEST(TrapTest, SampleTest1)
 {
     const std::vector<int> height {0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1};
@@ -150,6 +188,7 @@ TEST(TrapTest, SampleTest1)
     EXPECT_EQ(6, trapFA(height));
     EXPECT_EQ(6, trapDS1(height));
     EXPECT_EQ(6, trapDS2(height));
+    EXPECT_EQ(6, trapDS3(height));
 }
 
 TEST(TrapTest, SampleTest2)
@@ -164,6 +203,7 @@ TEST(TrapTest, SampleTest2)
     EXPECT_EQ(9, trapFA(height));
     EXPECT_EQ(9, trapDS1(height));
     EXPECT_EQ(9, trapDS2(height));
+    EXPECT_EQ(9, trapDS3(height));
 }
 
 TEST(TrapTest, SampleTest3)
@@ -181,4 +221,5 @@ TEST(TrapTest, SampleTest3)
     EXPECT_EQ(5, trapFA(height));
     EXPECT_EQ(7, trapDS1(height));
     EXPECT_EQ(7, trapDS2(height));
+    EXPECT_EQ(7, trapDS3(height));
 }
