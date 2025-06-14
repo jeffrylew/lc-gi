@@ -150,6 +150,12 @@ static int trapDS2(const std::vector<int>& height)
 static int trapDS3(const std::vector<int>& height)
 {
     //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+    //!
+    //!          Time complexity O(N) where N = height.size(). Each bar can be
+    //!          touched at most twice (due to insertion/deletion from stack)
+    //!          per iteration. Insertion and deletion takes O(1) time.
+    //!          Space complexity O(N). Stack can take up to O(N) space in the
+    //!          case of a stair-like or flat structure.
 
     int water_units {};
     int curr_idx {};
