@@ -194,6 +194,11 @@ static int trapDS3(const std::vector<int>& height)
 static int trapDS4(const std::vector<int>& height)
 {
     //! @details https://leetcode.com/problems/trapping-rain-water/editorial/
+    //!
+    //!          Time complexity O(N) where N = height.size() for a single
+    //!          iteration of O(N).
+    //!          Space complexity O(1) for left_idx, right_idx, left_max_height,
+    //!          and right_max_height.
 
     int water_units {};
 
