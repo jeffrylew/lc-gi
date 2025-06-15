@@ -202,8 +202,8 @@ static int trapDS4(const std::vector<int>& height)
 
     int water_units {};
 
-    int left_idx {};
-    int right_idx {std::ssize(height) - 1};
+    int  left_idx {};
+    auto right_idx = static_cast<int>(std::ssize(height)) - 1;
 
     int left_max_height {};
     int right_max_height {};
