@@ -79,22 +79,23 @@ static int trapDS1(const std::vector<int>& height)
 
     for (int curr_idx = 1; curr_idx < num_heights - 1; ++curr_idx)
     {
-        int left_max {};
-        int right_max {};
+        int left_max_height {};
+        int right_max_height {};
 
         //! Find the max height on the left side
         for (int lhs_idx = curr_idx; lhs_idx >= 0; --lhs_idx)
         {
-            left_max = std::max(left_max, height[lhs_idx]);
+            left_max_height = std::max(left_max_height, height[lhs_idx]);
         }
 
         //! Find the max height on the right side
         for (int rhs_idx = curr_idx; rhs_idx < num_heights; ++rhs_idx)
         {
-            right_max = std::max(right_max, height[rhs_idx]);
+            right_max_height = std::max(right_max_height, height[rhs_idx]);
         }
 
-        num_heights += std::min(left_max, right_max) - height[curr_idx];
+        num_heights +=
+            std::min(left_max_height, right_max_height) - height[curr_idx];
     }
 
     return water_units;
@@ -199,33 +200,33 @@ static int trapDS4(const std::vector<int>& height)
     int left_idx {};
     int right_idx {std::ssize(height) - 1};
 
-    int left_max {};
-    int right_max {};
+    int left_max_height {};
+    int right_max_height {};
 
     while (left_idx < right_idx)
     {
         if (height[left_idx] < height[right_idx])
         {
-            if (height[left_idx] >= left_max)
+            if (height[left_idx] >= left_max_height)
             {
-                left_max = height[left_idx];
+                left_max_height = height[left_idx];
             }
             else
             {
-                water_units += left_max - height[left_idx];
+                water_units += left_max_height - height[left_idx];
             }
 
             ++left_idx;
         }
         else
         {
-            if (height[right_idx] >= right_max)
+            if (height[right_idx] >= right_max_height)
             {
-                right_max = height[right_idx];
+                right_max_height = height[right_idx];
             }
             else
             {
-                water_units += right_max - height[right_idx];
+                water_units += right_max_height - height[right_idx];
             }
 
             --right_idx;
