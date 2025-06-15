@@ -2,6 +2,7 @@ set (
     cpp_files
     "lru_cache"
     "min_stack"
+    "serialize_and_deserialize_binary_tree"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
