@@ -118,6 +118,95 @@ public:
     }
 };
 
+//! @class CodecDS1
+//! @brief DFS discussion solution to serialize and deserialize a binary tree
+//! @details https://leetcode.com/problems/serialize-and-deserialize-binary-tree
+//!
+//!
+class CodecDS1
+{
+    static constexpr auto delim        = std::string_view {","};
+    static constexpr auto null_node_sv = std::string_view {"10001"};
+    static constexpr int  null_node_val {10001};
+
+public:
+    //! @brief Encodes a tree to a single string
+    std::string serialize(TreeNode* root)
+    {
+        std::string serialized_tree;
+        serialize_tree(root, serialized_tree);
+
+        //! Remove final trailing comma
+        serialized_tree.pop_back();
+
+        return serialized_tree;
+    }
+
+    //! @brief Decodes your encoded data to a tree
+    //! @pre LC handles memory deallocation
+    TreeNode* deserialize(std::string data)
+    {
+        std::queue<std::string_view> node_sv_queue {};
+        std::string_view             data_sv {data};
+
+        for (const auto node_view : std::views::split(data_sv, delim))
+        {
+            node_sv_queue.emplace(node_view);
+        }
+
+        return deserialize_tree(node_sv_queue);
+    }
+
+private:
+    //! @brief Recursive serialization helper
+    //! @param[in]  node     Pointer to TreeNode
+    //! @param[out] tree_str Reference to string storing serialized tree
+    void serialize_tree(TreeNode* node, std::string& tree_str)
+    {
+        if (node == nullptr)
+        {
+            tree_str.append(null_node_sv);
+            tree_str.append(delim);
+        }
+        else
+        {
+            tree_str += std::to_string(node->val);
+            tree_str.append(delim);
+
+            serialize_tree(node->left, tree_str);
+            serialize_tree(node->right, tree_str);
+        }
+    }
+
+    //! @brief Recursive deserialization helper
+    //! @param[in, out] node_sv_queue Reference to queue of node string_views
+    [[nodiscard]] TreeNode*
+        deserialize_tree(std::queue<std::string_view>& node_sv_queue)
+    {
+        const auto node_sv = node_sv_queue.front();
+        node_sv_queue.pop();
+
+        if (node_sv == null_node_sv)
+        {
+            return nullptr;
+        }
+
+        int node_val {};
+        if (std::from_chars(node_sv.data(),
+                            node_sv.data() + node_sv.size(),
+                            node_val).ec
+            == std::errc {})
+        {
+            auto* root  = new TreeNode {node_val};
+            root->left  = deserialize_tree(node_sv_queue);
+            root->right = deserialize_tree(node_sv_queue);
+            return root;
+        }
+
+        return nullptr;
+    }
+};
+
 TEST(CodecSerializeDeserializeBinaryTreeTest, SampleTest1)
 {
     TreeNode two {2};
@@ -135,12 +224,24 @@ TEST(CodecSerializeDeserializeBinaryTreeTest, SampleTest1)
     EXPECT_EQ(one.val, root_fa->val);
     EXPECT_EQ(one.left->val, root_fa->left->val);
     EXPECT_EQ(one.right->val, root_fa->right->val);
+
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_NE(nullptr, root_ds1->left);
+    EXPECT_NE(nullptr, root_ds1->right);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.left->val, root_ds1->left->val);
+    EXPECT_EQ(one.right->val, root_ds1->right->val);
 }
 
 TEST(CodecSerializeDeserializeBinaryTreeTest, SampleTest2)
 {
     CodecFA codec_fa;
     EXPECT_EQ(nullptr, codec_fa.deserialize(codec_fa.serialize(nullptr)));
+
+    CodecFA codec_ds1;
+    EXPECT_EQ(nullptr, codec_ds1.deserialize(codec_ds1.serialize(nullptr)));
 }
 
 TEST(CodecSerializeDeserializeBinaryTreeTest, SampleTest3)
@@ -159,4 +260,13 @@ TEST(CodecSerializeDeserializeBinaryTreeTest, SampleTest3)
      * Expected: 1, 2, 3, null, null, 4, 5, 6, 7
     CodecFA codec_fa;
      */
+
+    CodecDS1   codec_ds1;
+    const auto root_ds1 = codec_ds1.deserialize(codec_ds1.serialize(&one));
+    EXPECT_NE(nullptr, root_ds1);
+    EXPECT_NE(nullptr, root_ds1->left);
+    EXPECT_NE(nullptr, root_ds1->right);
+    EXPECT_EQ(one.val, root_ds1->val);
+    EXPECT_EQ(one.left->val, root_ds1->left->val);
+    EXPECT_EQ(one.right->val, root_ds1->right->val);
 }
