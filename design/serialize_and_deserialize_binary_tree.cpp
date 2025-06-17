@@ -122,7 +122,11 @@ public:
 //! @brief DFS discussion solution to serialize and deserialize a binary tree
 //! @details https://leetcode.com/problems/serialize-and-deserialize-binary-tree
 //!
-//!
+//!          Time complexity O(N) where N = number of nodes in the tree. In both
+//!          the serialization and deserialization functions, we visit each node
+//!          exactly once.
+//!          Space complexity O(N). In both serialization and deserialization,
+//!          we keep the entire tree either at the beginning or at the end.
 class CodecDS1
 {
     static constexpr auto delim        = std::string_view {","};
