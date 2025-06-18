@@ -9,6 +9,7 @@ set (
     "longest_substring_without_repeating_characters"
     "longest_substring_with_at_most_two_distinct_characters"
     "maximum_distance_to_closest_person"
+    "meeting_rooms_ii"
     "merge_k_sorted_lists"
     "minimum_window_substring"
     "missing_ranges"
