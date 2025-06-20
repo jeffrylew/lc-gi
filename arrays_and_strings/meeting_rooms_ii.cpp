@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <functional>
 #include <queue>
 #include <vector>
 
@@ -9,6 +10,11 @@
 //! @return Minimum number of conference rooms required
 static int minMeetingRoomsFA(const std::vector<std::vector<int>>& intervals)
 {
+    //! @details https://leetcode.com/explore/interview/card/google/59
+    //!          /array-and-strings/3059/
+
+    int min_req_rooms {};
+
     auto sorted_intervals = intervals;
     std::sort(sorted_intervals.begin(),
               sorted_intervals.end(),
@@ -16,7 +22,33 @@ static int minMeetingRoomsFA(const std::vector<std::vector<int>>& intervals)
                   return lhs[0] < rhs[0];
               });
 
-    //! @todo
+    std::priority_queue<int,
+                        std::vector<int>,
+                        std::greater<int>> end_time_min_heap;
+
+    for (const auto& interval : sorted_intervals)
+    {
+        const int start_time {interval[0]};
+        const int end_time {interval[1]};
+
+        if (!end_time_min_heap.empty())
+        {
+            const int earliest_end_time {end_time_min_heap.top()};
+
+            if (earliest_end_time < start_time)
+            {
+                end_time_min_heap.pop();
+            }
+        }
+
+        end_time_min_heap.push(end_time);
+
+        min_req_rooms =
+            std::max(min_req_rooms,
+                     static_cast<int>(std::ssize(end_time_min_heap)));
+    }
+
+    return min_req_rooms;
 }
 
 TEST(MinMeetingRoomsTest, SampleTest1)
