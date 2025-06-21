@@ -12,6 +12,14 @@ static int minMeetingRoomsFA(const std::vector<std::vector<int>>& intervals)
 {
     //! @details https://leetcode.com/explore/interview/card/google/59
     //!          /array-and-strings/3059/
+    //!
+    //!          Time complexity O(N * log N) where N = intervals.size() for
+    //!          sorting. end_time_min_heap will have N calls to push. In the
+    //!          worst case when all meetings conflict, no elements are popped
+    //!          so the time complexity would be O(N * log N) for the min heap.
+    //!          Space complexity O(N) in the worst case when end_time_min_heap
+    //!          must store all conflicting meetings. std::sort uses O(log N) in
+    //!          the average and best cases for quick sort.
 
     int min_req_rooms {};
 
@@ -35,7 +43,7 @@ static int minMeetingRoomsFA(const std::vector<std::vector<int>>& intervals)
         {
             const int earliest_end_time {end_time_min_heap.top()};
 
-            if (earliest_end_time < start_time)
+            if (earliest_end_time <= start_time)
             {
                 end_time_min_heap.pop();
             }
@@ -61,6 +69,13 @@ TEST(MinMeetingRoomsTest, SampleTest1)
 TEST(MinMeetingRoomsTest, SampleTest2)
 {
     const std::vector<std::vector<int>> intervals {{7, 10}, {2, 4}};
+
+    EXPECT_EQ(1, minMeetingRoomsFA(intervals));
+}
+
+TEST(MinMeetingRoomsTest, SampleTest3)
+{
+    const std::vector<std::vector<int>> intervals {{13, 15}, {1, 13}};
 
     EXPECT_EQ(1, minMeetingRoomsFA(intervals));
 }
