@@ -8,6 +8,7 @@ set (
     "find_the_minimum_and_maximum_number_of_nodes_between_critical_points"
     "fruits_into_baskets"
     "intersection_of_two_arrays_ii"
+    "interval_list_intersections"
     "kth_distinct_string_in_an_array"
     "lemonade_change"
     "length_of_last_word"
