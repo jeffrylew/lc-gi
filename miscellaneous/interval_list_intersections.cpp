@@ -145,6 +145,23 @@ static std::vector<std::vector<int>>
 
 } // static std::vector<std::vector<int>> intervalIntersectionFA( ...
 
+//! @brief Merge intervals discussion solution
+//! @param[in] firstList  Reference to first vector of closed intervals
+//! @param[in] secondList Reference to second vector of closed intervals
+//! @return Intersection of two interval lists
+static std::vector<std::vector<int>>
+    intervalIntersectionDS1(const std::vector<std::vector<int>>& firstList,
+                            const std::vector<std::vector<int>>& secondList)
+{
+    //! @details leetcode.com/problems/interval-list-intersections/editorial
+
+    std::vector<std::vector<int>> intersections {};
+
+    //! @todo
+
+    return intersections;
+}
+
 TEST(IntervalIntersectionTest, SampleTest1)
 {
     const std::vector<std::vector<int>> first_list {
@@ -155,6 +172,8 @@ TEST(IntervalIntersectionTest, SampleTest1)
         {1, 2}, {5, 5}, {8, 10}, {15, 23}, {24, 24}, {25, 25}};
 
     EXPECT_EQ(expected_output, intervalIntersectionFA(first_list, second_list));
+    EXPECT_EQ(expected_output,
+              intervalIntersectionDS1(first_list, second_list));
 }
 
 TEST(IntervalIntersectionTest, SampleTest2)
@@ -163,4 +182,5 @@ TEST(IntervalIntersectionTest, SampleTest2)
     const std::vector<std::vector<int>> second_list {};
 
     EXPECT_TRUE(intervalIntersectionFA(first_list, second_list).empty());
+    EXPECT_TRUE(intervalIntersectionDS1(first_list, second_list).empty());
 }
