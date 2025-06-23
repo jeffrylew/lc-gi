@@ -154,10 +154,41 @@ static std::vector<std::vector<int>>
                             const std::vector<std::vector<int>>& secondList)
 {
     //! @details leetcode.com/problems/interval-list-intersections/editorial
+    //!
+    //!          Time complexity O(M + N) where M = firstList.size() and
+    //!          N = secondList.size().
+    //!          Space complexity O(M + N), the max size of the answer.
 
     std::vector<std::vector<int>> intersections {};
 
-    //! @todo
+    const auto first_size  = static_cast<int>(std::ssize(firstList));
+    const auto second_size = static_cast<int>(std::ssize(secondList));
+
+    int first_idx {};
+    int second_idx {};
+
+    while (first_idx < first_size && second_idx < second_size)
+    {
+        const int max_start {
+            std::max(firstList[first_idx][0], secondList[second_idx][0])};
+        const int min_end {
+            std::min(firstList[first_idx][1], secondList[second_idx][1])};
+
+        if (max_start <= min_end)
+        {
+            intersections.push_back({max_start, min_end});
+        }
+
+        //! Remove interval with the smallest endpoint
+        if (firstList[first_idx][1] < secondList[second_idx][1])
+        {
+            ++first_idx;
+        }
+        else
+        {
+            ++second_idx;
+        }
+    }
 
     return intersections;
 }
