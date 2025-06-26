@@ -99,12 +99,55 @@ static int minMeetingRoomsDS1(const std::vector<std::vector<int>>& intervals)
     return static_cast<int>(std::ssize(end_time_min_heap));
 }
 
+//! @brief Chronological ordering discussion solution
+//! @param[in] intervals Reference to vector of meeting time intervals
+//! @return Minimum number of conference rooms required
+static int minMeetingRoomsDS2(const std::vector<std::vector<int>>& intervals)
+{
+    //! @details https://leetcode.com/problems/meeting-rooms-ii/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = intervals.size(). Need
+    //!          to sort the start_times and end_times vectors, each containing
+    //!          N elements.
+    //!          Space complexity O(N) for start_times and end_times.
+
+    std::vector<int> start_times;
+    std::vector<int> end_times;
+    start_times.reserve(intervals.size());
+    end_times.reserve(intervals.size());
+
+    for (const auto& interval : intervals)
+    {
+        start_times.push_back(interval[0]);
+        end_times.push_back(interval[1]);
+    }
+    std::ranges::sort(start_times);
+    std::ranges::sort(end_times);
+
+    int used_rooms {};
+    int end_times_idx {};
+
+    for (const int start_time : start_times)
+    {
+        if (start_time < end_times[end_times_idx])
+        {
+            ++used_rooms;
+            continue;
+        }
+
+        ++end_times_idx;
+    }
+
+    return used_rooms;
+}
+
 TEST(MinMeetingRoomsTest, SampleTest1)
 {
     const std::vector<std::vector<int>> intervals {{0, 30}, {5, 10}, {15, 20}};
 
     EXPECT_EQ(2, minMeetingRoomsFA(intervals));
     EXPECT_EQ(2, minMeetingRoomsDS1(intervals));
+    EXPECT_EQ(2, minMeetingRoomsDS2(intervals));
 }
 
 TEST(MinMeetingRoomsTest, SampleTest2)
@@ -113,6 +156,7 @@ TEST(MinMeetingRoomsTest, SampleTest2)
 
     EXPECT_EQ(1, minMeetingRoomsFA(intervals));
     EXPECT_EQ(1, minMeetingRoomsDS1(intervals));
+    EXPECT_EQ(1, minMeetingRoomsDS2(intervals));
 }
 
 TEST(MinMeetingRoomsTest, SampleTest3)
@@ -121,4 +165,5 @@ TEST(MinMeetingRoomsTest, SampleTest3)
 
     EXPECT_EQ(1, minMeetingRoomsFA(intervals));
     EXPECT_EQ(1, minMeetingRoomsDS1(intervals));
+    EXPECT_EQ(1, minMeetingRoomsDS2(intervals));
 }
