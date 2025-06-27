@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "logger_rate_limiter"
     "lru_cache"
     "min_stack"
     "serialize_and_deserialize_binary_tree"
