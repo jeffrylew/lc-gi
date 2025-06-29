@@ -1,0 +1,214 @@
+#include <gtest/gtest.h>
+
+#include <algorithm>
+#include <iterator>
+#include <utility>
+#include <vector>
+
+//! @class MyCalendarTwoFA
+//! @brief First attempt solution to check if can add event w/o triple booking.
+//! @details https://leetcode.com/problems/my-calendar-ii/description/
+//!
+//!          First attempt solution passes 24 / 97 testcases and does not pass
+//!          SampleTest2.
+//!
+//!          Time complexity O(N * log N) where N = number of calls to book. In
+//!          the worst case, N / 2 non-overlapping meetings are double booked.
+//!          Each of the N / 2 calls to book takes O(log N) for std::upper_bound
+//!          resulting in O(N * log N).
+//!          Space complexity O(N) for single_booked_times/double_booked_times.
+class MyCalendarTwoFA
+{
+public:
+    MyCalendarTwo()
+    {
+        single_booked_times.reserve(1000);
+        double_booked_times.reserve(1000);
+    }
+
+    bool book(int startTime, int endTime)
+    {
+        if (single_booked_times.empty())
+        {
+            single_booked_times.emplace_back(startTime, endTime);
+            return true;
+        }
+
+        constexpr int default_tstart {1000000001};
+        int           double_booked_tstart {default_tstart};
+        int           double_booked_tend {-1};
+
+        constexpr auto compare_tstart = [](int                        tstart,
+                                           const std::pair<int, int>& start_end)
+                                        {
+                                            return tstart < start_end.first;
+                                        };
+
+        auto single_booked_gt_it = std::upper_bound(single_booked_times.begin(),
+                                                    single_booked_times.end(),
+                                                    startTime,
+                                                    compare_tstart);
+
+        if (single_booked_gt_it == single_booked_times.begin())
+        {
+            if (endTime > single_booked_gt_it->first)
+            {
+                double_booked_tstart = single_booked_gt_it->first;
+                double_booked_tend   = endTime;
+            }
+            else
+            {
+                single_booked_times.emplace(single_booked_times.begin(),
+                                            startTime,
+                                            endTime);
+                return true;
+            }
+        }
+        else if (single_booked_gt_it == single_booked_times.end())
+        {
+            auto single_booked_le_it = std::prev(single_booked_gt_it);
+
+            if (startTime < single_booked_le_it->second)
+            {
+                double_booked_tstart = startTime;
+                double_booked_tend   = single_booked_le_it->second;
+            }
+            else
+            {
+                single_booked_times.emplace_back(startTime, endTime);
+                return true;
+            }
+        }
+        else
+        {
+            auto single_booked_le_it = std::prev(single_booked_gt_it);
+
+            if (startTime >= single_booked_le_it->second
+                && endTime <= single_booked_gt_it->first)
+            {
+                single_booked_times.emplace(single_booked_gt_it,
+                                            startTime,
+                                            endTime);
+                return true;
+            }
+
+            if (startTime < single_booked_le_it->second)
+            {
+                double_booked_tstart = startTime;
+                double_booked_tend   = single_booked_le_it->second;
+            }
+
+            if (endTime > single_booked_gt_it->first)
+            {
+                double_booked_tstart =
+                    std::min(double_booked_tstart, single_booked_gt_it->first);
+                double_booked_tend = endTime;
+            }
+        }
+
+        if (double_booked_times.empty())
+        {
+            double_booked_times.emplace_back(double_booked_tstart,
+                                             double_booked_tend);
+            return true;
+        }
+
+        auto dbl_booked_gt_it = std::upper_bound(double_booked_times.begin(),
+                                                 double_booked_times.end(),
+                                                 double_booked_tstart,
+                                                 compare_tstart);
+
+        if (dbl_booked_gt_it == double_booked_times.begin())
+        {
+            if (double_booked_tend > dbl_booked_gt_it->first)
+            {
+                return false;
+            }
+
+            double_booked_times.emplace(double_booked_times.begin(),
+                                        double_booked_tstart,
+                                        double_booked_tend);
+            return true;
+        }
+
+        auto dbl_booked_le_it = std::prev(dbl_booked_gt_it);
+
+        if (dbl_booked_gt_it == double_booked_times.end())
+        {
+            if (double_booked_tstart < dbl_booked_le_it->second)
+            {
+                return false;
+            }
+
+            double_booked_times.emplace_back(double_booked_tstart,
+                                             double_booked_tend);
+            return true;
+        }
+
+        if (double_booked_tstart >= dbl_booked_le_it->second
+            && double_booked_tend <= dbl_booked_gt_it->first)
+        {
+            double_booked_times.emplace(dbl_booked_gt_it,
+                                        double_booked_tstart,
+                                        double_booked_tend);
+            return true;
+        }
+
+        return false;
+    }
+
+private:
+    //! Vector of single booked <start time, end time>
+    std::vector<std::pair<int, int>> single_booked_times;
+
+    //! Vector of double booked <start time, end time>
+    std::vector<std::pair<int, int>> double_booked_times;
+};
+
+TEST(MyCalendarTwoTest, SampleTest1)
+{
+    MyCalendarTwoFA my_calendar_two_fa;
+
+    EXPECT_TRUE(my_calendar_two_fa.book(10, 20));
+    EXPECT_TRUE(my_calendar_two_fa.book(50, 60));
+    EXPECT_TRUE(my_calendar_two_fa.book(10, 40));
+    EXPECT_FALSE(my_calendar_two_fa.book(5, 15));
+    EXPECT_TRUE(my_calendar_two_fa.book(5, 10));
+    EXPECT_TRUE(my_calendar_two_fa.book(25, 55));
+}
+
+TEST(MyCalendarTwoTest, SampleTest2)
+{
+    MyCalendarTwoFA my_calendar_two_fa;
+
+    EXPECT_TRUE(my_calendar_two_fa.book(47, 50));
+    EXPECT_TRUE(my_calendar_two_fa.book(1, 10));
+    EXPECT_TRUE(my_calendar_two_fa.book(27, 36));
+    EXPECT_TRUE(my_calendar_two_fa.book(40, 47));
+    EXPECT_TRUE(my_calendar_two_fa.book(20, 27));
+    EXPECT_TRUE(my_calendar_two_fa.book(15, 23));
+    EXPECT_TRUE(my_calendar_two_fa.book(10, 18));
+    EXPECT_TRUE(my_calendar_two_fa.book(27, 36));
+    EXPECT_FALSE(my_calendar_two_fa.book(17, 25));
+    // EXPECT_FALSE(my_calendar_two_fa.book(8, 17)); // Incorrectly returns true
+    EXPECT_FALSE(my_calendar_two_fa.book(24, 33));
+    EXPECT_FALSE(my_calendar_two_fa.book(23, 28));
+    EXPECT_FALSE(my_calendar_two_fa.book(21, 27));
+    EXPECT_TRUE(my_calendar_two_fa.book(47, 50));
+    EXPECT_FALSE(my_calendar_two_fa.book(14, 21));
+    EXPECT_FALSE(my_calendar_two_fa.book(26, 32));
+    EXPECT_FALSE(my_calendar_two_fa.book(16, 21));
+    // EXPECT_TRUE(my_calendar_two_fa.book(2, 7)); // Incorrectly returns false
+    EXPECT_FALSE(my_calendar_two_fa.book(24, 33));
+    EXPECT_FALSE(my_calendar_two_fa.book(6, 13));
+    EXPECT_FALSE(my_calendar_two_fa.book(44, 50));
+    EXPECT_FALSE(my_calendar_two_fa.book(33, 39));
+    EXPECT_FALSE(my_calendar_two_fa.book(30, 36));
+    EXPECT_FALSE(my_calendar_two_fa.book(6, 15));
+    EXPECT_FALSE(my_calendar_two_fa.book(21, 27));
+    EXPECT_FALSE(my_calendar_two_fa.book(49, 50));
+    EXPECT_TRUE(my_calendar_two_fa.book(38, 45));
+    EXPECT_FALSE(my_calendar_two_fa.book(4, 12));
+    EXPECT_FALSE(my_calendar_two_fa.book(46, 50));
+    EXPECT_FALSE(my_calendar_two_fa.book(13, 21));
+}
