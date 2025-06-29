@@ -22,6 +22,7 @@ set (
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "minimum_operations_to_make_array_values_equal_to_k"
     "my_calendar_i"
+    "my_calendar_ii"
     "n_ary_tree_level_order_traversal"
     "n_ary_tree_preorder_traversal"
     "n_ary_tree_postorder_traversal"
