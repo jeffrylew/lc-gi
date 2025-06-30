@@ -20,7 +20,7 @@
 class MyCalendarTwoFA
 {
 public:
-    MyCalendarTwo()
+    MyCalendarTwoFA()
     {
         single_booked_times.reserve(1000);
         double_booked_times.reserve(1000);

@@ -19,7 +19,7 @@
 class MyCalendarFA
 {
 public:
-    MyCalendar()
+    MyCalendarFA()
     {
         //! At most 1000 calls will be made (1000 start and end times)
         start_end_times.reserve(1000);
