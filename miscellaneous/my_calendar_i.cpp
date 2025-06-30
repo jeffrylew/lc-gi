@@ -84,6 +84,35 @@ private:
 
 }; // class MyCalendarFA
 
+//! @class MyCalendarDS1
+//! @brief Brute force discussion solution to check if can add event
+//! @details https://leetcode.com/problems/my-calendar-i/description/
+//!
+//!          Time complexity O(N ^ 2) where N = number of calls to book. For
+//!          each new event, we process every previous event to decide.
+//!          Space complexity O(N) for start_end_times.
+class MyCalendarDS1
+{
+public:
+    bool book(int startTime, int endTime)
+    {
+        for (const auto& [tstart, tend] : start_end_times)
+        {
+            if (startTime < tend && tstart < endTime)
+            {
+                return false;
+            }
+        }
+
+        start_end_times.emplace_back(startTime, endTime);
+        return true;
+    }
+
+private:
+    //! Vector of <startTime, endTime>
+    std::vector<std::pair<int, int>> start_end_times;
+};
+
 TEST(MyCalendarTest, SampleTest1)
 {
     MyCalendarFA my_calendar_fa;
@@ -91,4 +120,10 @@ TEST(MyCalendarTest, SampleTest1)
     EXPECT_TRUE(my_calendar_fa.book(10, 20));
     EXPECT_FALSE(my_calendar_fa.book(15, 25));
     EXPECT_TRUE(my_calendar_fa.book(20, 30));
+
+    MyCalendarDS1 my_calendar_ds1;
+
+    EXPECT_TRUE(my_calendar_ds1.book(10, 20));
+    EXPECT_FALSE(my_calendar_ds1.book(15, 25));
+    EXPECT_TRUE(my_calendar_ds1.book(20, 30));
 }
