@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <set>
 #include <utility>
 #include <vector>
 
@@ -113,6 +114,46 @@ private:
     std::vector<std::pair<int, int>> start_end_times;
 };
 
+//! @class MyCalendarDS2
+//! @brief Sorted list + binary search discussion solution
+//! @details https://leetcode.com/problems/my-calendar-i/description/
+//!
+//!          Time complexity O(N * log N) where N = number of events booked. For
+//!          each new event, we check that the event does not double book in
+//!          O(log N) and then insert it in O(log N).
+//!          Space complexity O(N) for start_end_times.
+class MyCalendarDS2
+{
+public:
+    bool book(int startTime, int endTime)
+    {
+        const auto event         = std::make_pair(startTime, endTime);
+        const auto next_event_it = start_end_times.lower_bound(event);
+
+        if (next_event_it != start_end_times.end()
+            && next_event_it->first < endTime)
+        {
+            return false;
+        }
+
+        if (next_event_it != start_end_times.begin())
+        {
+            const auto prev_event_it = std::prev(next_event_it);
+            if (prev_event_it->second > startTime)
+            {
+                return false;
+            }
+        }
+
+        start_end_times.insert(event);
+        return true;
+    }
+
+private:
+    //! Set of <startTime, endTime>
+    std::set<std::pair<int, int>> start_end_times;
+};
+
 TEST(MyCalendarTest, SampleTest1)
 {
     MyCalendarFA my_calendar_fa;
@@ -126,4 +167,10 @@ TEST(MyCalendarTest, SampleTest1)
     EXPECT_TRUE(my_calendar_ds1.book(10, 20));
     EXPECT_FALSE(my_calendar_ds1.book(15, 25));
     EXPECT_TRUE(my_calendar_ds1.book(20, 30));
+
+    MyCalendarDS2 my_calendar_ds2;
+
+    EXPECT_TRUE(my_calendar_ds2.book(10, 20));
+    EXPECT_FALSE(my_calendar_ds2.book(15, 25));
+    EXPECT_TRUE(my_calendar_ds2.book(20, 30));
 }
