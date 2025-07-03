@@ -165,6 +165,68 @@ private:
     std::vector<std::pair<int, int>> double_booked_times;
 };
 
+//! @class MyCalendarTwoDS1
+//! @brief Using overlapped intervals discussion solution
+//! @details https://leetcode.com/problems/my-calendar-ii/description/
+//!
+//!          Time complexity O(N) where N = size of bookings vector. We iterate
+//!          throught the bookings list to check for overlaps and possibly add a
+//!          new booking. Additionally, we check the overlap_bookings vector,
+//!          which is always smaller or equal to the size of bookings.
+//!          Space complexity O(N) for bookings and overlap_bookings. The size
+//!          of overlap_bookings can never exceed the size of bookings.
+class MyCalendarTwoDS1
+{
+public:
+    bool book(int startTime, int endTime)
+    {
+        //! Return false if new booking overlaps with existing double booking
+        for (const auto& [tstart, tend] : overlap_bookings)
+        {
+            if (has_overlap(tstart, tend, startTime, endTime))
+            {
+                return false;
+            }
+        }
+
+        //! If there is a double booking, add it
+        for (const auto& [tstart, tend] : bookings)
+        {
+            if (has_overlap(tstart, tend, startTime, endTime))
+            {
+                overlap_bookings.push_back(
+                    get_overlap(tstart, tend, startTime, endTime));
+            }
+        }
+
+        //! Add booking
+        bookings.emplace_back(startTime, endTime);
+        return true;
+    }
+
+private:
+    std::vector<std::pair<int, int>> bookings;
+    std::vector<std::pair<int, int>> overlap_bookings;
+
+    //! @brief Check if [tstart1, tend1) and [tstart2, tend2) overlap
+    [[nodiscard]] constexpr bool has_overlap(int tstart1,
+                                             int tend1,
+                                             int tstart2,
+                                             int tend2)
+    {
+        return std::max(tstart1, tstart2) < std::min(tend1, tend2);
+    }
+
+    //! @brief Get overlapping booking for [tstart1, tend1) and [tstart2, tend2)
+    [[nodiscard]] constexpr std::pair<int, int> get_overlap(int tstart1,
+                                                            int tend1,
+                                                            int tstart2,
+                                                            int tend2)
+    {
+        return {std::max(tstart1, tstart2), std::min(tend1, tend2)};
+    }
+};
+
 TEST(MyCalendarTwoTest, SampleTest1)
 {
     MyCalendarTwoFA my_calendar_two_fa;
@@ -175,6 +237,15 @@ TEST(MyCalendarTwoTest, SampleTest1)
     EXPECT_FALSE(my_calendar_two_fa.book(5, 15));
     EXPECT_TRUE(my_calendar_two_fa.book(5, 10));
     EXPECT_TRUE(my_calendar_two_fa.book(25, 55));
+
+    MyCalendarTwoDS1 my_calendar_two_ds1;
+
+    EXPECT_TRUE(my_calendar_two_ds1.book(10, 20));
+    EXPECT_TRUE(my_calendar_two_ds1.book(50, 60));
+    EXPECT_TRUE(my_calendar_two_ds1.book(10, 40));
+    EXPECT_FALSE(my_calendar_two_ds1.book(5, 15));
+    EXPECT_TRUE(my_calendar_two_ds1.book(5, 10));
+    EXPECT_TRUE(my_calendar_two_ds1.book(25, 55));
 }
 
 TEST(MyCalendarTwoTest, SampleTest2)
