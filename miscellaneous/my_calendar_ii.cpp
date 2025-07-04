@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -170,7 +171,7 @@ private:
 //! @details https://leetcode.com/problems/my-calendar-ii/description/
 //!
 //!          Time complexity O(N) where N = size of bookings vector. We iterate
-//!          throught the bookings list to check for overlaps and possibly add a
+//!          through the bookings list to check for overlaps and possibly add a
 //!          new booking. Additionally, we check the overlap_bookings vector,
 //!          which is always smaller or equal to the size of bookings.
 //!          Space complexity O(N) for bookings and overlap_bookings. The size
@@ -227,6 +228,66 @@ private:
     }
 };
 
+//! @class MyCalendarTwoDS2
+//! @brief Line sweep discussion solution
+//! @details https://leetcode.com/problems/my-calendar-ii/description/
+//!
+//!          Time complexity O(N) where N = size of bookings vector. We iterate
+//!          over the booking entries in the map and find the prefix sum. For
+//!          each of the O(N) entries, we can have 3 map operations of O(log N).
+//!          Once we find the triple booking, we return and stop iterating.
+//!          Space complexity O(N) to store the start and end points of each
+//!          booking in the map. For N bookings, we store 2N entries.
+class MyCalendarTwoDS2
+{
+public:
+    bool book(int startTime, int endTime)
+    {
+        //! Increase and decrease the booking count
+        //! at startTime and endTime respectively
+        ++booking_count[startTime];
+        ++booking_count[endTime];
+
+        //! Find the prefix sum
+        int num_overlaps {};
+
+        for (const auto& [time_point, booking_count] : booking_count)
+        {
+            num_overlaps += booking_count;
+
+            //! If the number of bookings is more than 2 then return false
+            //! Also, undo the counts for this booking
+            if (num_overlaps > max_overlaps)
+            {
+                --booking_count[startTime];
+                ++booking_count[endTime];
+
+                //! Remove entries from map to avoid unnecessary iteration
+                if (booking_count[startTime] == 0)
+                {
+                    booking_count.erase(startTime);
+                }
+
+                if (booking_count[endTime] == 0)
+                {
+                    booking_count.erase(endTime);
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+private:
+    //! Maximum number of bookings at each point
+    constexpr int max_overlaps {2};
+
+    //! Store the number of bookings at each point
+    std::map<int, int> booking_count;
+};
+
 TEST(MyCalendarTwoTest, SampleTest1)
 {
     MyCalendarTwoFA my_calendar_two_fa;
@@ -246,6 +307,15 @@ TEST(MyCalendarTwoTest, SampleTest1)
     EXPECT_FALSE(my_calendar_two_ds1.book(5, 15));
     EXPECT_TRUE(my_calendar_two_ds1.book(5, 10));
     EXPECT_TRUE(my_calendar_two_ds1.book(25, 55));
+
+    MyCalendarTwoDS2 my_calendar_two_ds2;
+
+    EXPECT_TRUE(my_calendar_two_ds2.book(10, 20));
+    EXPECT_TRUE(my_calendar_two_ds2.book(50, 60));
+    EXPECT_TRUE(my_calendar_two_ds2.book(10, 40));
+    EXPECT_FALSE(my_calendar_two_ds2.book(5, 15));
+    EXPECT_TRUE(my_calendar_two_ds2.book(5, 10));
+    EXPECT_TRUE(my_calendar_two_ds2.book(25, 55));
 }
 
 TEST(MyCalendarTwoTest, SampleTest2)
