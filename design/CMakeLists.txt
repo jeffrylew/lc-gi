@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "insert_delete_getrandom_O1"
     "logger_rate_limiter"
     "lru_cache"
     "min_stack"
