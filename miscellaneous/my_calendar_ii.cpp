@@ -385,4 +385,37 @@ TEST(MyCalendarTwoTest, SampleTest2)
     EXPECT_FALSE(my_calendar_two_ds1.book(4, 12));
     EXPECT_FALSE(my_calendar_two_ds1.book(46, 50));
     EXPECT_FALSE(my_calendar_two_ds1.book(13, 21));
+
+    MyCalendarTwoDS2 my_calendar_two_ds2;
+
+    EXPECT_TRUE(my_calendar_two_ds2.book(47, 50));
+    EXPECT_TRUE(my_calendar_two_ds2.book(1, 10));
+    EXPECT_TRUE(my_calendar_two_ds2.book(27, 36));
+    EXPECT_TRUE(my_calendar_two_ds2.book(40, 47));
+    EXPECT_TRUE(my_calendar_two_ds2.book(20, 27));
+    EXPECT_TRUE(my_calendar_two_ds2.book(15, 23));
+    EXPECT_TRUE(my_calendar_two_ds2.book(10, 18));
+    EXPECT_TRUE(my_calendar_two_ds2.book(27, 36));
+    EXPECT_FALSE(my_calendar_two_ds2.book(17, 25));
+    EXPECT_FALSE(my_calendar_two_ds2.book(8, 17));
+    EXPECT_FALSE(my_calendar_two_ds2.book(24, 33));
+    EXPECT_FALSE(my_calendar_two_ds2.book(23, 28));
+    EXPECT_FALSE(my_calendar_two_ds2.book(21, 27));
+    EXPECT_TRUE(my_calendar_two_ds2.book(47, 50));
+    EXPECT_FALSE(my_calendar_two_ds2.book(14, 21));
+    EXPECT_FALSE(my_calendar_two_ds2.book(26, 32));
+    EXPECT_FALSE(my_calendar_two_ds2.book(16, 21));
+    EXPECT_TRUE(my_calendar_two_ds2.book(2, 7));
+    EXPECT_FALSE(my_calendar_two_ds2.book(24, 33));
+    EXPECT_FALSE(my_calendar_two_ds2.book(6, 13));
+    EXPECT_FALSE(my_calendar_two_ds2.book(44, 50));
+    EXPECT_FALSE(my_calendar_two_ds2.book(33, 39));
+    EXPECT_FALSE(my_calendar_two_ds2.book(30, 36));
+    EXPECT_FALSE(my_calendar_two_ds2.book(6, 15));
+    EXPECT_FALSE(my_calendar_two_ds2.book(21, 27));
+    EXPECT_FALSE(my_calendar_two_ds2.book(49, 50));
+    EXPECT_TRUE(my_calendar_two_ds2.book(38, 45));
+    EXPECT_FALSE(my_calendar_two_ds2.book(4, 12));
+    EXPECT_FALSE(my_calendar_two_ds2.book(46, 50));
+    EXPECT_FALSE(my_calendar_two_ds2.book(13, 21));
 }
