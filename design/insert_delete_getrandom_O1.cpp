@@ -57,6 +57,40 @@ private:
     std::mt19937       mersenne_twister_engine;
 };
 
+//! @class RandomizedSetDS
+//! @brief HashMap + Arraylist discussion solution
+//! @details https://leetcode.com/problems/insert-delete-getrandom-o1/editorial
+//!
+//!          Time complexity O(1).
+//!          Space complexity O(N) where N = number of ints in elements set.
+class RandomizedSetDS
+{
+public:
+    RandomizedSetDS()
+        : mersenne_twister_engine(random_num_engine_seed_source())
+    {
+    }
+
+    bool insert(int val)
+    {
+        //! @todo
+    }
+
+    bool remove(int val)
+    {
+        //! @todo
+    }
+
+    int getRandom()
+    {
+        //! @todo
+    }
+
+private:
+    std::random_device random_num_engine_seed_source;
+    std::mt19937       mersenne_twister_engine;
+};
+
 TEST(RandomizedSetTest, SampleTest1)
 {
     RandomizedSetFA randomized_set_fa;
@@ -68,4 +102,14 @@ TEST(RandomizedSetTest, SampleTest1)
     EXPECT_TRUE(randomized_set_fa.remove(1));
     EXPECT_FALSE(randomized_set_fa.insert(2));
     EXPECT_EQ(randomized_set_fa.getRandom(), 2);
+
+    RandomizedSetDS randomized_set_ds;
+
+    EXPECT_TRUE(randomized_set_ds.insert(1));
+    EXPECT_FALSE(randomized_set_ds.remove(2));
+    EXPECT_TRUE(randomized_set_ds.insert(2));
+    EXPECT_GE(randomized_set_ds.getRandom(), 1);
+    EXPECT_TRUE(randomized_set_ds.remove(1));
+    EXPECT_FALSE(randomized_set_ds.insert(2));
+    EXPECT_EQ(randomized_set_ds.getRandom(), 2);
 }
