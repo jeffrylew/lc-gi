@@ -2,7 +2,9 @@
 
 #include <iterator>
 #include <random>
+#include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 //! @class RandomizedSetFA
 //! @brief First attempt solution
@@ -58,7 +60,7 @@ private:
 };
 
 //! @class RandomizedSetDS
-//! @brief HashMap + Arraylist discussion solution
+//! @brief HashMap + Arraylist (vector) discussion solution
 //! @details https://leetcode.com/problems/insert-delete-getrandom-o1/editorial
 //!
 //!          Time complexity O(1).
@@ -73,22 +75,51 @@ public:
 
     bool insert(int val)
     {
-        //! @todo
+        if (value_idx_map.contains(val))
+        {
+            return false;
+        }
+
+        value_idx_map.try_emplace(val, static_cast<int>(std::ssize(values)));
+        values.push_back(val);
+        return true;
     }
 
     bool remove(int val)
     {
-        //! @todo
+        if (!value_idx_map.contains(val))
+        {
+            return false;
+        }
+
+        //! Swap the last element with the element at idx
+        const int idx {value_idx_map[val]};
+        value_idx_map[values.back()] = idx;
+        std::swap(values[idx], values.back());
+
+        //! Delete the last element
+        values.pop_back();
+        value_idx_map.erase(val);
+        return true;
     }
 
     int getRandom()
     {
-        //! @todo
+        std::uniform_int_distribution<> distribution(
+            0, static_cast<int>(std::ssize(values)) - 1);
+
+        return values[distribution(mersenne_twister_engine)];
     }
 
 private:
     std::random_device random_num_engine_seed_source;
     std::mt19937       mersenne_twister_engine;
+
+    //! Vector of element values
+    std::vector<int> values;
+
+    //! Map of <element value, index in values vector>
+    std::unordered_map<int, int> value_idx_map;
 };
 
 TEST(RandomizedSetTest, SampleTest1)
