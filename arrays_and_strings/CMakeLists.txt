@@ -11,6 +11,7 @@ set (
     "maximum_distance_to_closest_person"
     "meeting_rooms_ii"
     "merge_k_sorted_lists"
+    "minimum_cost_to_hire_k_workers"
     "minimum_window_substring"
     "missing_ranges"
     "multiply_strings"
