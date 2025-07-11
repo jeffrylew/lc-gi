@@ -63,8 +63,12 @@ private:
 //! @brief HashMap + Arraylist (vector) discussion solution
 //! @details https://leetcode.com/problems/insert-delete-getrandom-o1/editorial
 //!
-//!          Time complexity O(1).
-//!          Space complexity O(N) where N = number of ints in elements set.
+//!          Time complexity. getRandom is always O(1). insert and remove both
+//!          have O(1) average time complexity and O(N) (where N = number of
+//!          elements) in the worst-case scenario when the operation exceeds the
+//!          capacity of the currently allocated vector and invokes space
+//!          reallocation.
+//!          Space complexity O(N) to store N elements.
 class RandomizedSetDS
 {
 public:
