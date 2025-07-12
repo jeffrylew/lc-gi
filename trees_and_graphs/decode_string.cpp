@@ -121,9 +121,17 @@ static std::string decodeStringDS1(std::string s)
     std::string result {};
     result.reserve(stack_size);
 
+    /*
     for (int idx = stack_size - 1; idx >= 0; --idx)
     {
         result = stack.top() + result;
+        stack.pop();
+    }
+     */
+
+    while (!stack.empty())
+    {
+        result.insert(result.begin(), stack.top());
         stack.pop();
     }
 
