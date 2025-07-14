@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "android_unlock_patterns"
     "strobogrammatic_number_ii"
     "word_search_ii"
     "word_squares"
