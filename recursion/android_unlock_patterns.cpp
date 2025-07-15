@@ -24,22 +24,37 @@ static int numberOfPatternsFA(int m, int n)
         {6, {1, 2, 3, 5, 7, 8, 9}},
         {7, {2, 4, 5, 6, 8}},
         {8, {1, 3, 4, 5, 6, 7, 9}},
-        {9, {2, 4, 5, 6, 8}}}; 
+        {9, {2, 4, 5, 6, 8}}};
+
+    //! Map of <key, vector<conditionally reachable key, required neighbor>>>
+    std::unordered_map<int, std::vector<std::pair<int, int>>>
+        conditional_neighbors {
+        {1, {{3, 2}, {7, 4}, {9, 5}}},
+        {2, {{8, 5}}},
+        {3, {{1, 2}, {7, 5}, {9, 6}}},
+        {4, {{6, 5}}},
+        {5, {}},
+        {6, {{4, 5}}},
+        {7, {{1, 4}, {3, 5}, {9, 8}}},
+        {8, {{2, 5}}},
+        {9, {{1, 5}, {3, 6}, {7, 8}}}};
 
     //! Set of keys that have been visited already
     std::unordered_set<int> visited_keys;
 
     std::function<int(int)> get_num_patterns = [&](int starting_key) {
+        int num_patterns_from_starting_key {};
+
         //! Stack for <key to process, number of keys in sequence so far>
         std::stack<std::pair<int, int>> key_stack;
         key_stack.emplace(starting_key, 1);
-
-        //! @todo Keep track of pattern in e.g. vector
 
         while (!key_stack.empty())
         {
             const auto [curr_key, curr_num_keys] = key_stack.top();
             key_stack.pop();
+
+            visited_keys.insert(curr_key);
 
             if (curr_num_keys > n)
             {
@@ -47,20 +62,36 @@ static int numberOfPatternsFA(int m, int n)
                 continue;
             }
 
+            if (m <= curr_num_keys)
+            {
+                ++num_patterns_from_starting_key;
+            }
 
+            for (const auto& neighbor : reachable_neighbors[curr_key])
+            {
+                if (visited_keys.contains(neighbor))
+                {
+                    //! This key is already in the pattern
+                    continue;
+                }
+
+                key_stack.emplace(neighbor, curr_num_keys + 1);
+            }
         }
+
+        return num_patterns_from_starting_key;
     };
 
-    int num_patterns {};
+    int total_num_patterns {};
 
     for (int key = 1; key <= 9; ++key)
     {
         visited_keys.clear();
 
-        num_patterns += get_num_patterns(key);
+        total_num_patterns += get_num_patterns(key);
     }
 
-    return num_patterns;
+    return total_num_patterns;
 }
 
 TEST(NumberOfPatternsTest, SampleTest1)
