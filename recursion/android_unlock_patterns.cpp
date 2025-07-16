@@ -42,44 +42,64 @@ static int numberOfPatternsFA(int m, int n)
     //! Set of keys that have been visited already
     std::unordered_set<int> visited_keys;
 
-    std::function<int(int)> get_num_patterns = [&](int starting_key) {
-        int num_patterns_from_starting_key {};
+    std::function<int(int, int)> get_num_patterns =
+        [&](int key, int num_keys_in_sequence) {
 
-        //! Stack for <key to process, number of keys in sequence so far>
-        std::stack<std::pair<int, int>> key_stack;
-        key_stack.emplace(starting_key, 1);
+        visited_keys.insert(key);
 
-        while (!key_stack.empty())
+        if (num_keys_in_sequence > n)
         {
-            const auto [curr_key, curr_num_keys] = key_stack.top();
-            key_stack.pop();
+            //! Exceeded max number of keys in unlock pattern
+            return 0;
+        }
 
-            visited_keys.insert(curr_key);
+        int num_patterns_from_key {};
 
-            if (curr_num_keys > n)
+        if (m <= num_keys_in_sequence)
+        {
+            ++num_patterns_from_key;
+        }
+
+        for (const auto& neighbor : reachable_neighbors[key])
+        {
+            if (visited_keys.contains(neighbor))
             {
-                //! Exceeded max number of keys in unlock pattern
+                //! This key is already in the pattern
                 continue;
             }
 
-            if (m <= curr_num_keys)
-            {
-                ++num_patterns_from_starting_key;
-            }
+            num_patterns_from_key += get_num_patterns(neighbor,
+                                                      num_keys_in_sequence + 1);
 
-            for (const auto& neighbor : reachable_neighbors[curr_key])
-            {
-                if (visited_keys.contains(neighbor))
-                {
-                    //! This key is already in the pattern
-                    continue;
-                }
-
-                key_stack.emplace(neighbor, curr_num_keys + 1);
-            }
+            //! Remove neighbor from visited_keys so the following sequences are
+            //! not affected by the current neighbor
+            visited_keys.erase(neighbor);
         }
 
-        return num_patterns_from_starting_key;
+        for (const auto& [conditional_neighbor, required_neighbor]
+             : conditional_neighbors[key])
+        {
+            if (visited_keys.contains(conditional_neighbor))
+            {
+                //! This key is already in the pattern
+                continue;
+            }
+
+            if (!visited_keys.contains(required_neighbor))
+            {
+                //! The required neighbor key isn't in the pattern yet so the
+                //! conditional_neighbor key cannot be used
+                continue;
+            }
+
+            num_patterns_from_key += get_num_patterns(conditional_neighbor,
+                                                      num_keys_in_sequence + 1);
+
+            //! Remove conditional_neighbor from visited_keys to backtrack
+            visited_keys.erase(conditional_neighbor);
+        }
+
+        return num_patterns_from_key;
     };
 
     int total_num_patterns {};
@@ -88,7 +108,7 @@ static int numberOfPatternsFA(int m, int n)
     {
         visited_keys.clear();
 
-        total_num_patterns += get_num_patterns(key);
+        total_num_patterns += get_num_patterns(key, 1);
     }
 
     return total_num_patterns;
