@@ -69,20 +69,55 @@ static int peakIndexInMountainArrayDS1(std::vector<int> arr)
     return idx;
 }
 
+//! @brief Binary search discussion solution
+//! @param[in] arr Vector of ints forming a mountain
+//! @return Index of the peak element
+static int peakIndexInMountainArrayDS2(std::vector<int> arr)
+{
+    //! @details https://leetcode.com/problems/peak-index-in-a-mountain-array
+    //!
+    //!          Time complexity O(log N) where N = arr.size(). We perform
+    //!          O(log N) iterations using the binary search algorithm as the
+    //!          problem set is divided into half in each iteration.
+    //!          Space complexity O(1) for a few constant space variables.
+
+    int left_idx {};
+    int right_idx {static_cast<int>(std::ssize(arr))};
+
+    while (left_idx < right_idx)
+    {
+        const int mid_idx {left_idx + (right_idx - left_idx) / 2};
+
+        if (arr[mid_idx] < arr[mid_idx + 1])
+        {
+            left_idx = mid_idx + 1;
+        }
+        else
+        {
+            right_idx = mid_idx;
+        }
+    }
+
+    return left_idx;
+}
+
 TEST(PeakIndexInMountainArrayTest, SampleTest1)
 {
     EXPECT_EQ(1, peakIndexInMountainArrayFA({0, 1, 0}));
     EXPECT_EQ(1, peakIndexInMountainArrayDS1({0, 1, 0}));
+    EXPECT_EQ(1, peakIndexInMountainArrayDS2({0, 1, 0}));
 }
 
 TEST(PeakIndexInMountainArrayTest, SampleTest2)
 {
     EXPECT_EQ(1, peakIndexInMountainArrayFA({0, 2, 1, 0}));
     EXPECT_EQ(1, peakIndexInMountainArrayDS1({0, 2, 1, 0}));
+    EXPECT_EQ(1, peakIndexInMountainArrayDS2({0, 2, 1, 0}));
 }
 
 TEST(PeakIndexInMountainArrayTest, SampleTest3)
 {
     EXPECT_EQ(1, peakIndexInMountainArrayFA({0, 10, 5, 2}));
     EXPECT_EQ(1, peakIndexInMountainArrayDS1({0, 10, 5, 2}));
+    EXPECT_EQ(1, peakIndexInMountainArrayDS2({0, 10, 5, 2}));
 }
