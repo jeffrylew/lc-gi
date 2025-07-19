@@ -52,6 +52,54 @@ private:
     std::queue<decltype(msg_time_map)::iterator> msg_time_queue;
 };
 
+//! @class LoggerDS1
+//! @brief Queue + Set discussion solution
+//! @details https://leetcode.com/problems/logger-rate-limiter/editorial
+//!
+//!          Time complexity amortised O(1) per call. In the worst case, a call
+//!          might remove up to N obsolete messages from the queue, where N is
+//!          the size of msg_queue. However, each message is added and removed
+//!          at most once so over multiple calls, the total work is linear and
+//!          the average (amortized) cost per call remains constant.
+//!          Space complexity O(N) where N = msg_queue.size(). We keep incoming
+//!          messages in both the queue and set. The upper bound on space is 2N
+//!          when there are no duplicates at all.
+class LoggerDS1
+{
+public:
+    bool shouldPrintMessage(int timestamp, std::string message)
+    {
+        while (!msg_queue.empty())
+        {
+            const auto& [oldest_msg, oldest_tstamp] = msg_queue.front();
+
+            if (timestamp - oldest_tstamp >= 10)
+            {
+                msg_set.erase(oldest_msg);
+                msg_queue.pop();
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (msg_set.count(message) == 0)
+        {
+            msg_queue.emplace(message, timestamp);
+            msg_set.insert(std::move(message));
+            return true;
+        }
+
+        return false;
+    }
+
+private:
+    std::unordered_set<std::string> msg_set;
+
+    std::queue<std::pair<std::string, int>> msg_queue;
+};
+
 TEST(LoggerTest, SampleTest1)
 {
     LoggerFA logger_fa;
@@ -62,4 +110,13 @@ TEST(LoggerTest, SampleTest1)
     EXPECT_FALSE(logger_fa.shouldPrintMessage(8, "bar"));
     EXPECT_FALSE(logger_fa.shouldPrintMessage(10, "foo"));
     EXPECT_TRUE(logger_fa.shouldPrintMessage(11, "foo"));
+
+    LoggerDS1 logger_ds1;
+
+    EXPECT_TRUE(logger_ds1.shouldPrintMessage(1, "foo"));
+    EXPECT_TRUE(logger_ds1.shouldPrintMessage(2, "bar"));
+    EXPECT_FALSE(logger_ds1.shouldPrintMessage(3, "foo"));
+    EXPECT_FALSE(logger_ds1.shouldPrintMessage(8, "bar"));
+    EXPECT_FALSE(logger_ds1.shouldPrintMessage(10, "foo"));
+    EXPECT_TRUE(logger_ds1.shouldPrintMessage(11, "foo"));
 }
