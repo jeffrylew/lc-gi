@@ -34,6 +34,8 @@ static int candyFA(const std::vector<int>& ratings)
             min_rating_idxs.push_back(idx);
         }
     }
+    const auto min_rating_idxs_size =
+        static_cast<int>(std::ssize(min_rating_idxs));
 
     int min_candies {std::accumulate(min_rating_idxs.begin(),
                                      min_rating_idxs.end(),
@@ -58,6 +60,30 @@ static int candyFA(const std::vector<int>& ratings)
                 curr_candies = 1;
             }
             min_candies += curr_candies;
+        }
+        else
+        {
+            //! ratings[ridx] < ratings[ridx + 1]
+
+            if (ratings[ridx] > ratings[ridx - 1])
+            {
+                //! @todo
+            }
+            else if (ratings[ridx] == ratings[ridx - 1])
+            {
+                //! @todo
+            }
+            min_candies += curr_candies;
+        }
+    }
+
+    if (min_rating_idxs_size > 1)
+    {
+        for (int lidx = min_rating_idxs.back();
+             lidx < min_rating_idxs_size;
+             ++lidx)
+        {
+            //! @todo
         }
     }
 
