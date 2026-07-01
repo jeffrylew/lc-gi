@@ -92,11 +92,22 @@ static int candyFA(const std::vector<int>& ratings)
     return min_candies;
 }
 
+//! @brief Brute force discussion solution to get min number of candies
+//! @param[in] ratings Reference to vector of rating of each child
+//! @return Min number of candies required to distribute them to the children
+static int candyDS1(const std::vector<int>& ratings)
+{
+    //! @details https://leetcode.com/problems/candy/editorial/
+
+    //! @todo
+}
+
 TEST(CandyTest, SampleTest1)
 {
     const std::vector<int> ratings {1, 0, 2};
 
     EXPECT_EQ(5, candyFA(ratings));
+    EXPECT_EQ(5, candyDS1(ratings));
 }
 
 TEST(CandyTest, SampleTest2)
@@ -104,4 +115,5 @@ TEST(CandyTest, SampleTest2)
     const std::vector<int> ratings {1, 2, 2};
 
     EXPECT_EQ(4, candyFA(ratings));
+    EXPECT_EQ(4, candyDS1(ratings));
 }
