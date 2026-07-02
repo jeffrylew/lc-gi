@@ -99,7 +99,36 @@ static int candyDS1(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
 
-    //! @todo
+    std::vector<int> candies(ratings.size(), 1);
+    const auto       num_ratings = static_cast<int>(std::ssize(ratings));
+
+    bool has_changed {true};
+
+    while (has_changed)
+    {
+        has_changed = false;
+
+        for (int child = 0; child < num_ratings; ++child)
+        {
+            if (child != num_ratings - 1
+                && ratings[child] > ratings[child + 1]
+                && candies[child] <= candies[child + 1])
+            {
+                candies[child] = candies[child + 1] + 1;
+                has_changed = true;
+            }
+
+            if (child > 0
+                && ratings[child] > ratings[child - 1]
+                && candies[child] <= candies[child - 1])
+            {
+                candies[child] = candies[child - 1] + 1;
+                has_changed = true;
+            }
+        }
+    }
+
+    return std::accumulate(candies.begin(), candies.end(), 0);
 }
 
 TEST(CandyTest, SampleTest1)
