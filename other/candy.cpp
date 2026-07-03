@@ -98,6 +98,12 @@ static int candyFA(const std::vector<int>& ratings)
 static int candyDS1(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = ratings.size(). We need to
+    //!          traverse the vector at most N times. This is because a child
+    //!          will get N candies at most, and their candy count will be
+    //!          updated once on each traversal.
+    //!          Space complexity O(N) for one vector, candies, of size N.
 
     std::vector<int> candies(ratings.size(), 1);
     const auto       num_ratings = static_cast<int>(std::ssize(ratings));
