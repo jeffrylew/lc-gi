@@ -108,6 +108,10 @@ static int candyDS1(const std::vector<int>& ratings)
     std::vector<int> candies(ratings.size(), 1);
     const auto       num_ratings = static_cast<int>(std::ssize(ratings));
 
+    //! If in any traversal, no update of the candies vector occurs, it means
+    //! that the vector now contains the final distribution of candies so we
+    //! should stop. We use bool has_changed to keep track of whether or not we
+    //! made any changes in the last traversal.
     bool has_changed {true};
 
     while (has_changed)
@@ -137,12 +141,21 @@ static int candyDS1(const std::vector<int>& ratings)
     return std::accumulate(candies.begin(), candies.end(), 0);
 }
 
+//! @brief Using two vectors discussion solution to get min number of candies
+//! @param[in] ratings Reference to vector of rating of each child
+//! @return Min number of candies required to distribute them to the children
+static int candyDS2(const std::vector<int>& ratings)
+{
+    //! @details https://leetcode.com/problems/candy/editorial/
+}
+
 TEST(CandyTest, SampleTest1)
 {
     const std::vector<int> ratings {1, 0, 2};
 
     EXPECT_EQ(5, candyFA(ratings));
     EXPECT_EQ(5, candyDS1(ratings));
+    EXPECT_EQ(5, candyDS2(ratings));
 }
 
 TEST(CandyTest, SampleTest2)
@@ -151,4 +164,5 @@ TEST(CandyTest, SampleTest2)
 
     EXPECT_EQ(4, candyFA(ratings));
     EXPECT_EQ(4, candyDS1(ratings));
+    EXPECT_EQ(4, candyDS2(ratings));
 }
