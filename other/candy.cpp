@@ -106,7 +106,7 @@ static int candyDS1(const std::vector<int>& ratings)
     //!          Space complexity O(N) for one vector, candies, of size N.
 
     std::vector<int> candies(ratings.size(), 1);
-    const auto       num_ratings = static_cast<int>(std::ssize(ratings));
+    const auto       num_children = static_cast<int>(std::ssize(ratings));
 
     //! If in any traversal, no update of the candies vector occurs, it means
     //! that the vector now contains the final distribution of candies so we
@@ -118,9 +118,9 @@ static int candyDS1(const std::vector<int>& ratings)
     {
         has_changed = false;
 
-        for (int child = 0; child < num_ratings; ++child)
+        for (int child = 0; child < num_children; ++child)
         {
-            if (child != num_ratings - 1
+            if (child != num_children - 1
                 && ratings[child] > ratings[child + 1]
                 && candies[child] <= candies[child + 1])
             {
@@ -147,6 +147,37 @@ static int candyDS1(const std::vector<int>& ratings)
 static int candyDS2(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
+
+    const auto num_children = static_cast<int>(std::ssize(ratings));
+
+    std::vector<int> candies_rel_to_left_child(ratings.size(), 1);
+    std::vector<int> candies_rel_to_right_child(ratings.size(), 1);
+
+    for (int child = 1; child < num_children; ++child)
+    {
+        if (ratings[child] > ratings[child - 1])
+        {
+            candies_rel_to_left_child[child] =
+                candies_rel_to_left_child[child - 1] + 1;
+        }
+    }
+
+    for (int child = num_children - 2; child >= 0; --child)
+    {
+        if (ratings[child] > ratings[child + 1])
+        {
+            candies_rel_to_right_child[child] =
+                candies_rel_to_right_child[child + 1] + 1;
+        }
+    }
+
+    int min_candies {};
+    for (int child = 0; child < num_children; ++child)
+    {
+        min_candies += std::max(candies_rel_to_left_child[child],
+                                candies_rel_to_right_child[child]);
+    }
+    return min_candies;
 }
 
 TEST(CandyTest, SampleTest1)
