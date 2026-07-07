@@ -185,6 +185,37 @@ static int candyDS2(const std::vector<int>& ratings)
     return min_candies;
 }
 
+//! @brief Using one vector discussion solution to get min number of candies
+//! @param[in] ratings Reference to vector of rating of each child
+//! @return Min number of candies required to distribute them to the children
+static int candyDS3(const std::vector<int>& ratings)
+{
+    //! @details https://leetcode.com/problems/candy/editorial/
+
+    const auto num_children = static_cast<int>(std::ssize(ratings));
+
+    std::vector<int> candies(ratings.size(), 1);
+
+    for (int child = 1; child < num_children; ++child)
+    {
+        if (ratings[child] > ratings[child - 1])
+        {
+            candies[child] = candies[child - 1] + 1;
+        }
+    }
+
+    int min_candies {candies.back()};
+    for (int child = num_children - 2; child >= 0; --child)
+    {
+        if (ratings[child] > ratings[child + 1])
+        {
+            candies[child] = std::max(candies[child], candies[child + 1] + 1);
+        }
+        min_candies += candies[child];
+    }
+    return min_candies;
+}
+
 TEST(CandyTest, SampleTest1)
 {
     const std::vector<int> ratings {1, 0, 2};
@@ -192,6 +223,7 @@ TEST(CandyTest, SampleTest1)
     EXPECT_EQ(5, candyFA(ratings));
     EXPECT_EQ(5, candyDS1(ratings));
     EXPECT_EQ(5, candyDS2(ratings));
+    EXPECT_EQ(5, candyDS3(ratings));
 }
 
 TEST(CandyTest, SampleTest2)
@@ -201,4 +233,5 @@ TEST(CandyTest, SampleTest2)
     EXPECT_EQ(4, candyFA(ratings));
     EXPECT_EQ(4, candyDS1(ratings));
     EXPECT_EQ(4, candyDS2(ratings));
+    EXPECT_EQ(4, candyDS3(ratings));
 }
