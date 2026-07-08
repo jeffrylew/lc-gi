@@ -191,6 +191,10 @@ static int candyDS2(const std::vector<int>& ratings)
 static int candyDS3(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
+    //!
+    //!          Time complexity O(N) where N = ratings.size(). The candies
+    //!          vector of size N is traversed thrice.
+    //!          Space complexity O(N) for the candies vector of size N.
 
     const auto num_children = static_cast<int>(std::ssize(ratings));
 
