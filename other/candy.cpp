@@ -220,6 +220,30 @@ static int candyDS3(const std::vector<int>& ratings)
     return min_candies;
 }
 
+//! @brief Calculate sum of first n natural numbers
+//! @param[in] n int representing the number of natural numbers to sum
+//! @return Sum of first n natural numbers
+[[nodiscard]] constexpr int sum_of_natural_numbers(int n)
+{
+    return (n * (n + 1)) / 2;
+}
+
+//! @brief Single pass with constant space discussion solution
+//! @param[in] ratings Reference to vector of rating of each child
+//! @return Min number of candies required to distribute them to the children
+static int candyDS4(const std::vector<int>& ratings)
+{
+    //! @details https://leetcode.com/problems/candy/editorial/
+
+    const auto num_children = static_cast<int>(std::ssize(ratings));
+    if (num_children <= 1)
+    {
+        return num_children;
+    }
+
+    //! @todo
+}
+
 TEST(CandyTest, SampleTest1)
 {
     const std::vector<int> ratings {1, 0, 2};
@@ -228,6 +252,7 @@ TEST(CandyTest, SampleTest1)
     EXPECT_EQ(5, candyDS1(ratings));
     EXPECT_EQ(5, candyDS2(ratings));
     EXPECT_EQ(5, candyDS3(ratings));
+    EXPECT_EQ(5, candyDS4(ratings));
 }
 
 TEST(CandyTest, SampleTest2)
@@ -238,4 +263,5 @@ TEST(CandyTest, SampleTest2)
     EXPECT_EQ(4, candyDS1(ratings));
     EXPECT_EQ(4, candyDS2(ratings));
     EXPECT_EQ(4, candyDS3(ratings));
+    EXPECT_EQ(4, candyDS4(ratings));
 }
