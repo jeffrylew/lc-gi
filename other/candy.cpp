@@ -258,6 +258,10 @@ static int candyDS3(const std::vector<int>& ratings)
 static int candyDS4(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
+    //!
+    //!          Time complexity O(N) where N = ratings.size().
+    //!          We traverse the ratings vector only once.
+    //!          Space complexity O(1).
 
     const auto num_children = static_cast<int>(std::ssize(ratings));
     if (num_children <= 1)
@@ -265,26 +269,36 @@ static int candyDS4(const std::vector<int>& ratings)
         return num_children;
     }
 
+    //! Always update the total count of candies at the end of a falling slope
+    //! following a rising slope (i.e. a mountain). The leveling of points in
+    //! ratings also indicates the end of a mountain.
     int total_candies {};
+
+    //! uphill_candies and downhill_candies keep track of the candies on the
+    //! rising and falling slopes respectively, without including the peak
     int uphill_candies {};
     int downhill_candies {};
+
+    //! old_slope and new_slope determine the occurrence of a peak or valley
     int old_slope {};
 
     for (int child = 1; child < num_children; ++child)
     {
+        //! new_slope = 1  if ratings[child] > ratings[child - 1]
+        //! new_slope = 0  if ratings[child] == ratings[child - 1]
+        //! new_slope = -1 if ratings[child] < ratings[child - 1]
         const int new_slope {
             ratings[child] > ratings[child - 1]
                 ? 1
                 : (ratings[child] < ratings[child - 1] ? -1 : 0)};
 
-        //! Slope is changing from uphill to flat or downhill
-        //! or from downhill to flat or uphill
+        //! Slope is changing from uphill to flat or downhill to flat/uphill
         if ((old_slope > 0 && new_slope == 0)
             || (old_slope < 0 && new_slope >= 0))
         {
-            total_candies += sum_of_natural_numbers(uphill_candies)
-                + sum_of_natural_numbers(downhill_candies)
-                + std::max(uphill_candies, downhill_candies);
+            total_candies += std::max(uphill_candies, downhill_candies)
+                + sum_of_natural_numbers(uphill_candies)
+                + sum_of_natural_numbers(downhill_candies);
 
             uphill_candies   = 0;
             downhill_candies = 0;
@@ -309,10 +323,9 @@ static int candyDS4(const std::vector<int>& ratings)
         old_slope = new_slope;
     }
 
-    total_candies += 1
+    total_candies += 1 + std::max(uphill_candies, downhill_candies)
         + sum_of_natural_numbers(uphill_candies)
-        + sum_of_natural_numbers(downhill_candies)
-        + std::max(uphill_candies, downhill_candies);
+        + sum_of_natural_numbers(downhill_candies);
 
     return total_candies;
 }
@@ -354,4 +367,45 @@ TEST(CandyTest, SampleTest3)
 
     EXPECT_EQ(16, candyDS3(ratings));
     EXPECT_EQ(16, candyDS4(ratings));
+}
+
+/*
+ * Plots for SampleTest4
+ *
+ r  6 |                            r                                     | 6  r
+ a  5 |             r                 r                                  | 5  a
+ t  4 |          r                       r                          r    | 4  t
+ i  3 |       r        r                    r  r           r  r  r       | 3  i
+ n  2 |    r              r     r                 r                    r | 2  n
+ g  1 | r                    r                       r  r                | 1  g
+ s  0   ----------------------------------------------------------------   0  s
+        0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21
+                                  child index
+
+        1  2  3  4  5  3  2  1  2  4  3  2  1  3  2  1  1  2  1  1  2  1
+                                minimum candies
+
+        0  1  1  1  1 -1 -1 -1  1  1 -1 -1 -1  0 -1 -1  0  1  0  0  1 -1
+                                    slopes
+
+ c  6 |                                                                  | 6  c
+ a  5 |             c                                                    | 5  a
+ n  4 |          c                 c                                     | 4  n
+ d  3 |       c        c              c        c                         | 3  d
+ i  2 |    c              c     c        c        c        c        c    | 2  i
+ e  1 | c                    c              c        c  c     c  c     c | 1  e
+ s  0   ----------------------------------------------------------------   0  s
+        0  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21
+                                  child index
+ */
+TEST(CandyTest, SampleTest4)
+{
+    const std::vector<int> ratings {
+        1, 2, 3, 4, 5, 3, 2, 1, 2, 6, 5, 4, 3, 3, 2, 1, 1, 3, 3, 3, 4, 2};
+
+    EXPECT_EQ(47, candyFA(ratings));
+    EXPECT_EQ(47, candyDS1(ratings));
+    EXPECT_EQ(47, candyDS2(ratings));
+    EXPECT_EQ(47, candyDS3(ratings));
+    EXPECT_EQ(47, candyDS4(ratings));
 }
