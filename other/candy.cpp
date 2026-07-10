@@ -120,7 +120,7 @@ static int candyDS1(const std::vector<int>& ratings)
 
         for (int child = 0; child < num_children; ++child)
         {
-            if (child != num_children - 1
+            if (child < num_children - 1
                 && ratings[child] > ratings[child + 1]
                 && candies[child] <= candies[child + 1])
             {
@@ -155,7 +155,12 @@ static int candyDS2(const std::vector<int>& ratings)
 
     const auto num_children = static_cast<int>(std::ssize(ratings));
 
+    //! The student with a higher rating than their left neighbor
+    //! should always get more candies than their left neighbor
     std::vector<int> candies_rel_to_left_child(ratings.size(), 1);
+
+    //! The student with a higher rating than their right neighbor
+    //! should always get more candies than their right neighbor
     std::vector<int> candies_rel_to_right_child(ratings.size(), 1);
 
     for (int child = 1; child < num_children; ++child)
@@ -182,6 +187,7 @@ static int candyDS2(const std::vector<int>& ratings)
         min_candies += std::max(candies_rel_to_left_child[child],
                                 candies_rel_to_right_child[child]);
     }
+
     return min_candies;
 }
 
@@ -192,8 +198,8 @@ static int candyDS3(const std::vector<int>& ratings)
 {
     //! @details https://leetcode.com/problems/candy/editorial/
     //!
-    //!          Time complexity O(N) where N = ratings.size(). The candies
-    //!          vector of size N is traversed thrice.
+    //!          Time complexity O(N) where N = ratings.size().
+    //!          The candies vector of size N is traversed thrice.
     //!          Space complexity O(N) for the candies vector of size N.
 
     const auto num_children = static_cast<int>(std::ssize(ratings));
@@ -202,6 +208,8 @@ static int candyDS3(const std::vector<int>& ratings)
 
     for (int child = 1; child < num_children; ++child)
     {
+        //! Don't need to check if candies[child] <= candies[child - 1]
+        //! since this will always be the case
         if (ratings[child] > ratings[child - 1])
         {
             candies[child] = candies[child - 1] + 1;
@@ -211,12 +219,28 @@ static int candyDS3(const std::vector<int>& ratings)
     int min_candies {candies.back()};
     for (int child = num_children - 2; child >= 0; --child)
     {
+        //! When traversing from right to left, we need to update candies[child]
+        //! only if candies[child] <= candies[child + 1] since we already
+        //! altered the candies vector during the forward traversal.
         if (ratings[child] > ratings[child + 1])
         {
+            //! If candies[child] <= candies[child + 1] then
+            //! candies[child + 1] + 1 will be bigger than candies[child].
+            //! If candies[child] > candies[child + 1] then
+            //! we don't need to update candies[child].
+            /*
+            if (candies[child] <= candies[child + 1])
+            {
+                candies[child] = candies[child + 1] + 1;
+            }
+             */
+
+            //! Using std::max captures the above logic
             candies[child] = std::max(candies[child], candies[child + 1] + 1);
         }
         min_candies += candies[child];
     }
+
     return min_candies;
 }
 
@@ -313,4 +337,21 @@ TEST(CandyTest, SampleTest2)
     EXPECT_EQ(4, candyDS2(ratings));
     EXPECT_EQ(4, candyDS3(ratings));
     EXPECT_EQ(4, candyDS4(ratings));
+}
+
+TEST(CandyTest, SampleTest3)
+{
+    const std::vector<int> ratings {12, 4, 3, 11, 34, 34, 1, 67};
+
+    EXPECT_EQ(16, candyFA(ratings));
+    EXPECT_EQ(16, candyDS1(ratings));
+
+    //!                    ratings: 12  4  3 11 34 34  1 67
+    //!  candies_rel_to_left_child:  1  1  1  2  3  1  1  2
+    //! candies_rel_to_right_child:  3  2  1  1  1  2  1  1
+    //!  max of latter two vectors:  3  2  1  2  3  2  1  2 -> sum = 16
+    EXPECT_EQ(16, candyDS2(ratings));
+
+    EXPECT_EQ(16, candyDS3(ratings));
+    EXPECT_EQ(16, candyDS4(ratings));
 }
