@@ -241,7 +241,56 @@ static int candyDS4(const std::vector<int>& ratings)
         return num_children;
     }
 
-    //! @todo
+    int total_candies {};
+    int uphill_candies {};
+    int downhill_candies {};
+    int old_slope {};
+
+    for (int child = 1; child < num_children; ++child)
+    {
+        const int new_slope {
+            ratings[child] > ratings[child - 1]
+                ? 1
+                : (ratings[child] < ratings[child - 1] ? -1 : 0)};
+
+        //! Slope is changing from uphill to flat or downhill
+        //! or from downhill to flat or uphill
+        if ((old_slope > 0 && new_slope == 0)
+            || (old_slope < 0 && new_slope >= 0))
+        {
+            total_candies += sum_of_natural_numbers(uphill_candies)
+                + sum_of_natural_numbers(downhill_candies)
+                + std::max(uphill_candies, downhill_candies);
+
+            uphill_candies   = 0;
+            downhill_candies = 0;
+        }
+
+        //! Slope is uphill
+        if (new_slope > 0)
+        {
+            ++uphill_candies;
+        }
+        //! Slope is downhill
+        else if (new_slope < 0)
+        {
+            ++downhill_candies;
+        }
+        //! Slope is flat
+        else
+        {
+            ++total_candies;
+        }
+
+        old_slope = new_slope;
+    }
+
+    total_candies += 1
+        + sum_of_natural_numbers(uphill_candies)
+        + sum_of_natural_numbers(downhill_candies)
+        + std::max(uphill_candies, downhill_candies);
+
+    return total_candies;
 }
 
 TEST(CandyTest, SampleTest1)
