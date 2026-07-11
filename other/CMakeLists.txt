@@ -1,6 +1,7 @@
 set (
     cpp_files
     "candy"
+    "isomorphic_strings"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
