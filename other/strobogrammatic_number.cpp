@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <ranges>
 #include <string>
 #include <unordered_map>
 
@@ -59,27 +60,58 @@ static bool isStrobogrammaticFA(const std::string& num)
     return true;
 }
 
+//! @brief Discussion solution for checking if num is a strobogrammatic number
+//! @param[in] num String that represents an integer of length up to 50
+//! @return True if num looks the same when rotated 180 degrees, else false
+static bool isStrobogrammaticDS(const std::string& num)
+{
+    //! @details https://leetcode.com/problems/strobogrammatic-number/editorial/
+
+    std::unordered_map<char, char> rotated_digits {
+        {'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
+
+    std::string rotated_num;
+    rotated_num.reserve(num.size());
+
+    for (const char digit : num | std::views::reverse)
+    {
+        if (!rotated_digits.contains(digit))
+        {
+            return false;
+        }
+
+        rotated_num += rotated_digits[digit];
+    }
+
+    return num == rotated_num;
+}
+
 TEST(IsStrobogrammatic, SampleTest1)
 {
     EXPECT_TRUE(isStrobogrammaticFA("69"));
+    EXPECT_TRUE(isStrobogrammaticDS("69"));
 }
 
 TEST(IsStrobogrammatic, SampleTest2)
 {
     EXPECT_TRUE(isStrobogrammaticFA("88"));
+    EXPECT_TRUE(isStrobogrammaticDS("88"));
 }
 
 TEST(IsStrobogrammatic, SampleTest3)
 {
     EXPECT_TRUE(isStrobogrammaticFA("962"));
+    EXPECT_TRUE(isStrobogrammaticDS("962"));
 }
 
 TEST(IsStrobogrammatic, SampleTest4)
 {
     EXPECT_FALSE(isStrobogrammaticFA("6"));
+    EXPECT_FALSE(isStrobogrammaticDS("6"));
 }
 
 TEST(IsStrobogrammatic, SampleTest5)
 {
     EXPECT_FALSE(isStrobogrammaticFA("868"));
+    EXPECT_FALSE(isStrobogrammaticDS("868"));
 }
