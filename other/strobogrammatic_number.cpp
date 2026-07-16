@@ -98,6 +98,10 @@ static bool isStrobogrammaticDS1(const std::string& num)
 static bool isStrobogrammaticDS2(const std::string& num)
 {
     //! @details https://leetcode.com/problems/strobogrammatic-number/editorial/
+    //!
+    //!          Time complexity O(N) where N = num.size(). For each of the N
+    //!          digits in num, we perform a single lookup and comparison.
+    //!          Space complexity O(1).
 
     const std::unordered_map<char, char> rotated_digits {
         {'0', '0'}, {'1', '1'}, {'6', '9'}, {'8', '8'}, {'9', '6'}};
