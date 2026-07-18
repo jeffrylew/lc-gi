@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <array>
 #include <ranges>
 #include <string>
 #include <unordered_map>
@@ -92,10 +93,32 @@ static bool isStrobogrammaticDS1(const std::string& num)
     return num == rotated_num;
 }
 
-//! @brief Two pointers discussion solution for checking strobogrammatic numbers
+//! @brief Rotated copy with array discussion solution
 //! @param[in] num String that represents an integer of length up to 50
 //! @return True if num looks the same when rotated 180 degrees, else false
 static bool isStrobogrammaticDS2(const std::string& num)
+{
+    //! @details https://leetcode.com/problems/strobogrammatic-number/editorial/
+
+    constexpr std::array<char, 10U> rotated_digits {
+        '0', '1', ' ', ' ', ' ', ' ', '9', ' ', '8', '6'};
+
+    std::string rotated_num;
+    rotated_num.reserve(num.size());
+
+    for (const char digit : num | std::views::reverse)
+    {
+        const auto digit_idx = static_cast<int>(digit - '0');
+        rotated_num += rotated_digits[digit_idx];
+    }
+
+    return num == rotated_num;
+}
+
+//! @brief Two pointers discussion solution for checking strobogrammatic numbers
+//! @param[in] num String that represents an integer of length up to 50
+//! @return True if num looks the same when rotated 180 degrees, else false
+static bool isStrobogrammaticDS3(const std::string& num)
 {
     //! @details https://leetcode.com/problems/strobogrammatic-number/editorial/
     //!
@@ -132,6 +155,7 @@ TEST(IsStrobogrammatic, SampleTest1)
     EXPECT_TRUE(isStrobogrammaticFA("69"));
     EXPECT_TRUE(isStrobogrammaticDS1("69"));
     EXPECT_TRUE(isStrobogrammaticDS2("69"));
+    EXPECT_TRUE(isStrobogrammaticDS3("69"));
 }
 
 TEST(IsStrobogrammatic, SampleTest2)
@@ -139,6 +163,7 @@ TEST(IsStrobogrammatic, SampleTest2)
     EXPECT_TRUE(isStrobogrammaticFA("88"));
     EXPECT_TRUE(isStrobogrammaticDS1("88"));
     EXPECT_TRUE(isStrobogrammaticDS2("88"));
+    EXPECT_TRUE(isStrobogrammaticDS3("88"));
 }
 
 TEST(IsStrobogrammatic, SampleTest3)
@@ -146,6 +171,7 @@ TEST(IsStrobogrammatic, SampleTest3)
     EXPECT_TRUE(isStrobogrammaticFA("962"));
     EXPECT_TRUE(isStrobogrammaticDS1("962"));
     EXPECT_TRUE(isStrobogrammaticDS2("962"));
+    EXPECT_TRUE(isStrobogrammaticDS3("962"));
 }
 
 TEST(IsStrobogrammatic, SampleTest4)
@@ -153,6 +179,7 @@ TEST(IsStrobogrammatic, SampleTest4)
     EXPECT_FALSE(isStrobogrammaticFA("6"));
     EXPECT_FALSE(isStrobogrammaticDS1("6"));
     EXPECT_FALSE(isStrobogrammaticDS2("6"));
+    EXPECT_FALSE(isStrobogrammaticDS3("6"));
 }
 
 TEST(IsStrobogrammatic, SampleTest5)
@@ -160,4 +187,5 @@ TEST(IsStrobogrammatic, SampleTest5)
     EXPECT_FALSE(isStrobogrammaticFA("868"));
     EXPECT_FALSE(isStrobogrammaticDS1("868"));
     EXPECT_FALSE(isStrobogrammaticDS2("868"));
+    EXPECT_FALSE(isStrobogrammaticDS3("868"));
 }
