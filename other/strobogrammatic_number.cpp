@@ -99,6 +99,12 @@ static bool isStrobogrammaticDS1(const std::string& num)
 static bool isStrobogrammaticDS2(const std::string& num)
 {
     //! @details https://leetcode.com/problems/strobogrammatic-number/editorial/
+    //!
+    //!          Time complexity O(N) where N = num.size(). In the worst case,
+    //!          all digits in num will be rotatable. For each digit, we look up
+    //!          its rotation in O(1). In the final step, comparing two strings
+    //!          of length N costs O(N).
+    //!          Space complexity O(N) for rotated_num.
 
     constexpr std::array<char, 10U> rotated_digits {
         '0', '1', ' ', ' ', ' ', ' ', '9', ' ', '8', '6'};
