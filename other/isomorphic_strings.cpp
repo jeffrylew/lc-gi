@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <array>
 #include <string>
 #include <unordered_map>
 
@@ -42,22 +43,59 @@ static bool isIsomorphicFA(std::string s, std::string t)
     return true;
 }
 
+//! @brief Character mapping with dictionary discussion solution
+//! @param[in] s First string
+//! @param[in] t Second string
+//! @return True if characters in s can be replaced to get t
+static bool isIsomorphicDS1(std::string s, std::string t)
+{
+    //! @details https://leetcode.com/problems/isomorphic-strings/editorial/
+
+    std::array<int, 256U> map_s_to_t {};
+    std::array<int, 256U> map_t_to_s {};
+
+    for (int idx = 0; idx < std::ssize(s); ++idx)
+    {
+        const char ch_s {s[idx]};
+        const char ch_t {t[idx]};
+
+        //! Case 1: No mapping exists in either dictionary
+        if (map_s_to_t[ch_s] == 0 && map_t_to_s[ch_t] == 0)
+        {
+            map_s_to_t[ch_s] = ch_t;
+            map_t_to_s[ch_t] = ch_s;
+        }
+        else if (map_s_to_t[ch_s] != ch_t || map_t_to_s[ch_t] != ch_s)
+        {
+            //! Case 2: Either mapping doesn't exist in one of the dictionaries
+            //!         or mapping exists but doesn't match in either dictionary
+            return false;
+        }
+    }
+
+    return true;
+}
+
 TEST(IsIsomorphicTest, SampleTest1)
 {
     EXPECT_TRUE(isIsomorphicFA("egg", "add"));
+    EXPECT_TRUE(isIsomorphicDS1("egg", "add"));
 }
 
 TEST(IsIsomorphicTest, SampleTest2)
 {
     EXPECT_FALSE(isIsomorphicFA("f11", "b23"));
+    EXPECT_FALSE(isIsomorphicDS1("f11", "b23"));
 }
 
 TEST(IsIsomorphicTest, SampleTest3)
 {
     EXPECT_TRUE(isIsomorphicFA("paper", "title"));
+    EXPECT_TRUE(isIsomorphicDS1("paper", "title"));
 }
 
 TEST(IsIsomorphicTest, SampleTest4)
 {
     EXPECT_FALSE(isIsomorphicFA("badc", "baba"));
+    EXPECT_FALSE(isIsomorphicDS1("badc", "baba"));
 }
