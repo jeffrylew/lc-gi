@@ -2,7 +2,9 @@
 
 #include <array>
 #include <string>
+#include <string_view>
 #include <unordered_map>
+#include <vector>
 
 //! @brief First attempt to determine if strings are isomorphic
 //! @param[in] s First string
@@ -83,26 +85,56 @@ static bool isIsomorphicDS1(std::string s, std::string t)
     return true;
 }
 
+//! @brief First occurrence transformation discussion solution
+//! @param[in] s First string
+//! @param[in] t Second string
+//! @return True if characters in s can be replaced to get t
+static bool isIsomorphicDS2(std::string s, std::string t)
+{
+    //! @details https://leetcode.com/problems/isomorphic-strings/editorial/
+
+    const auto transform_string = [](std::string_view str) -> std::vector<int> {
+        std::unordered_map<char, int> char_to_index;
+        std::vector<int>              indices;
+        indices.reserve(str.size());
+
+        for (int idx = 0; idx < std::ssize(str); ++idx)
+        {
+            const char ch {str[idx]};
+            const auto [map_it, was_added] = char_to_index.try_emplace(ch, idx);
+            indices.push_back(map_it->second);
+        }
+
+        return indices;
+    };
+
+    return transform_string(s) == transform_string(t);
+}
+
 TEST(IsIsomorphicTest, SampleTest1)
 {
     EXPECT_TRUE(isIsomorphicFA("egg", "add"));
     EXPECT_TRUE(isIsomorphicDS1("egg", "add"));
+    EXPECT_TRUE(isIsomorphicDS2("egg", "add"));
 }
 
 TEST(IsIsomorphicTest, SampleTest2)
 {
     EXPECT_FALSE(isIsomorphicFA("f11", "b23"));
     EXPECT_FALSE(isIsomorphicDS1("f11", "b23"));
+    EXPECT_FALSE(isIsomorphicDS2("f11", "b23"));
 }
 
 TEST(IsIsomorphicTest, SampleTest3)
 {
     EXPECT_TRUE(isIsomorphicFA("paper", "title"));
     EXPECT_TRUE(isIsomorphicDS1("paper", "title"));
+    EXPECT_TRUE(isIsomorphicDS2("paper", "title"));
 }
 
 TEST(IsIsomorphicTest, SampleTest4)
 {
     EXPECT_FALSE(isIsomorphicFA("badc", "baba"));
     EXPECT_FALSE(isIsomorphicDS1("badc", "baba"));
+    EXPECT_FALSE(isIsomorphicDS2("badc", "baba"));
 }
