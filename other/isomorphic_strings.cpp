@@ -50,6 +50,13 @@ static bool isIsomorphicFA(std::string s, std::string t)
 static bool isIsomorphicDS1(std::string s, std::string t)
 {
     //! @details https://leetcode.com/problems/isomorphic-strings/editorial/
+    //!
+    //!          Time complexity O(N) where N = the length of each string.
+    //!          If the strings are not the same length then they cannot be
+    //!          isomorphic. We process each character in both the strings
+    //!          exactly once to determine if the strings are isomorphic.
+    //!          Space complexity O(1) since the size of the ASCII character set
+    //!          is fixed and the keys in our dictionary are all valid ASCII.
 
     std::array<int, 256U> map_s_to_t {};
     std::array<int, 256U> map_t_to_s {};
