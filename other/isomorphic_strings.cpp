@@ -92,6 +92,13 @@ static bool isIsomorphicDS1(std::string s, std::string t)
 static bool isIsomorphicDS2(std::string s, std::string t)
 {
     //! @details https://leetcode.com/problems/isomorphic-strings/editorial/
+    //!
+    //!          Time complexity O(N) where N = the length of each string. We
+    //!          process each char in both strings exactly once.
+    //!          Space complexity O(N). transform_string returns a vector twice.
+    //!          The size of the ASCII character set is fixed and the keys in
+    //!          our dictionary are valid ASCII only so the size of the
+    //!          char_to_index map doesn't contribute to the space complexity.
 
     const auto transform_string = [](std::string_view str) -> std::vector<int> {
         std::unordered_map<char, int> char_to_index;
