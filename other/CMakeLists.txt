@@ -3,6 +3,7 @@ set (
     "candy"
     "isomorphic_strings"
     "strobogrammatic_number"
+    "unique_email_addresses"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
