@@ -11,6 +11,12 @@
 static int numUniqueEmailsFA(const std::vector<std::string>& emails)
 {
     //! @details leetcode.com/explore/interview/card/google/67/sql-2/3044
+    //!
+    //!          Time complexity O(N * C) where N = emails.size() and C is the
+    //!          average number of characters per email. We iterate through the
+    //!          characters in each email.
+    //!          Space complexity O(N * C) for the unique_emails set in the
+    //!          worst case where all emails are unique.
 
     std::unordered_set<std::string> unique_emails;
 
