@@ -1,5 +1,8 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <iterator>
+#include <ranges>
 #include <string>
 #include <unordered_set>
 #include <utility>
@@ -58,6 +61,62 @@ static int numUniqueEmailsFA(const std::vector<std::string>& emails)
     return static_cast<int>(std::ssize(unique_emails));
 }
 
+//! @brief Linear iteration discussion solution
+//! @param[in] emails Vector of emails containing a local name and domain name
+//! @return Number of different addresses that actually receive email
+static int numUniqueEmailsDS1(const std::vector<std::string>& emails)
+{
+    //! @details https://leetcode.com/problems/unique-email-addresses/editorial/
+
+    std::unordered_set<std::string> unique_emails;
+
+    for (const auto& email : emails)
+    {
+        std::string clean_email;
+
+        for (const char ch : email)
+        {
+            if (ch == '+' || ch == '@')
+            {
+                //! Stop adding chars to clean_email
+                break;
+            }
+
+            if (ch == '.')
+            {
+                //! Skip this char
+                continue;
+            }
+
+            clean_email += ch;
+        }
+
+        std::string domain_name;
+        for (const char ch : email | std::views::reverse)
+        {
+            domain_name += ch;
+
+            if (ch == '@')
+            {
+                break;
+            }
+        }
+
+        std::ranges::reverse(domain_name);
+
+#ifdef __cpp_lib_containers_ranges
+        clean_email.append_range(std::move(domain_name));
+#else
+        clean_email.append(std::make_move_iterator(domain_name.begin()),
+                           std::make_move_iterator(domain_name.end()));
+#endif
+
+        unique_emails.insert(std::move(clean_email));
+    }
+
+    return static_cast<int>(std::ssize(unique_emails));
+}
+
 TEST(NumUniqueEmailsTest, Example1)
 {
     const std::vector<std::string> emails {
@@ -68,6 +127,7 @@ TEST(NumUniqueEmailsTest, Example1)
     //! Explanation: testemail@leetcode.com and testemail@lee.tcode.com
     //!              actually receive mail
     EXPECT_EQ(2, numUniqueEmailsFA(emails));
+    EXPECT_EQ(2, numUniqueEmailsDS1(emails));
 }
 
 TEST(NumUniqueEmailsTest, Example2)
@@ -76,4 +136,5 @@ TEST(NumUniqueEmailsTest, Example2)
         "a@leetcode.com", "b@leetcode.com", "c@leetcode.com"};
 
     EXPECT_EQ(3, numUniqueEmailsFA(emails));
+    EXPECT_EQ(3, numUniqueEmailsDS1(emails));
 }
