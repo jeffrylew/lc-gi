@@ -67,6 +67,12 @@ static int numUniqueEmailsFA(const std::vector<std::string>& emails)
 static int numUniqueEmailsDS1(const std::vector<std::string>& emails)
 {
     //! @details https://leetcode.com/problems/unique-email-addresses/editorial/
+    //!
+    //!          Time complexity O(N * C) where N = emails.size() and C is the
+    //!          average length of an email. In the worst case, we iterate over
+    //!          all the characters of each of the emails.
+    //!          Space complexity O(N * C). In the worst case when all emails
+    //!          are unique, we will store every email in the hash set.
 
     std::unordered_set<std::string> unique_emails;
 
