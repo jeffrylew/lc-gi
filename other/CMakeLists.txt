@@ -2,6 +2,7 @@ set (
     cpp_files
     "candy"
     "isomorphic_strings"
+    "odd_even_jump"
     "strobogrammatic_number"
     "unique_email_addresses"
 )
