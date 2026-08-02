@@ -1,5 +1,7 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
+#include <utility>
 #include <vector>
 
 //! @brief First attempt to get the number of good starting indices
@@ -8,12 +10,109 @@
 static int oddEvenJumpsFA(const std::vector<int>& arr)
 {
     //! @details leetcode.com/explore/interview/card/google/67/sql-2/3045
+    //!
+    //!          First attempt solution does not pass Example 2.
+
+    //! Vector of <val in arr, index in arr>
+    std::vector<std::pair<int, int>> val_idxs;
+    val_idxs.reserve(arr.size());
+
+    const auto arr_size = static_cast<int>(std::ssize(arr));
+    for (int idx = 0; idx < arr_size; ++idx)
+    {
+        val_idxs.emplace_back(arr[idx], idx);
+    }
+    std::ranges::stable_sort(val_idxs,
+                             [](const auto& lhs, const auto& rhs) -> bool {
+                                 return lhs.first < rhs.first;   
+                             });
+
+    int       num_good_start_idxs {};
+    const int end_val {arr.back()};
+
+    for (int arr_idx = 0; arr_idx < arr_size; ++arr_idx)
+    {
+        const int arr_val {arr[arr_idx]};
+
+        auto start_it = std::ranges::lower_bound(
+            val_idxs,
+            arr_val,
+            {},
+            [](const std::pair<int, int>& ele) -> int {
+                return ele.first;
+            });
+        const auto start_idx =
+            static_cast<int>(std::ranges::distance(val_idxs.begin(), start_it));
+
+        int prev_arr_idx {arr_idx};
+        int curr_idx {start_idx};
+        int is_odd_jump {true};
+
+        while (val_idxs[curr_idx].first != end_val)
+        {
+            if (is_odd_jump)
+            {
+                while (curr_idx < arr_size)
+                {
+                    if (val_idxs[curr_idx].second <= prev_arr_idx)
+                    {
+                        ++curr_idx;
+                    }
+                    else
+                    {
+                        prev_arr_idx = val_idxs[curr_idx].second;
+                        break;
+                    }
+                }
+
+                if (curr_idx == arr_size)
+                {
+                    break;
+                }
+            }
+            else
+            {
+                while (curr_idx >= 0)
+                {
+                    if (val_idxs[curr_idx].second <= prev_arr_idx)
+                    {
+                        --curr_idx;
+                    }
+                    else
+                    {
+                        prev_arr_idx = val_idxs[curr_idx].second;
+                        break;
+                    }
+                }
+
+                if (curr_idx < 0)
+                {
+                    break;
+                }
+            }
+
+            is_odd_jump = !is_odd_jump;
+        }
+
+        if (curr_idx >= 0
+            && curr_idx < arr_size
+            && val_idxs[curr_idx].first == end_val)
+        {
+            ++num_good_start_idxs;
+        }
+    }
+
+    return num_good_start_idxs;
 }
 
 TEST(OddEvenJumpsTest, Example1)
 {
     //!                  index   0   1   2   3   4
     const std::vector<int> arr {10, 13, 12, 14, 15};
+
+    /*
+     val_idxs: {10, 0}, {12, 2}, {13, 1}, {14, 3}, {15, 4}
+     */
 
     /*
      Starting index 0:
@@ -32,6 +131,10 @@ TEST(OddEvenJumpsTest, Example2)
 {
     //!                  index  0  1  2  3  4
     const std::vector<int> arr {2, 3, 1, 1, 4};
+
+    /*
+     val_idxs: {1, 2}, {1, 3}, {2, 0}, {3, 1}, {4, 4}
+     */
 
     /*
      Starting index 0:
