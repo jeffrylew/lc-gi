@@ -11,7 +11,7 @@ static int oddEvenJumpsFA(const std::vector<int>& arr)
 {
     //! @details leetcode.com/explore/interview/card/google/67/sql-2/3045
     //!
-    //!          First attempt solution does not pass Example 2.
+    //!          First attempt solution does not pass Example 4.
 
     //! Vector of <val in arr, index in arr>
     std::vector<std::pair<int, int>> val_idxs;
@@ -80,6 +80,15 @@ static int oddEvenJumpsFA(const std::vector<int>& arr)
                     }
                     else
                     {
+                        const int prev_idx {curr_idx - 1};
+                        if (prev_idx >= 0
+                            && val_idxs[prev_idx].first
+                                == val_idxs[curr_idx].first)
+                        {
+                            --curr_idx;
+                            continue;
+                        }
+
                         prev_arr_idx = val_idxs[curr_idx].second;
                         break;
                     }
@@ -163,4 +172,12 @@ TEST(OddEvenJumpsTest, Example3)
 
     //! Can reach the end from starting indices 1, 2, and 4
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
+}
+
+TEST(OddEvenJumpsTest, Example4)
+{
+    const std::vector<int> arr {1, 2, 3, 2, 1, 4, 4, 5};
+
+    EXPECT_EQ(2, oddEvenJumpsFA(arr));
+    EXPECT_NE(6, oddEvenJumpsFA(arr));
 }
