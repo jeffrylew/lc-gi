@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <flat_map>
 #include <utility>
 #include <vector>
 
@@ -114,6 +115,35 @@ static int oddEvenJumpsFA(const std::vector<int>& arr)
     return num_good_start_idxs;
 }
 
+//! @brief DP using map discussion solution
+//! @param[in] arr Reference to a vector of ints
+//! @return The number of good starting indices
+static int oddEvenJumpsDS1(const std::vector<int>& arr)
+{
+    //! @details https://leetcode.com/explore/interview/card/google/67/sql-2
+    //!          /3045/discuss/217981/JavaC++Python-DP-using-Map-or-Stack/
+
+    const auto arr_size = static_cast<int>(std::ssize(arr));
+
+    int num_good_start_idxs {};
+
+    std::vector<bool> can_jump_to_greater_eq_elem(arr.size());
+    std::vector<bool> can_jump_to_lesser_eq_elem(arr.size());
+    can_jump_to_greater_eq_elem.back() = true;
+    can_jump_to_lesser_eq_elem.back()  = true;
+
+    //! Map of <arr val, index in arr>
+    std::flat_map<int, int> val_idxs;
+    val_idxs[arr.back()] = arr_size - 1;
+
+    for (int idx = arr_size - 2; idx >= 0; --idx)
+    {
+        //! @todo
+    }
+
+    return num_good_start_idxs;
+}
+
 TEST(OddEvenJumpsTest, Example1)
 {
     //!                  index   0   1   2   3   4
@@ -134,6 +164,7 @@ TEST(OddEvenJumpsTest, Example1)
      Thus, there are 2 good indices (3, 4) where we can reach the end
      */
     EXPECT_EQ(2, oddEvenJumpsFA(arr));
+    EXPECT_EQ(2, oddEvenJumpsDS1(arr));
 }
 
 TEST(OddEvenJumpsTest, Example2)
@@ -163,6 +194,7 @@ TEST(OddEvenJumpsTest, Example2)
      Thus, there are 3 good starting indices (1, 3, 4) where can reach the end
      */
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
+    EXPECT_EQ(3, oddEvenJumpsDS1(arr));
 }
 
 TEST(OddEvenJumpsTest, Example3)
@@ -172,6 +204,7 @@ TEST(OddEvenJumpsTest, Example3)
 
     //! Can reach the end from starting indices 1, 2, and 4
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
+    EXPECT_EQ(3, oddEvenJumpsDS1(arr));
 }
 
 TEST(OddEvenJumpsTest, Example4)
@@ -180,4 +213,5 @@ TEST(OddEvenJumpsTest, Example4)
 
     EXPECT_EQ(2, oddEvenJumpsFA(arr));
     EXPECT_NE(6, oddEvenJumpsFA(arr));
+    EXPECT_EQ(6, oddEvenJumpsDS1(arr));
 }
