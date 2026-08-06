@@ -125,10 +125,11 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
 
     const auto arr_size = static_cast<int>(std::ssize(arr));
 
-    int num_good_start_idxs {};
+    int num_good_start_idxs {1};
 
     std::vector<bool> can_jump_to_greater_eq_elem(arr.size());
     std::vector<bool> can_jump_to_lesser_eq_elem(arr.size());
+
     can_jump_to_greater_eq_elem.back() = true;
     can_jump_to_lesser_eq_elem.back()  = true;
 
@@ -138,7 +139,30 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
 
     for (int idx = arr_size - 2; idx >= 0; --idx)
     {
-        //! @todo
+        const int curr_val {arr[idx]};
+
+        auto curr_it = val_idxs.lower_bound(curr_val);
+        auto next_it = val_idxs.upper_bound(curr_val);
+
+        if (curr_it != val_idxs.end())
+        {
+            can_jump_to_greater_eq_elem[idx] =
+                can_jump_to_lesser_eq_elem[curr_it->second];
+        }
+
+        if (next_it != val_idxs.begin())
+        {
+            --next_it;
+            can_jump_to_lesser_eq_elem[idx] =
+                can_jump_to_greater_eq_elem[next_it->second];
+        }
+
+        if (can_jump_to_greater_eq_elem[idx])
+        {
+            ++num_good_start_idxs;
+        }
+
+        val_idxs[curr_val] = idx;
     }
 
     return num_good_start_idxs;
