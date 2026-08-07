@@ -145,20 +145,32 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
     {
         const int curr_val {arr[idx]};
 
-        auto curr_it = val_idxs.lower_bound(curr_val);
-        auto next_it = val_idxs.upper_bound(curr_val);
+        auto ceil_it  = val_idxs.lower_bound(curr_val);
 
-        if (curr_it != val_idxs.end())
+        //! val_idxs orders keys from smallest to largest.
+        //! floor_it points to the next greater key in val_idxs.
+        //! If val_idxs has no greater keys then floor_it is val_idxs.end().
+        //! The floor_it != val_idxs.begin() if statement block sets floor_it to
+        //! the largest key in val_idxs, which is the largest value that is less
+        //! than the current key (for even-numbered jumps, arr[i] >= arr[j]).
+        //!
+        //! If val_idxs does have a greater key then the if statement block sets
+        //! floor_it to the key that is less than or equal to the current key.
+        auto floor_it = val_idxs.upper_bound(curr_val);
+
+        if (ceil_it != val_idxs.end())
         {
+            //! Case when we can jump to a greater or equal value in arr
             can_jump_to_greater_eq_elem[idx] =
-                can_jump_to_lesser_eq_elem[curr_it->second];
+                can_jump_to_lesser_eq_elem[ceil_it->second];
         }
 
-        if (next_it != val_idxs.begin())
+        if (floor_it != val_idxs.begin())
         {
-            --next_it;
+            //! Case when we can jump to a lesser or equal value in arr
+            --floor_it;
             can_jump_to_lesser_eq_elem[idx] =
-                can_jump_to_greater_eq_elem[next_it->second];
+                can_jump_to_greater_eq_elem[floor_it->second];
         }
 
         if (can_jump_to_greater_eq_elem[idx])
@@ -229,6 +241,81 @@ TEST(OddEvenJumpsTest, Example3)
 {
     //!                  index  0  1  2  3  4
     const std::vector<int> arr {5, 1, 3, 4, 2};
+
+    /*
+     Before for loop in DS1:
+              index    0      1      2      3      4
+       jump_to_ge = [false, false, false, false, true]
+       jump_to_le = [false, false, false, false, true]
+       val_idxs = {{val: 2, idx: 4}}
+
+     idx = 3:
+       curr_val = 4
+       ceil_it  -> val_idxs.end()
+       floor_it -> val_idxs.end()
+         Can't jump to greater or equal value since ceil_it == val_idxs.end():
+           jump_to_ge[3] = false
+         Can jump to lesser or equal value:
+           floor_it -> {val: 2, idx: 4}
+           jump_to_le[3] = jump_to_ge[4] = true // Jump from val: 4 to val: 2
+       At end of iteration:
+                index    0      1      2      3      4
+         jump_to_ge = [false, false, false, false, true]
+         jump_to_le = [false, false, false, true,  true]
+         val_idxs = {{val: 2, idx: 4}, {val: 4, idx: 3}}
+         num_good_starting_idxs = 1
+
+     idx = 2:
+       curr_val = 3
+       ceil_it  -> {val: 4, idx: 3}
+       floor_it -> {val: 4, idx: 3}
+         Can jump to greater or equal value:
+           jump_to_ge[2] = jump_to_le[3] = true // Jump from val: 3 to val: 4
+         Can jump to lesser or equal value:
+           floor_it -> {val: 2, idx: 4}
+           jump_to_le[2] = jump_to_ge[4] = true // Jump from val: 3 to val: 2
+       jump_to_ge[2] == true -> num_good_start_idxs = 2
+       At end of iteration:
+                index    0      1      2     3      4
+         jump_to_ge = [false, false, true, false, true]
+         jump_to_le = [false, false, true, true,  true]
+         val_idxs = {{val: 2, idx: 4}, {val: 3, idx: 2}, {val: 4, idx: 3}}
+         num_good_starting_idxs = 2
+
+     idx = 1:
+       curr_val = 1
+       ceil_it  -> {val: 2, idx: 4}
+       floor_it -> {val: 2, idx: 4}
+         Can jump to greater or equal value:
+           jump_to_ge[1] = jump_to_le[4] = true // Jump from val: 1 to val: 2
+         Can't jump to lesser or equal value since floor_it == val_idxs.begin():
+           jump_to_le[1] = false
+       jump_to_ge[1] == true -> num_good_starting_idxs = 3
+       At end of iteration:
+                index    0      1      2     3      4
+         jump_to_ge = [false, true,  true, false, true]
+         jump_to_le = [false, false, true,  true, true]
+         val_idxs = {{val: 2, idx: 4}, {val: 3, idx: 2}, {val: 4, idx: 3}}
+         num_good_starting_idxs = 3
+
+     idx = 0:
+       curr_val = 5
+       ceil_it  -> val_idxs.end()
+       floor_it -> val_idxs.end()
+         Can't jump to greater or equal value since ceil_it == val_idxs.end():
+           jump_to_ge[0] = false
+         Can jump to lesser or equal value:
+           floor_it -> {val: 4, idx: 3}
+           jump_to_le[0] = jump_to_ge[3] = false
+       At end of iteration:
+                index    0      1      2     3      4
+         jump_to_ge = [false, true,  true, false, true]
+         jump_to_le = [false, false, true,  true, true]
+         val_idxs = {
+          {val: 1, idx: 0}, {val: 2, idx: 4}, {val: 3, idx: 2}, {val: 4, idx: 3}
+         }
+         num_good_starting_idxs = 3 // Indices 1, 2, and 4
+     */
 
     //! Can reach the end from starting indices 1, 2, and 4
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
