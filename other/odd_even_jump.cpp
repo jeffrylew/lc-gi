@@ -122,6 +122,10 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
 {
     //! @details https://leetcode.com/explore/interview/card/google/67/sql-2
     //!          /3045/discuss/217981/JavaC++Python-DP-using-Map-or-Stack/
+    //!
+    //!          Time complexity O(N * log N) where N = arr.size() for binary
+    //!          searching with lower_bound and upper_bound N times.
+    //!          Space complexity O(N) for two vectors and flat map.
 
     const auto arr_size = static_cast<int>(std::ssize(arr));
 
