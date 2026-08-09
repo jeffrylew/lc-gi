@@ -2,6 +2,8 @@
 
 #include <algorithm>
 #include <flat_map>
+#include <functional>
+#include <ranges>
 #include <stack>
 #include <utility>
 #include <vector>
@@ -192,29 +194,79 @@ static int oddEvenJumpsDS2(const std::vector<int>& arr)
 {
     //! @details https://leetcode.com/problems/odd-even-jump/editorial/
 
-    const auto arr_size = static_cast<int>(std::ssize(arr));
+    //! @brief For every index in sorted_val_idxs, get the index to jump to
+    //! @param[in] sorted_val_idxs Reference to vector of <arr val, arr index>
+    //! @return Vector of indices that can be jumped to (-1: can't jump from it)
+    const auto get_next_idxs =
+        [&](const std::vector<std::pair<int, int>>& sorted_val_idxs) {
+            //! next_idx_to_jump_to[i] = j means jump from index i to j
+            std::vector<int> next_idx_to_jump_to(arr.size(), -1);
 
-    const auto init_next_idxs = [&](std::vector<int>& indices_of_sorted_vals,
-                                    std::vector<int>& next_indices) {
-        //! Invariant: stack is monotonically decreasing
-        std::stack<int> idx_stack;
+            //! Invariant: stack is monotonically decreasing
+            std::stack<int> idx_stack;
 
-        for (const int curr_index : indices_of_sorted_vals)
-        {
-            while (!idx_stack.empty() && curr_index > idx_stack.top())
+            for (const auto& [curr_val, curr_index] : sorted_val_idxs)
             {
-                indices_of_sorted_vals[idx_stack.top()] = curr_index;
-                idx_stack.pop();
+                while (!idx_stack.empty() && curr_index > idx_stack.top())
+                {
+                    next_idx_to_jump_to[idx_stack.top()] = curr_index;
+                    idx_stack.pop();
+                }
+
+                idx_stack.push(curr_index);
             }
 
-            idx_stack.push(curr_index);
+            return next_idx_to_jump_to;
+        };
+
+    //! Vector of <val in arr, index in arr>
+    std::vector<std::pair<int, int>> val_idxs;
+    val_idxs.reserve(arr.size());
+    for (const auto& [index, val] : std::views::enumerate(arr))
+    {
+        val_idxs.emplace_back(val, index);
+    }
+
+    //! Odd jumps: Jump from i to j (i < j) such that arr[i] <= arr[j]
+    //! Sort ascending by the first element (arr val). Equal arr vals should be
+    //! sorted in ascending index order, which is handled by default when
+    //! std::ranges::less {} sorts using the second element (arr index).
+    std::ranges::stable_sort(val_idxs);
+    const auto odd_jump_next_idxs = get_next_idxs(val_idxs);
+
+    //! Even jumps: Jump from i to j (i < j) such that arr[i] >= arr[j]
+    //! Sort descending by the first element (arr val). Equal arr vals should be
+    //! sorted in ascending index order, so use the &std::pair<int, int>::first
+    //! projection to only sort arr vals in descending order and leave equal arr
+    //! vals in their original ascending index order when stable sorting.
+    std::ranges::stable_sort(val_idxs,
+                             std::ranges::greater {},
+                             &std::pair<int, int>::first);
+    const auto even_jump_next_idxs = get_next_idxs(val_idxs);
+
+    std::vector<bool> can_jump_to_greater_eq_elem(arr.size());
+    std::vector<bool> can_jump_to_lesser_eq_elem(arr.size());
+
+    can_jump_to_greater_eq_elem.back() = true;
+    can_jump_to_lesser_eq_elem.back()  = true;
+
+    for (int idx = static_cast<int>(std::ssize(arr)) - 2; idx >= 0; --idx)
+    {
+        if (odd_jump_next_idxs[idx] != -1)
+        {
+            can_jump_to_greater_eq_elem[idx] =
+                can_jump_to_lesser_eq_elem[odd_jump_next_idxs[idx]];
         }
-    };
 
-    std::vector<int> odd_jump_next_idxs(arr.size(), -1);
-    std::vector<int> even_jump_next_idxs(arr.size(), -1);
+        if (even_jump_next_idxs[idx] != -1)
+        {
+            can_jump_to_lesser_eq_elem[idx] =
+                can_jump_to_greater_eq_elem[even_jump_next_idxs[idx]];
+        }
+    }
 
-    //! @todo
+    //! Start with jump 1 (odd-numbered jump)
+    return std::ranges::count(can_jump_to_greater_eq_elem, true);
 }
 
 TEST(OddEvenJumpsTest, Example1)
