@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <flat_map>
+#include <stack>
 #include <utility>
 #include <vector>
 
@@ -184,6 +185,38 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
     return num_good_start_idxs;
 }
 
+//! @brief Monotonic stack discussion solution
+//! @param[in] arr Reference to a vector of ints
+//! @return The number of good starting indices
+static int oddEvenJumpsDS2(const std::vector<int>& arr)
+{
+    //! @details https://leetcode.com/problems/odd-even-jump/editorial/
+
+    const auto arr_size = static_cast<int>(std::ssize(arr));
+
+    const auto init_next_idxs = [&](std::vector<int>& indices_of_sorted_vals,
+                                    std::vector<int>& next_indices) {
+        //! Invariant: stack is monotonically decreasing
+        std::stack<int> idx_stack;
+
+        for (const int curr_index : indices_of_sorted_vals)
+        {
+            while (!idx_stack.empty() && curr_index > idx_stack.top())
+            {
+                indices_of_sorted_vals[idx_stack.top()] = curr_index;
+                idx_stack.pop();
+            }
+
+            idx_stack.push(curr_index);
+        }
+    };
+
+    std::vector<int> odd_jump_next_idxs(arr.size(), -1);
+    std::vector<int> even_jump_next_idxs(arr.size(), -1);
+
+    //! @todo
+}
+
 TEST(OddEvenJumpsTest, Example1)
 {
     //!                  index   0   1   2   3   4
@@ -205,6 +238,7 @@ TEST(OddEvenJumpsTest, Example1)
      */
     EXPECT_EQ(2, oddEvenJumpsFA(arr));
     EXPECT_EQ(2, oddEvenJumpsDS1(arr));
+    EXPECT_EQ(2, oddEvenJumpsDS2(arr));
 }
 
 TEST(OddEvenJumpsTest, Example2)
@@ -235,6 +269,7 @@ TEST(OddEvenJumpsTest, Example2)
      */
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
     EXPECT_EQ(3, oddEvenJumpsDS1(arr));
+    EXPECT_EQ(3, oddEvenJumpsDS2(arr));
 }
 
 TEST(OddEvenJumpsTest, Example3)
@@ -320,6 +355,7 @@ TEST(OddEvenJumpsTest, Example3)
     //! Can reach the end from starting indices 1, 2, and 4
     EXPECT_EQ(3, oddEvenJumpsFA(arr));
     EXPECT_EQ(3, oddEvenJumpsDS1(arr));
+    EXPECT_EQ(3, oddEvenJumpsDS2(arr));
 }
 
 TEST(OddEvenJumpsTest, Example4)
@@ -329,4 +365,5 @@ TEST(OddEvenJumpsTest, Example4)
     EXPECT_EQ(2, oddEvenJumpsFA(arr));
     EXPECT_NE(6, oddEvenJumpsFA(arr));
     EXPECT_EQ(6, oddEvenJumpsDS1(arr));
+    EXPECT_EQ(6, oddEvenJumpsDS2(arr));
 }
