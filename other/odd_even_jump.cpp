@@ -193,6 +193,16 @@ static int oddEvenJumpsDS1(const std::vector<int>& arr)
 static int oddEvenJumpsDS2(const std::vector<int>& arr)
 {
     //! @details https://leetcode.com/problems/odd-even-jump/editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = arr.size() for
+    //!          std::ranges::stable_sort, which dominates the O(N) operations
+    //!          when running get_next_idxs, initializing val_idxs, reverse
+    //!          iterating through arr, and iterating through
+    //!          can_jump_to_greater_eq_elem to count all true elements.
+    //!          Space complexity O(N) for idx_stack in the worst case of a
+    //!          monotonically decreasing sorted_val_idxs, val_idxs,
+    //!          odd_jump_next_idxs, even_jump_next_idxs,
+    //!          can_jump_to_greater_eq_elem, and can_jump_to_lesser_eq_elem.
 
     //! @brief For every index in sorted_val_idxs, get the index to jump to
     //! @param[in] sorted_val_idxs Reference to vector of <arr val, arr index>
