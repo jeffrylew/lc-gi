@@ -59,3 +59,19 @@ static std::string licenseKeyFormattingFA(const std::string& s, int k)
 
     return reformatted_license_key;
 }
+
+TEST(LicenseKeyFormattingTest, SampleTest1)
+{
+    const std::string license_key {"5F3Z-2e-9-w"};
+    const std::string expected_output {"5F3Z-2E9W"};
+
+    EXPECT_EQ(expected_output, licenseKeyFormattingFA(license_key, 4));
+}
+
+TEST(LicenseKeyFormattingTest, SampleTest2)
+{
+    const std::string license_key {"2-5g-3-J"};
+    const std::string expected_output {"2-5G-3J"};
+
+    EXPECT_EQ(expected_output, licenseKeyFormattingFA(license_key, 2));
+}
