@@ -10,6 +10,10 @@
 static std::string licenseKeyFormattingFA(const std::string& s, int k)
 {
     //! @details https://leetcode.com/explore/interview/card/google/67/sql-2/472
+    //!
+    //!          Time complexity O(N) where N = s.size() to iterate through s.
+    //!          Space complexity O(1) if the output reformatted_license_key is
+    //!          not considered, else O(N).
 
     const auto to_upper_case = [](char ch) -> char {
         return static_cast<char>(std::toupper(static_cast<unsigned char>(ch)));
