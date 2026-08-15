@@ -67,6 +67,12 @@ static std::string licenseKeyFormattingFA(const std::string& s, int k)
 static std::string licenseKeyFormattingDS1(const std::string& s, int k)
 {
     //! @details https://leetcode.com/problems/license-key-formatting/editorial/
+    //!
+    //!          Time complexity O(N) where N = s.size(). We traverse each char
+    //!          from the input string in reverse order in O(N). At the end, we
+    //!          reverse reformatted_license_key in O(N).
+    //!          Space complexity O(1) since we are not using any extra space
+    //!          other than the output string.
 
     std::string reformatted_license_key;
     int         num_chars_in_group {};
