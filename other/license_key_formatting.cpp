@@ -129,7 +129,60 @@ static std::string licenseKeyFormattingDS2(const std::string& s, int k)
         size_of_first_group = k;
     }
 
-    //! @todo
+    std::string reformatted_license_key;
+    const auto  s_size = static_cast<int>(std::ssize(s));
+    int         num_chars_in_curr_group {};
+    int         idx {};
+
+    while (idx < s_size)
+    {
+        if (num_chars_in_curr_group == size_of_first_group)
+        {
+            num_chars_in_curr_group = 0;
+            break;
+        }
+
+        if (s[idx] != '-')
+        {
+            ++num_chars_in_curr_group;
+            reformatted_license_key.push_back(
+                static_cast<char>(
+                    std::toupper(static_cast<unsigned char>(s[idx]))));
+        }
+
+        ++idx;
+    }
+
+    //! This case only appears if k is greater or equal to the total number of
+    //! alphanumeric characters in string s
+    if (idx >= s_size)
+    {
+        return reformatted_license_key;
+    }
+
+    reformatted_license_key.push_back('-');
+
+    while (idx < s_size)
+    {
+        if (s[idx] != '-')
+        {
+            //! Whenever num_chars_in_curr_group equals k, put a '-' afterwards
+            if (num_chars_in_curr_group == k)
+            {
+                reformatted_license_key.push_back('-');
+                num_chars_in_curr_group = 0;
+            }
+
+            reformatted_license_key.push_back(
+                static_cast<char>(
+                    std::toupper(static_cast<unsigned char>(s[idx]))));
+            ++num_chars_in_curr_group;
+        }
+
+        ++idx;
+    }
+
+    return reformatted_license_key;
 }
 
 TEST(LicenseKeyFormattingTest, SampleTest1)
