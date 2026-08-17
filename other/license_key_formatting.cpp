@@ -112,6 +112,12 @@ static std::string licenseKeyFormattingDS1(const std::string& s, int k)
 static std::string licenseKeyFormattingDS2(const std::string& s, int k)
 {
     //! @details https://leetcode.com/problems/license-key-formatting/editorial/
+    //!
+    //!          Time complexity O(N) where N = s.size(). We traverse the input
+    //!          once to get num_no_hyphen_chars in O(N). We traverse it again
+    //!          to populated reformatted_license_key in groups in O(N).
+    //!          Space complexity O(1) since we are not using any extra space
+    //!          other than the output string.
 
     int num_no_hyphen_chars {};
 
