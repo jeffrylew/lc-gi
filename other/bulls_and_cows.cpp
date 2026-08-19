@@ -12,6 +12,9 @@ static std::string getHintFA(const std::string& secret,
                              const std::string& guess)
 {
     //! @details leetcode.com/explore/interview/card/google/66/sql-2/3100
+    //!
+    //!          Time complexity O(N) where N = number of chars in secret/guess.
+    //!          Space complexity O(1) since the arrays have fixed sizes.
 
     int        num_bulls {};
     int        num_cows {};
