@@ -1,5 +1,6 @@
 set (
     cpp_files
+    "bulls_and_cows"
     "candy"
     "isomorphic_strings"
     "license_key_formatting"
