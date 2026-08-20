@@ -51,6 +51,58 @@ static std::string getHintFA(const std::string& secret,
     return std::format("{}A{}B", num_bulls, num_cows);
 }
 
+//! @brief Hash map two passes discussion solution
+//! @param[in] secret std::string containing the secret number
+//! @param[in] guess  std::string containing the guess of the secret number
+//! @return A hint in the format xAyB where x = num bulls and y = num cows
+static std::string getHintDS1(const std::string& secret,
+                              const std::string& guess)
+{
+    //! @details https://leetcode.com/problems/bulls-and-cows/editorial/
+
+    std::unordered_map<char, int> secret_digit_count;
+    for (const char digit : secret)
+    {
+        ++secret_digit_count[digit];
+    }
+
+    int        num_bulls {};
+    int        num_cows {};
+    const auto num_digits = static_cast<int>(std::ssize(secret));
+
+    for (int idx = 0; idx < num_digits; ++idx)
+    {
+        const char guess_digit {guess[idx]};
+        if (!secret_digit_count.contains(guess_digit))
+        {
+            continue;
+        }
+
+        if (guess_digit == secret[idx])
+        {
+            //! Update the bulls
+            ++num_bulls;
+
+            //! Update the cows
+            if (secret_digit_count[guess_digit] <= 0)
+            {
+                //! If all instances of guess_digit from secret were used up
+                --num_cows;
+            }
+        }
+        else if (secret_digit_count[guess_digit] > 0)
+        {
+            //! Corresponding digits don't match, update the cows
+            ++num_cows;
+        }
+
+        //! guess_digit was used
+        --secret_digit_count[guess_digit];
+    }
+
+    return std::format("{}A{}B", num_bulls, num_cows);
+}
+
 TEST(BullsAndCowsTest, SampleTest1)
 {
     const std::string secret {"1807"};
@@ -58,6 +110,7 @@ TEST(BullsAndCowsTest, SampleTest1)
     const std::string expected_output {"1A3B"};
 
     EXPECT_EQ(expected_output, getHintFA(secret, guess));
+    EXPECT_EQ(expected_output, getHintDS1(secret, guess));
 }
 
 TEST(BullsAndCowsTest, SampleTest2)
@@ -67,4 +120,5 @@ TEST(BullsAndCowsTest, SampleTest2)
     const std::string expected_output {"1A1B"};
 
     EXPECT_EQ(expected_output, getHintFA(secret, guess));
+    EXPECT_EQ(expected_output, getHintDS1(secret, guess));
 }
