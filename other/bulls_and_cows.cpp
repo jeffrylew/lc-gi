@@ -108,6 +108,55 @@ static std::string getHintDS1(const std::string& secret,
     return std::format("{}A{}B", num_bulls, num_cows);
 }
 
+//! @brief One pass discussion solution
+//! @param[in] secret std::string containing the secret number
+//! @param[in] guess  std::string containing the guess of the secret number
+//! @return A hint in the format xAyB where x = num bulls and y = num cows
+static std::string getHintDS2(const std::string& secret,
+                              const std::string& guess)
+{
+    //! @details https://leetcode.com/problems/bulls-and-cows/editorial/
+
+    //! Map of digit counts. secret: positive contribution; guess: negative
+    std::unordered_map<char, int> digit_count;
+
+    int        num_bulls {};
+    int        num_cows {};
+    const auto num_digits = static_cast<int>(std::ssize(secret));
+
+    for (int idx = 0; idx < num_digits; ++idx)
+    {
+        const char secret_digit {secret[idx]};
+        const char guess_digit {guess[idx]};
+
+        if (secret_digit == guess_digit)
+        {
+            ++num_bulls;
+            continue;
+        }
+
+        if (digit_count[secret_digit] < 0)
+        {
+            //! guess has more instances of secret_digit than secret
+            ++num_cows;
+        }
+
+        if (digit_count[guess_digit] > 0)
+        {
+            //! secret has more instances of guess_digit than guess
+            ++num_cows;
+        }
+
+        //! Mark the presence of secret_digit in secret
+        ++digit_count[secret_digit];
+
+        //! Mark the presence of guess_digit in guess
+        --digit_count[guess_digit];
+    }
+
+    return std::format("{}A{}B", num_bulls, num_cows);
+}
+
 TEST(BullsAndCowsTest, SampleTest1)
 {
     const std::string secret {"1807"};
@@ -116,6 +165,7 @@ TEST(BullsAndCowsTest, SampleTest1)
 
     EXPECT_EQ(expected_output, getHintFA(secret, guess));
     EXPECT_EQ(expected_output, getHintDS1(secret, guess));
+    EXPECT_EQ(expected_output, getHintDS2(secret, guess));
 }
 
 TEST(BullsAndCowsTest, SampleTest2)
@@ -126,4 +176,5 @@ TEST(BullsAndCowsTest, SampleTest2)
 
     EXPECT_EQ(expected_output, getHintFA(secret, guess));
     EXPECT_EQ(expected_output, getHintDS1(secret, guess));
+    EXPECT_EQ(expected_output, getHintDS2(secret, guess));
 }
