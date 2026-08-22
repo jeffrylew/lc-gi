@@ -59,6 +59,11 @@ static std::string getHintDS1(const std::string& secret,
                               const std::string& guess)
 {
     //! @details https://leetcode.com/problems/bulls-and-cows/editorial/
+    //!
+    //!          Time complexity O(N) where N = secret.size(). We pass over the
+    //!          strings two times.
+    //!          Space complexity O(1) to keep hashmap secret_digit_count, which
+    //!          contains at most 10 elements.
 
     std::unordered_map<char, int> secret_digit_count;
     for (const char digit : secret)
