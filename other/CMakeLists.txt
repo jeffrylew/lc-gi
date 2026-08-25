@@ -2,6 +2,7 @@ set (
     cpp_files
     "bulls_and_cows"
     "candy"
+    "fruit_into_baskets"
     "isomorphic_strings"
     "license_key_formatting"
     "odd_even_jump"
