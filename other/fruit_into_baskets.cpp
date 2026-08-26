@@ -10,6 +10,11 @@
 static int totalFruitFA(const std::vector<int>& fruits)
 {
     //! @details leetcode.com/explore/interview/card/google/67/sql-2/3046
+    //!
+    //!          Time complexity O(N) where N = the number of trees. We iterate
+    //!          through the fruits vector with two pointers.
+    //!          Space complexity O(1) since the fruit_type_counts map stores up
+    //!          to three elements.
 
     const auto num_trees = static_cast<int>(std::ssize(fruits));
 
