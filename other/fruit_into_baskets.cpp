@@ -55,6 +55,15 @@ static int totalFruitFA(const std::vector<int>& fruits)
 static int totalFruitDS1(const std::vector<int>& fruits)
 {
     //! @details https://leetcode.com/problems/fruit-into-baskets/editorial/
+    //!
+    //!          Time complexity O(N ^ 3) where N = the number of trees. We have
+    //!          three nested loops - the first loop for the left index, the
+    //!          second for the right index, and the third loop for curr_tree.
+    //!          In each iteration, we add the current fruit type to the basket
+    //!          set in constant time.
+    //!          Space complexity O(N). We count the types of fruits in every
+    //!          subarray and store them in a hash set. In the worst case, there
+    //!          could be O(N) types in some subarrays.
 
     const auto num_trees = static_cast<int>(std::ssize(fruits));
 
