@@ -101,6 +101,12 @@ static int totalFruitDS1(const std::vector<int>& fruits)
 static int totalFruitDS2(const std::vector<int>& fruits)
 {
     //! @details https://leetcode.com/problems/fruit-into-baskets/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = the number of trees. There
+    //!          are two nested loops. In each iteration, we add the current
+    //!          fruit type to the hash set basket in constant time.
+    //!          Space complexity O(1). We use basket to count the fruit types
+    //!          in each subarray and the number of fruit types won't exceed 3.
 
     const auto num_trees = static_cast<int>(std::ssize(fruits));
 
