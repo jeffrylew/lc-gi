@@ -137,6 +137,37 @@ static int totalFruitDS2(const std::vector<int>& fruits)
     return max_fruits_picked;
 }
 
+//! @brief Sliding window discussion solution
+//! @param[in] fruits Reference to vector of trees where fruits[i] = fruit type
+//! @return Max number of fruits that I can pick from selecting two fruit types
+static int totalFruitDS3(const std::vector<int>& fruits)
+{
+    //! @details https://leetcode.com/problems/fruit-into-baskets/editorial/
+
+    //! Map of <fruit type, count>
+    std::unordered_map<int, int> basket_counts;
+
+    int left_tree {};
+    for (int right_tree = 0; right_tree < std::ssize(fruits); ++right_tree)
+    {
+        ++basket_counts[fruits[right_tree]];
+
+        if (std::ssize(basket_counts) > 2)
+        {
+            --basket_counts[fruits[left_tree]];
+
+            if (basket_counts[fruits[left_tree]] == 0)
+            {
+                basket_counts.erase(fruits[left_tree]);
+            }
+
+            ++left_tree;
+        }
+    }
+
+    return right_tree - left_tree;
+}
+
 TEST(TotalFruitTest, SampleTest1)
 {
     const std::vector<int> fruits {1, 2, 1};
@@ -144,6 +175,7 @@ TEST(TotalFruitTest, SampleTest1)
     EXPECT_EQ(3, totalFruitFA(fruits));
     EXPECT_EQ(3, totalFruitDS1(fruits));
     EXPECT_EQ(3, totalFruitDS2(fruits));
+    EXPECT_EQ(3, totalFruitDS3(fruits));
 }
 
 TEST(TotalFruitTest, SampleTest2)
@@ -153,6 +185,7 @@ TEST(TotalFruitTest, SampleTest2)
     EXPECT_EQ(3, totalFruitFA(fruits));
     EXPECT_EQ(3, totalFruitDS1(fruits));
     EXPECT_EQ(3, totalFruitDS2(fruits));
+    EXPECT_EQ(3, totalFruitDS3(fruits));
 }
 
 TEST(TotalFruitTest, SampleTest3)
@@ -162,4 +195,5 @@ TEST(TotalFruitTest, SampleTest3)
     EXPECT_EQ(4, totalFruitFA(fruits));
     EXPECT_EQ(4, totalFruitDS1(fruits));
     EXPECT_EQ(4, totalFruitDS2(fruits));
+    EXPECT_EQ(4, totalFruitDS3(fruits));
 }
