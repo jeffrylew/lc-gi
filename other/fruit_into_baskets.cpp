@@ -182,6 +182,12 @@ static int totalFruitDS3(const std::vector<int>& fruits)
 static int totalFruitDS4(const std::vector<int>& fruits)
 {
     //! @details https://leetcode.com/problems/fruit-into-baskets/editorial/
+    //!
+    //!          Time complexity O(N) where N = the number of trees. Indices
+    //!          left_tree and right_tree only monotonically increase during
+    //!          each iteration so we have at most 2 * N steps.
+    //!          Space complexity O(1). At any given time, there are at most 3
+    //!          types of fruit in the window or basket_counts hash map.
 
     //! Map of <fruit type, count>
     std::unordered_map<int, int> basket_counts;
