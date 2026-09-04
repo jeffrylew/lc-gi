@@ -5,6 +5,7 @@ set (
     "fruit_into_baskets"
     "isomorphic_strings"
     "license_key_formatting"
+    "my_calendar_ii"
     "odd_even_jump"
     "strobogrammatic_number"
     "unique_email_addresses"
