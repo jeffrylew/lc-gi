@@ -30,6 +30,13 @@ constexpr std::pair<int, int>
 //! @class MyCalendarTwoDS1
 //! @brief Using overlapped intervals discussion solution
 //! @details https://leetcode.com/explore/interview/card/google/66/others-4/3101
+//!
+//!          Time complexity O(N) where N = the number of bookings. We iterate
+//!          through single_bookings to check for overlaps. We also check the
+//!          double_bookings vector and since its size is always smaller than or
+//!          equal to single_bookings, the overall time complexity is O(N).
+//!          Space complexity O(N) for single_bookings and double_bookings. The
+//!          size of double_bookings cannot exceed the size of single_bookings.
 class MyCalendarTwoDS1
 {
 public:
