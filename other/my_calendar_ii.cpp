@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <map>
 #include <utility>
 #include <vector>
 
@@ -81,6 +82,72 @@ private:
     std::vector<std::pair<int, int>> double_bookings;    
 };
 
+//! @class MyCalendarTwoDS2
+//! @brief Line sweep discussion solution
+//! @details https://leetcode.com/problems/my-calendar-ii/editorial/
+class MyCalendarTwoDS2
+{
+public:
+    //! @brief Check if event can be added without causing a triple booking
+    //! @param[in]  startTime Event start time, inclusive
+    //! @param[out] endTime   Event stop time, exclusive
+    //! @return True if the event can be added without causing a triple booking
+    bool book(int startTime, int endTime)
+    {
+        auto [start_it, start_time_added] =
+            booking_count.try_emplace(startTime, 1);
+        auto [end_it, end_time_added] = booking_count.try_emplace(endTime, -1);
+
+        if (!start_time_added)
+        {
+            start_it->second++;
+        }
+
+        if (!end_time_added)
+        {
+            end_it->second--;
+        }
+
+        int num_overlapped_bookings {};
+
+        //! Find the prefix sum
+        for (const auto& [curr_time, curr_booking_count] : booking_count)
+        {
+            num_overlapped_bookings += curr_booking_count;
+
+            //! If the number of bookings is more than 2, return false and undo
+            //! the counts for this booking since it won't be added
+            if (num_overlapped_bookings > max_overlapped_bookings)
+            {
+                start_it->second--;
+                end_it->second++;
+
+                //! Remove entries from the map to avoid unnecessary iteration
+                if (start_it->second == 0)
+                {
+                    booking_count.erase(start_it);
+                }
+
+                if (end_it->second == 0)
+                {
+                    booking_count.erase(end_it);
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+private:
+    //! Max number of overlapped bookings allowed
+    static constexpr int max_overlapped_bookings {2};
+
+    //! Store the number of bookings at each point
+    std::map<int, int> booking_count;
+};
+
 TEST(MyCalendarTwoTest, SampleTest1)
 {
     MyCalendarTwoDS1 my_calendar_two_ds1;
@@ -95,4 +162,17 @@ TEST(MyCalendarTwoTest, SampleTest1)
     //! The time [40, 50) will be single booked
     //! The time [50, 55) will be double booked with the second event
     EXPECT_TRUE(my_calendar_two_ds1.book(25, 55));
+
+    MyCalendarTwoDS2 my_calendar_two_ds2;
+
+    EXPECT_TRUE(my_calendar_two_ds2.book(10, 20)); // Event can be booked
+    EXPECT_TRUE(my_calendar_two_ds2.book(50, 60)); // Event can be booked
+    EXPECT_TRUE(my_calendar_two_ds2.book(10, 40)); // Event can be double booked
+    EXPECT_FALSE(my_calendar_two_ds2.book(5, 15)); // Results in triple booking
+    EXPECT_TRUE(my_calendar_two_ds2.book(5, 10));  // Excludes double booked 10
+
+    //! The time in [25, 40) will be double booked with the third event
+    //! The time [40, 50) will be single booked
+    //! The time [50, 55) will be double booked with the second event
+    EXPECT_TRUE(my_calendar_two_ds2.book(25, 55));
 }
