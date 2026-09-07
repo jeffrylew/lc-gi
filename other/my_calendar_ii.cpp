@@ -85,6 +85,13 @@ private:
 //! @class MyCalendarTwoDS2
 //! @brief Line sweep discussion solution
 //! @details https://leetcode.com/problems/my-calendar-ii/editorial/
+//!
+//!          Time complexity O(N) where N = the number of bookings. We iterate
+//!          over the entries in the booking_count map and find the prefix sum.
+//!          There are O(N) entries and for each, we have two try_emplace
+//!          operations with O(log N) complexity.
+//!          Space complexity O(N) to store the start and end times of each
+//!          booking in the map.
 class MyCalendarTwoDS2
 {
 public:
