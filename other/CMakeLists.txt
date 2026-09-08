@@ -7,6 +7,7 @@ set (
     "license_key_formatting"
     "my_calendar_ii"
     "odd_even_jump"
+    "range_sum_query_2D_mutable"
     "strobogrammatic_number"
     "unique_email_addresses"
 )
