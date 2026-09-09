@@ -5,6 +5,13 @@
 //! @class NumMatrixFA
 //! @brief First attempt solution to implement NumMatrix class
 //! @details https://leetcode.com/explore/interview/card/google/66/others-4/477/
+//!
+//!          Time complexity O(R * C) where R = the number of rows and C = the
+//!          number of columns in matrix. Initializing the prefix_sums and
+//!          matrix_copy 2D vectors in the constructor costs O(R * C). update()
+//!          costs O(C) in the worst case when col = 0 is passed, since all cols
+//!          are iterated for the input row. sumRegion() costs O(R) in the worst
+//!          case when row1 = 0 and row2 = matrix.size().
 class NumMatrixFA
 {
 public:
