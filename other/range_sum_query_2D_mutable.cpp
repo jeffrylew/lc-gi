@@ -62,6 +62,41 @@ private:
     std::vector<std::vector<int>> prefix_sums;
 };
 
+//! @class NumMatrixDS1
+//! @brief Brute force discussion solution
+//! @details https://leetcode.com/problems/range-sum-query-2d-mutable/editorial/
+class NumMatrixDS1
+{
+public:
+    NumMatrixDS1(const std::vector<std::vector<int>>& matrix)
+        : matrix_copy {matrix}
+    {
+    }
+
+    void update(int row, int col, int val)
+    {
+        matrix_copy[row][col] = val;
+    }
+
+    int sumRegion(int row1, int col1, int row2, int col2)
+    {
+        int region_sum {};
+
+        for (int row = row1; row <= row2; ++row)
+        {
+            for (int col = col1; col <= col2; ++col)
+            {
+                region_sum += matrix_copy[row][col];
+            }
+        }
+
+        return region_sum;
+    }
+
+private:
+    std::vector<std::vector<int>> matrix_copy;
+};
+
 TEST(NumMatrixTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -98,6 +133,11 @@ TEST(NumMatrixTest, SampleTest1)
      */
     num_matrix_fa.update(3, 2, 2);
     EXPECT_EQ(10, num_matrix_fa.sumRegion(2, 1, 4, 3));
+
+    NumMatrixDS1 num_matrix_ds1 {matrix};
+    EXPECT_EQ(8, num_matrix_ds1.sumRegion(2, 1, 4, 3));
+    num_matrix_ds1.update(3, 2, 2);
+    EXPECT_EQ(10, num_matrix_ds1.sumRegion(2, 1, 4, 3));
 }
 
 TEST(NumMatrixTest, SampleTest2)
@@ -149,4 +189,10 @@ TEST(NumMatrixTest, SampleTest2)
                                                             Total = -3
      */
     EXPECT_EQ(-3, num_matrix_fa.sumRegion(0, 0, 1, 1));
+
+    NumMatrixDS1 num_matrix_ds1 {matrix};
+    num_matrix_ds1.update(0, 1, 3);
+    num_matrix_ds1.update(1, 1, -3);
+    num_matrix_ds1.update(0, 1, 1);
+    EXPECT_EQ(-3, num_matrix_ds1.sumRegion(0, 0, 1, 1));
 }
