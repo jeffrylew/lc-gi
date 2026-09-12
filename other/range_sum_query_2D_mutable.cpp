@@ -65,6 +65,11 @@ private:
 //! @class NumMatrixDS1
 //! @brief Brute force discussion solution
 //! @details https://leetcode.com/problems/range-sum-query-2d-mutable/editorial/
+//!
+//!          Time complexity O(R * C) where R and C represent the number of rows
+//!          and columns respectively. Each sumRegion query can go through at
+//!          most R x C elements.
+//!          Space complexity O(R * C) for matrix_copy.
 class NumMatrixDS1
 {
 public:
