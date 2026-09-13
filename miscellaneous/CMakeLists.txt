@@ -34,6 +34,7 @@ set (
     "reverse_substrings_between_each_pair_of_parentheses"
     "serialize_and_deserialize_n_ary_tree"
     "sort_the_people"
+    "sqrt_x"
     "sum_of_digits_of_string_after_convert"
     "symmetric_tree"
     "three_consecutive_odds"
