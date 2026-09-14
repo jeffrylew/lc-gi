@@ -41,6 +41,9 @@ static int mySqrtFA(int x)
 static int mySqrtDS1(int x)
 {
     //! @details https://leetcode.com/problems/sqrtx/editorial/
+    //!
+    //!          Time complexity O(1).
+    //!          Space complexity O(1).
 
     if (x < 2)
     {
