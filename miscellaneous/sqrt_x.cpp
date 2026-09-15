@@ -62,14 +62,53 @@ static int mySqrtDS1(int x)
     return static_cast<int>(x_upper_bound);
 }
 
+//! @brief Binary search discussion solution
+//! @param[in] x A non-negative integer
+//! @return Non-negative square root of x rounded down to the nearest integer
+static int mySqrtDS2(int x)
+{
+    //! @details https://leetcode.com/problems/sqrtx/editorial/
+
+    if (x < 2)
+    {
+        return x;
+    }
+
+    int x_lower_bound {2};
+    int x_upper_bound {x / 2};
+
+    while (x_lower_bound <= x_upper_bound)
+    {
+        const int  x_mid {x_lower_bound + (x_upper_bound - x_lower_bound) / 2};
+        const auto x_mid2 = static_cast<long>(x_mid) * x_mid;
+
+        if (x_mid2 > x)
+        {
+            x_upper_bound = x_mid - 1;
+        }
+        else if (x_mid2 < x)
+        {
+            x_lower_bound = x_mid + 1;
+        }
+        else
+        {
+            return x_mid;
+        }
+    }
+
+    return x_upper_bound;
+}
+
 TEST(MySqrtTest, SampleTest1)
 {
     EXPECT_EQ(2, mySqrtFA(4));
     EXPECT_EQ(2, mySqrtDS1(4));
+    EXPECT_EQ(2, mySqrtDS2(4));
 }
 
 TEST(MySqrtTest, SampleTest2)
 {
     EXPECT_EQ(2, mySqrtFA(8));
     EXPECT_EQ(2, mySqrtDS1(8));
+    EXPECT_EQ(2, mySqrtDS2(8));
 }
