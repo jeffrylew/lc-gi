@@ -68,6 +68,15 @@ static int mySqrtDS1(int x)
 static int mySqrtDS2(int x)
 {
     //! @details https://leetcode.com/problems/sqrtx/editorial/
+    //!
+    //!          Time complexity O(log N) using the master theorem, T(N) =
+    //!          A * T(N / b) + theta(N ^ d). The equation represents dividing
+    //!          the problem into A subproblems of size (N / b) in theta(N ^ d)
+    //!          time. At each step, there is only one subproblem A = 1 and its
+    //!          size is half of the initial problem b = 2, and all this happens
+    //!          in constant time d = 0. So log_b A = d and case 2 result in
+    //!          O(log N).
+    //!          Space complexity O(1).
 
     if (x < 2)
     {
