@@ -108,11 +108,43 @@ static int mySqrtDS2(int x)
     return x_upper_bound;
 }
 
+//! @brief Recursion + bit shifts discussion solution
+//! @param[in] x A non-negative integer
+//! @return Non-negative square root of x rounded down to the nearest integer
+constexpr int mySqrtDS3(int x)
+{
+    //! @details https://leetcode.com/problems/sqrtx/editorial/
+
+    if (x < 2)
+    {
+        return x;
+    }
+
+    /*
+     sqrt(x) = 2 * sqrt(x / 4) = 2 * sqrt(x / (2 ^ 2))
+     and
+     x << y = x * 2 ^ y
+     x >> y = x / 2 ^ y
+     so
+     x >> 2 = x / (2 ^ 2) = x / 4
+     */
+    const int x_lower_bound {mySqrtDS3(x >> 2) << 1};
+    const int x_upper_bound {x_lower_bound + 1};
+
+    if (x_upper_bound > x / x_upper_bound)
+    {
+        return x_lower_bound;
+    }
+
+    return x_upper_bound;
+}
+
 TEST(MySqrtTest, SampleTest1)
 {
     EXPECT_EQ(2, mySqrtFA(4));
     EXPECT_EQ(2, mySqrtDS1(4));
     EXPECT_EQ(2, mySqrtDS2(4));
+    EXPECT_EQ(2, mySqrtDS3(4));
 }
 
 TEST(MySqrtTest, SampleTest2)
@@ -120,4 +152,5 @@ TEST(MySqrtTest, SampleTest2)
     EXPECT_EQ(2, mySqrtFA(8));
     EXPECT_EQ(2, mySqrtDS1(8));
     EXPECT_EQ(2, mySqrtDS2(8));
+    EXPECT_EQ(2, mySqrtDS3(8));
 }
