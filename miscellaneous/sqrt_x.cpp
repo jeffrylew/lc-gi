@@ -114,6 +114,9 @@ static int mySqrtDS2(int x)
 constexpr int mySqrtDS3(int x)
 {
     //! @details https://leetcode.com/problems/sqrtx/editorial/
+    //!
+    //!          Time complexity O(log N).
+    //!          Space complexity O(log N) for the recursion stack.
 
     if (x < 2)
     {
