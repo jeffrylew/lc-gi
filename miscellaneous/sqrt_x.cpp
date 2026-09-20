@@ -142,12 +142,38 @@ constexpr int mySqrtDS3(int x)
     return x_upper_bound;
 }
 
+//! @brief Newton's method discussion solution
+//! @param[in] x A non-negative integer
+//! @return Non-negative square root of x rounded down to the nearest integer
+constexpr int mySqrtDS4(int x)
+{
+    //! @details https://leetcode.com/problems/sqrtx/editorial/
+
+    if (x < 2)
+    {
+        return x;
+    }
+
+    double x0 {x};
+    double x1 {(x0 + x / x0) / 2.0};
+
+    //! x_{k + 1} = 0.5 * [x_k + x / x_k] converges to sqrt(x) if x0 = x
+    while (std::abs(x0 - x1) >= 1)
+    {
+        x0 = x1;
+        x1 = (x0 + x / x0) / 2.0;
+    }
+
+    return static_cast<int>(x1);
+}
+
 TEST(MySqrtTest, SampleTest1)
 {
     EXPECT_EQ(2, mySqrtFA(4));
     EXPECT_EQ(2, mySqrtDS1(4));
     EXPECT_EQ(2, mySqrtDS2(4));
     EXPECT_EQ(2, mySqrtDS3(4));
+    EXPECT_EQ(2, mySqrtDS4(4));
 }
 
 TEST(MySqrtTest, SampleTest2)
@@ -156,4 +182,5 @@ TEST(MySqrtTest, SampleTest2)
     EXPECT_EQ(2, mySqrtDS1(8));
     EXPECT_EQ(2, mySqrtDS2(8));
     EXPECT_EQ(2, mySqrtDS3(8));
+    EXPECT_EQ(2, mySqrtDS4(8));
 }
