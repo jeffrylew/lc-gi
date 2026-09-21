@@ -148,6 +148,9 @@ constexpr int mySqrtDS3(int x)
 constexpr int mySqrtDS4(int x)
 {
     //! @details https://leetcode.com/problems/sqrtx/editorial/
+    //!
+    //!          Time complexity O(log N) since the set converges quadratically.
+    //!          Space complexity O(1).
 
     if (x < 2)
     {
