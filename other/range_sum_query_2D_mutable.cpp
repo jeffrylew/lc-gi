@@ -102,6 +102,65 @@ private:
     std::vector<std::vector<int>> matrix_copy;
 };
 
+constexpr void
+    update_binary_indexed_tree(std::vector<std::vector<int>>& matrix,
+                               int                            num_rows,
+                               int                            num_cols,
+                               int                            val)
+{
+    //! @todo
+}
+
+constexpr void
+    build_binary_indexed_tree(std::vector<std::vector<int>>& matrix,
+                              int                            num_rows,
+                              int                            num_cols)
+{
+    for (int row = 1; row <= num_rows; ++row)
+    {
+        for (int col = 1; col <= num_cols; ++col)
+        {
+            //! Call update function on each of the entries in the matrix
+            const int val {matrix[row - 1][col - 1]};
+
+            update_binary_indexed_tree(row, col, val);
+        }
+    }
+}
+
+//! @class NumMatrixDS2
+//! @brief Binary Indexed Tree (Fenwick Tree) discussion solution
+//! @details https://leetcode.com/problems/range-sum-query-2d-mutable/editorial/
+class NumMatrixDS2
+{
+public:
+    NumMatrixDS2(const std::vector<std::vector<int>>& matrix)
+        : num_rows {1 + static_cast<int>(std::ssize(matrix))}
+        , num_cols {1 + static_cast<int>(std::ssize(matrix[0]))}
+        , bit_matrix(num_rows, std::vector<int>(num_cols, 0))
+    {
+        build_binary_indexed_tree(bit_matrix);
+    }
+
+    void update(int row, int col, int val)
+    {
+        //! @todo
+    }
+
+    int sumRegion(int row1, int col1, int row2, int col2)
+    {
+        //! @todo
+    }
+
+private:
+    int num_rows {};
+    int num_cols {};
+
+    std::vector<std::vector<int>> bit_matrix;
+
+    
+};
+
 TEST(NumMatrixTest, SampleTest1)
 {
     const std::vector<std::vector<int>> matrix {
@@ -143,6 +202,11 @@ TEST(NumMatrixTest, SampleTest1)
     EXPECT_EQ(8, num_matrix_ds1.sumRegion(2, 1, 4, 3));
     num_matrix_ds1.update(3, 2, 2);
     EXPECT_EQ(10, num_matrix_ds1.sumRegion(2, 1, 4, 3));
+
+    NumMatrixDS2 num_matrix_ds2 {matrix};
+    EXPECT_EQ(8, num_matrix_ds2.sumRegion(2, 1, 4, 3));
+    num_matrix_ds2.update(3, 2, 2);
+    EXPECT_EQ(10, num_matrix_ds2.sumRegion(2, 1, 4, 3));
 }
 
 TEST(NumMatrixTest, SampleTest2)
@@ -200,4 +264,10 @@ TEST(NumMatrixTest, SampleTest2)
     num_matrix_ds1.update(1, 1, -3);
     num_matrix_ds1.update(0, 1, 1);
     EXPECT_EQ(-3, num_matrix_ds1.sumRegion(0, 0, 1, 1));
+
+    NumMatrixDS2 num_matrix_ds2 {matrix};
+    num_matrix_ds2.update(0, 1, 3);
+    num_matrix_ds2.update(1, 1, -3);
+    num_matrix_ds2.update(0, 1, 1);
+    EXPECT_EQ(-3, num_matrix_ds2.sumRegion(0, 0, 1, 1));
 }
