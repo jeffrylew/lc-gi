@@ -102,6 +102,14 @@ private:
     std::vector<std::vector<int>> matrix_copy;
 };
 
+//! @brief Get the right-most non-zero bit of a number
+//! @param[in] val The number to get the right-most non-zero bit of
+//! @return The least significant bit
+[[nodiscard]] constexpr int least_significant_bit(int val)
+{
+    return val & -val;
+}
+
 constexpr void
     update_binary_indexed_tree(std::vector<std::vector<int>>& matrix,
                                int                            num_rows,
@@ -157,8 +165,6 @@ private:
     int num_cols {};
 
     std::vector<std::vector<int>> bit_matrix;
-
-    
 };
 
 TEST(NumMatrixTest, SampleTest1)
