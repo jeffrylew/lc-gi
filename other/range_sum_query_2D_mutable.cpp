@@ -111,18 +111,31 @@ private:
 }
 
 constexpr void
-    update_binary_indexed_tree(std::vector<std::vector<int>>& matrix,
+    update_binary_indexed_tree(std::vector<std::vector<int>>& bit_matrix,
+                               int                            val,
+                               int                            curr_row,
+                               int                            curr_col,
                                int                            num_rows,
-                               int                            num_cols,
-                               int                            val)
+                               int                            num_cols)
 {
-    //! @todo
+    //! Add least_significant_bit(row) to row, least_significant_bit(col) to col
+    //! and add val to bit_matrix[curr_row][curr_col]
+    for (int row = curr_row; row <= num_rows; row += least_significant_bit(row))
+    {
+        for (int col = curr_col;
+             col <= num_cols;
+             col += least_significant_bit(col))
+        {
+            bit_matrix[row][col] += val;
+        }
+    }
 }
 
 constexpr void
-    build_binary_indexed_tree(std::vector<std::vector<int>>& matrix,
-                              int                            num_rows,
-                              int                            num_cols)
+    build_binary_indexed_tree(const std::vector<std::vector<int>>& matrix,
+                              std::vector<std::vector<int>>&       bit_matrix,
+                              int                                  num_rows,
+                              int                                  num_cols)
 {
     for (int row = 1; row <= num_rows; ++row)
     {
@@ -131,7 +144,12 @@ constexpr void
             //! Call update function on each of the entries in the matrix
             const int val {matrix[row - 1][col - 1]};
 
-            update_binary_indexed_tree(row, col, val);
+            update_binary_indexed_tree(bit_matrix,
+                                       val,
+                                       row,
+                                       col,
+                                       num_rows,
+                                       num_cols);
         }
     }
 }
