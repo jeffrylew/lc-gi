@@ -154,6 +154,27 @@ constexpr void
     }
 }
 
+[[nodiscard]] constexpr int
+    query_binary_indexed_tree(const std::vector<std::vector<int>>& bit_matrix,
+                              int                                  curr_row,
+                              int                                  curr_col)
+{
+    int sum_of_nonoverlapping_subrectangles {};
+
+    //! Subtract least_significant_bit(row) from row, least_significant_bit(col)
+    //! from col, and obtain the final sum as the sum of non-overlapping
+    //! sub-rectangles
+    for (int row = curr_row; row > 0; row -= least_significant_bit(row))
+    {
+        for (int col = curr_col; col > 0; col -= least_signficant_bit(col))
+        {
+            sum_of_nonoverlapping_subrectangles += bit_matrix[row][col];
+        }
+    }
+
+    return sum_of_nonoverlapping_subrectangles;
+}
+
 //! @class NumMatrixDS2
 //! @brief Binary Indexed Tree (Fenwick Tree) discussion solution
 //! @details https://leetcode.com/problems/range-sum-query-2d-mutable/editorial/
