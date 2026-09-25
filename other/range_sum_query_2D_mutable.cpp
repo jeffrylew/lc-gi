@@ -182,21 +182,49 @@ class NumMatrixDS2
 {
 public:
     NumMatrixDS2(const std::vector<std::vector<int>>& matrix)
-        : num_rows {1 + static_cast<int>(std::ssize(matrix))}
-        , num_cols {1 + static_cast<int>(std::ssize(matrix[0]))}
-        , bit_matrix(num_rows, std::vector<int>(num_cols, 0))
+        : num_rows {static_cast<int>(std::ssize(matrix))}
+        , num_cols {static_cast<int>(std::ssize(matrix[0]))}
+        , bit_matrix(1 + num_rows)
     {
-        build_binary_indexed_tree(bit_matrix);
+        for (int row = 1; row <= num_rows; ++row)
+        {
+            bit_matrix[row].resize(1 + num_cols, 0);
+        }
+        build_binary_indexed_tree(matrix, bit_matrix, num_rows, num_cols);
     }
 
     void update(int row, int col, int val)
     {
-        //! @todo
+        const int prev_sum_region {sumRegion(row, col, row, col)};
+
+        //! Handle 1-based indexing
+        ++row;
+        ++col;
+
+        const int diff_sum_region {val - prev_sum_region};
+        update_binary_indexed_tree(bit_matrix,
+                                   diff_sum_region,
+                                   row,
+                                   col,
+                                   num_rows,
+                                   num_cols);
     }
 
     int sumRegion(int row1, int col1, int row2, int col2)
     {
-        //! @todo
+        //! Handle 1-based indexing
+        ++row1;
+        ++col1;
+        ++row2;
+        ++col2;
+
+        const int sum_a {query_binary_indexed_tree(bit_matrix, row2, col2)};
+        const int sum_b {query_binary_indexed_tree(bit_matrix,
+                                                   row1 - 1,
+                                                   col1 - 1)};
+        const int sum_c {query_binary_indexed_tree(bit_matrix, row2, col1 - 1)};
+        const int sum_d {query_binary_indexed_tree(bit_matrix, row1 - 1, col2)};
+        return (sum_a + sum_b) - (sum_c + sum_d);
     }
 
 private:
