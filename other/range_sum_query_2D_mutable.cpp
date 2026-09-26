@@ -178,6 +178,13 @@ constexpr void
 //! @class NumMatrixDS2
 //! @brief Binary Indexed Tree (Fenwick Tree) discussion solution
 //! @details https://leetcode.com/problems/range-sum-query-2d-mutable/editorial/
+//!
+//!          Time complexity: R = the number of rows and C = number of columns
+//!              update (2D) - O(log R * log C)
+//!              query (2D) - O(log R * log C)
+//!              build (2D) - O(R * C * log R * log C)
+//!          Space complexity O(R * C) for the bit_matrix to store the
+//!          non-overlapping partial sums.
 class NumMatrixDS2
 {
 public:
