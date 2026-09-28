@@ -5,6 +5,7 @@ set (
     "fruit_into_baskets"
     "isomorphic_strings"
     "license_key_formatting"
+    "minimum_area_rectangle"
     "my_calendar_ii"
     "odd_even_jump"
     "range_sum_query_2D_mutable"
