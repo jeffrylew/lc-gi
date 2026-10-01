@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <limits>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -62,6 +64,18 @@ static int minAreaRectFA(const std::vector<std::vector<int>>& points)
 static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
 {
     //! @details https://leetcode.com/problems/minimum-area-rectangle/editorial/
+
+    std::unordered_map<int, std::vector<int>> grouped_columns;
+    for (const auto& point : points)
+    {
+        const int x_coord {point.front()};
+        const int y_coord {point.back()};
+        grouped_columns[x_coord].push_back(y_coord);
+    }
+
+    int min_area {std::numeric_limits<int>::max()};
+
+    std::unordered_map<int, int> last_x_coord;
 
     //! @todo
 }
