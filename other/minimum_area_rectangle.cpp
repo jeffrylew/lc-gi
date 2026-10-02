@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <flat_map>
 #include <limits>
 #include <unordered_map>
 #include <utility>
@@ -65,7 +66,7 @@ static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
 {
     //! @details https://leetcode.com/problems/minimum-area-rectangle/editorial/
 
-    std::unordered_map<int, std::vector<int>> grouped_columns;
+    std::flat_map<int, std::vector<int>> grouped_columns;
     for (const auto& point : points)
     {
         const int x_coord {point.front()};
@@ -75,9 +76,42 @@ static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
 
     int min_area {std::numeric_limits<int>::max()};
 
+    //! Map of <id of right side formed from two y coords, shared x coord>
     std::unordered_map<int, int> last_x_coord;
 
-    //! @todo
+    for (auto& [x_coord, y_coords_vec] : grouped_columns)
+    {
+        std::ranges::sort(y_coords_vec);
+        const auto num_y_coords = static_cast<int>(std::ssize(y_coords_vec));
+
+        for (int y_coord1_idx = 0; y_coord1_idx < num_y_coords; ++y_coord1_idx)
+        {
+            for (int y_coord2_idx = y_coord1_idx + 1;
+                 y_coord2_idx < num_y_coords;
+                 ++y_coord2_idx)
+            {
+                const int smaller_y_coord {y_coords_vec[y_coord1_idx]};
+                const int larger_y_coord {y_coords_vec[y_coord2_idx]};
+
+                const int right_side_id_from_y_coords {
+                    40001 * smaller_y_coord + larger_y_coord};
+
+                auto side_it = last_x_coord.find(right_side_id_from_y_coords);
+                if (side_it != last_x_coord.end())
+                {
+                    const int curr_area {
+                        (x_coord - side_it->second)
+                         * (larger_y_coord - smaller_y_coord)};
+
+                    min_area = std::min(min_area, curr_area);
+                }
+
+                last_x_coord[right_side_id_from_y_coords] = x_coord;
+            }
+        }
+    }
+
+    return min_area < std::numeric_limits<int>::max() ? min_area : 0;
 }
 
 TEST(MinAreaRectTest, SampleTest1)
