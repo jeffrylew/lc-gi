@@ -65,6 +65,9 @@ static int minAreaRectFA(const std::vector<std::vector<int>>& points)
 static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
 {
     //! @details https://leetcode.com/problems/minimum-area-rectangle/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = points.size().
+    //!          Space complexity O(N).
 
     std::flat_map<int, std::vector<int>> grouped_columns;
     for (const auto& point : points)
