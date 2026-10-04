@@ -4,6 +4,7 @@
 #include <flat_map>
 #include <limits>
 #include <unordered_map>
+#include <unordered_set>
 #include <utility>
 #include <vector>
 
@@ -117,6 +118,38 @@ static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
     return min_area < std::numeric_limits<int>::max() ? min_area : 0;
 }
 
+//! @brief Count by diagonal discussion solution
+//! @param[in] points A vector of points where points[i] = [x_i, y_i]
+//! @return The min area of a rectangle formed from points or 0 if no rectangle
+static int minAreaRectDS2(const std::vector<std::vector<int>>& points)
+{
+    //! @details https://leetcode.com/problems/minimum-area-rectangle/editorial/
+
+    std::unordered_set<int> point_set;
+
+    for (const auto& point : points)
+    {
+        point_set.insert(40001 * point.front() + point.back());
+    }
+
+    int min_area {std::numeric_limits<int>::max()};
+
+    const auto num_points = static_cast<int>(std::ssize(points));
+
+    for (int corner1 = 0; corner1 < num_points; ++corner1)
+    {
+        for (int corner2 = corner1 + 1; corner2 < num_points; ++corner2)
+        {
+            const int corner1_x {points[corner1][0]};
+            const int corner2_x {points[corner2][0]};
+            const int corner1_y {points[corner1][1]};
+            const int corner2_y {points[corner2][1]};
+
+            //! @todo
+        }
+    }
+}
+
 TEST(MinAreaRectTest, SampleTest1)
 {
     const std::vector<std::vector<int>> points {
@@ -124,6 +157,7 @@ TEST(MinAreaRectTest, SampleTest1)
 
     EXPECT_EQ(4, minAreaRectFA(points));
     EXPECT_EQ(4, minAreaRectDS1(points));
+    EXPECT_EQ(4, minAreaRectDS2(points));
 }
 
 TEST(MinAreaRectTest, SampleTest1)
@@ -133,4 +167,5 @@ TEST(MinAreaRectTest, SampleTest1)
 
     EXPECT_EQ(2, minAreaRectFA(points));
     EXPECT_EQ(2, minAreaRectDS1(points));
+    EXPECT_EQ(2, minAreaRectDS2(points));
 }
