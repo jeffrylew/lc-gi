@@ -145,9 +145,21 @@ static int minAreaRectDS2(const std::vector<std::vector<int>>& points)
             const int corner1_y {points[corner1][1]};
             const int corner2_y {points[corner2][1]};
 
-            //! @todo
+            if (corner1_x != corner2_x && corner1_y != corner2_y)
+            {
+                if (point_set.contains(40001 * corner1_x + corner2_y)
+                    && point_set.contains(40001 * corner2_x + corner1_y))
+                {
+                    min_area =
+                        std::min(min_area,
+                                 std::abs(corner2_x - corner1_x)
+                                 * std::abs(corner2_y - corner1_y));
+                }
+            }
         }
     }
+
+    return min_area < std::numeric_limits<int>::max() ? min_area : 0;
 }
 
 TEST(MinAreaRectTest, SampleTest1)
