@@ -124,6 +124,9 @@ static int minAreaRectDS1(const std::vector<std::vector<int>>& points)
 static int minAreaRectDS2(const std::vector<std::vector<int>>& points)
 {
     //! @details https://leetcode.com/problems/minimum-area-rectangle/editorial/
+    //!
+    //!          Time complexity O(N ^ 2) where N = points.size().
+    //!          Space complexity O(N).
 
     std::unordered_set<int> point_set;
 
