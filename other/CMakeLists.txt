@@ -10,6 +10,7 @@ set (
     "odd_even_jump"
     "range_sum_query_2D_mutable"
     "strobogrammatic_number"
+    "swap_adjacent_in_LR_string"
     "unique_email_addresses"
 )
 
