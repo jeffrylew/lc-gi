@@ -13,6 +13,7 @@ static bool canTransformFA(std::string start, std::string result)
     //! @details leetcode.com/explore/interview/card/google/66/others-4/3103
     //!
     //!          First attempt solution passes 53 / 99 test cases.
+    //!          It fails SampleTest3.
 
     const auto start_size  = static_cast<int>(std::ssize(start));
     const auto result_size = static_cast<int>(std::ssize(result));
@@ -80,4 +81,9 @@ TEST(CanTransformTest, SampleTest1)
 TEST(CanTransformTest, SampleTest2)
 {
     EXPECT_FALSE(canTransformFA("X", "L"));
+}
+
+TEST(CanTransformTest, SampleTest3)
+{
+    // EXPECT_TRUE(canTransformFA("XXXXXLXXXX", "LXXXXXXXXX"));
 }
