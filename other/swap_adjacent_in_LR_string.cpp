@@ -12,8 +12,8 @@ static bool canTransformFA(std::string start, std::string result)
 {
     //! @details leetcode.com/explore/interview/card/google/66/others-4/3103
     //!
-    //!          First attempt solution passes 53 / 99 test cases.
-    //!          It fails SampleTest3.
+    //!          First attempt solution passes 67 / 99 test cases.
+    //!          It has Time Limit Exceeded for SampleTest4.
 
     const auto start_size  = static_cast<int>(std::ssize(start));
     const auto result_size = static_cast<int>(std::ssize(result));
@@ -47,7 +47,8 @@ static bool canTransformFA(std::string start, std::string result)
                 {
                     std::swap(begin_char, end_char);
                     result_reachable =
-                        result_reachable || can_transform(curr_string, end_idx);
+                        result_reachable
+                        || can_transform(curr_string, std::max(1, end_idx - 1));
                     std::swap(begin_char, end_char);
                 }
             }
@@ -85,5 +86,12 @@ TEST(CanTransformTest, SampleTest2)
 
 TEST(CanTransformTest, SampleTest3)
 {
-    // EXPECT_TRUE(canTransformFA("XXXXXLXXXX", "LXXXXXXXXX"));
+    EXPECT_TRUE(canTransformFA("XXXXXLXXXX", "LXXXXXXXXX"));
+}
+
+TEST(CanTransformTest, SampleTest4)
+{
+    EXPECT_TRUE(
+        canTransformFA("XXXXXXRXXLXRXXXXXRXXXXXRXXXXXLXXXLXLXXRXXXXXLXXXXX",
+                       "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
 }
