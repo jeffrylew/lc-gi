@@ -70,6 +70,17 @@ static bool canTransformFA(std::string start, std::string result)
     return sequence_exists;
 }
 
+//! @brief Invariant discussion solution
+//! @param[in] start  The starting string
+//! @param[in] result The ending string
+//! @return True if a sequence of moves exists to transform start into result
+static bool canTransformDS1(std::string start, std::string result)
+{
+    //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
+
+    //! @todo
+}
+
 TEST(CanTransformTest, SampleTest1)
 {
     //! RX XLRXRXL  -> XR XLRXRXL
@@ -77,16 +88,19 @@ TEST(CanTransformTest, SampleTest1)
     //! XRLX RX RXL -> XRLX XR RXL
     //! XRLXXRR XL  -> XRLXXRR LX == XRLXXRRLX
     EXPECT_TRUE(canTransformFA("RXXLRXRXL", "XRLXXRRLX"));
+    EXPECT_TRUE(canTransformDS1("RXXLRXRXL", "XRLXXRRLX"));
 }
 
 TEST(CanTransformTest, SampleTest2)
 {
     EXPECT_FALSE(canTransformFA("X", "L"));
+    EXPECT_FALSE(canTransformDS1("X", "L"));
 }
 
 TEST(CanTransformTest, SampleTest3)
 {
     EXPECT_TRUE(canTransformFA("XXXXXLXXXX", "LXXXXXXXXX"));
+    EXPECT_TRUE(canTransformDS1("XXXXXLXXXX", "LXXXXXXXXX"));
 }
 
 TEST(CanTransformTest, SampleTest4)
@@ -94,4 +108,7 @@ TEST(CanTransformTest, SampleTest4)
     EXPECT_TRUE(
         canTransformFA("XXXXXXRXXLXRXXXXXRXXXXXRXXXXXLXXXLXLXXRXXXXXLXXXXX",
                        "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
+    EXPECT_TRUE(
+        canTransformDS1("XXXXXXRXXLXRXXXXXRXXXXXRXXXXXLXXXLXLXXRXXXXXLXXXXX",
+                        "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
 }
