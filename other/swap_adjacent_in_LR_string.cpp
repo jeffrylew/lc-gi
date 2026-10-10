@@ -78,6 +78,16 @@ static bool canTransformDS1(std::string start, std::string result)
 {
     //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
 
+    auto start_without_x  = start;
+    auto result_without_x = result;
+    std::ranges::replace(start_without_x, 'X', '');
+    std::ranges::replace(result_without_x, 'X', '');
+
+    if (start_without_x != result_without_x)
+    {
+        return false;
+    }
+
     //! @todo
 }
 
