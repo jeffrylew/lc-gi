@@ -2,7 +2,9 @@
 
 #include <algorithm>
 #include <functional>
+#include <iterator>
 #include <string>
+#include <vector>
 
 //! @brief First attempt to check if start can be transformed into result
 //! @param[in] start  The starting string
@@ -78,17 +80,71 @@ static bool canTransformDS1(std::string start, std::string result)
 {
     //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
 
-    auto start_without_x  = start;
-    auto result_without_x = result;
-    std::ranges::replace(start_without_x, 'X', '');
-    std::ranges::replace(result_without_x, 'X', '');
+    std::vector<char> start_without_x;
+    std::vector<char> result_without_x;
+    std::ranges::remove_copy(start, std::back_inserter(start_without_x), 'X');
+    std::ranges::remove_copy(result, std::back_inserter(result_without_x), 'X');
 
     if (start_without_x != result_without_x)
     {
         return false;
     }
 
-    //! @todo
+    const auto start_size = static_cast<int>(std::ssize(start));
+    int        result_idx {};
+
+    for (int start_idx = 0; start_idx < start_size; ++start_idx)
+    {
+        if (start[start_idx] == 'L')
+        {
+            //! Move result_idx to the right. Due to "accessbility", the nth 'L'
+            //! cannot be to the right of its original position since we can
+            //! replace "XL" with "LX"
+            while (result[result_idx] != 'L')
+            {
+                ++result_idx;
+            }
+
+            //! result_idx is now at a position in result that has an 'L'
+            //! It cannot be to the right of start_idx
+            if (start_idx < result_idx)
+            {
+                return false;
+            }
+
+            //! result_idx is either to the left of or at start_idx
+            //! Increment it to start the search for the next 'L'
+            ++result_idx;
+        }
+    }
+
+    result_idx = 0;
+    for (int start_idx = 0; start_idx < start_size; ++start_idx)
+    {
+        //! Move result_idx to the right. Due to "accessibility", the nth 'R'
+        //! cannot be to the left of its original position since we can replace
+        //! "RX" with "XR"
+        if (start[start_idx] == 'R')
+        {
+            while (result[result_idx] != 'R')
+            {
+                ++result_idx;
+            }
+
+            //! result_idx is now at a position in result that has an 'R'
+            //! It cannot be to the left of start_idx
+            if (start_idx > result_idx)
+            {
+                return false;
+            }
+
+            //! result_idx is either to the right of or at start_idx
+            //! Increment it to start the search for the next 'R'
+            ++result_idx;
+        }
+    }
+
+    return true;
 }
 
 TEST(CanTransformTest, SampleTest1)
