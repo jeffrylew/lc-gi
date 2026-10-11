@@ -147,6 +147,83 @@ static bool canTransformDS1(std::string start, std::string result)
     return true;
 }
 
+//! @brief Two pointers discussion solution
+//! @param[in] start  The starting string
+//! @param[in] result The ending string
+//! @return True if a sequence of moves exists to transform start into result
+static bool canTransformDS2(std::string start, std::string result)
+{
+    //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
+
+    const auto string_size = static_cast<int>(std::ssize(start));
+
+    //! Count of 'X' in start and result should be the same
+    int num_x {};
+    for (int idx = 0; idx < string_size; ++idx)
+    {
+        if (start[idx] == 'X')
+        {
+            ++num_x;
+        }
+
+        if (result[idx] == 'X')
+        {
+            --num_x;
+        }
+    }
+
+    if (num_x != 0)
+    {
+        return false;
+    }
+
+    int start_idx {};
+    int result_idx {};
+
+    while (start_idx < string_size && result_idx < string_size)
+    {
+        while (start_idx < string_size && start[start_idx] == 'X')
+        {
+            ++start_idx;
+        }
+
+        while (result_idx < string_size && result[result_idx] == 'X')
+        {
+            ++result_idx;
+        }
+
+        //! start_idx and result_idx are the indices of the next non-'X' chars
+        if (start_idx == string_size || result_idx == string_size)
+        {
+            return start_idx == string_size && result_idx == string_size;
+        }
+
+        if (start[start_idx] != result[result_idx])
+        {
+            return false;
+        }
+
+        //! The nth 'L' in result cannot be right of its orig position in start
+        //! when replacing "XL" with "LX"
+        if (start[start_idx] == 'L' && start_idx < result_idx)
+        {
+            return false;
+        }
+
+        //! The nth 'R' in result cannot be left of its orig position in start
+        //! when replacing "RX" with "XR"
+        if (start[start_idx] == 'R' && start_idx > result_idx)
+        {
+            return false;
+        }
+
+        ++start_idx;
+        ++result_idx;
+    }
+
+    return true;
+}
+
 TEST(CanTransformTest, SampleTest1)
 {
     //! RX XLRXRXL  -> XR XLRXRXL
@@ -155,18 +232,21 @@ TEST(CanTransformTest, SampleTest1)
     //! XRLXXRR XL  -> XRLXXRR LX == XRLXXRRLX
     EXPECT_TRUE(canTransformFA("RXXLRXRXL", "XRLXXRRLX"));
     EXPECT_TRUE(canTransformDS1("RXXLRXRXL", "XRLXXRRLX"));
+    EXPECT_TRUE(canTransformDS2("RXXLRXRXL", "XRLXXRRLX"));
 }
 
 TEST(CanTransformTest, SampleTest2)
 {
     EXPECT_FALSE(canTransformFA("X", "L"));
     EXPECT_FALSE(canTransformDS1("X", "L"));
+    EXPECT_FALSE(canTransformDS2("X", "L"));
 }
 
 TEST(CanTransformTest, SampleTest3)
 {
     EXPECT_TRUE(canTransformFA("XXXXXLXXXX", "LXXXXXXXXX"));
     EXPECT_TRUE(canTransformDS1("XXXXXLXXXX", "LXXXXXXXXX"));
+    EXPECT_TRUE(canTransformDS2("XXXXXLXXXX", "LXXXXXXXXX"));
 }
 
 TEST(CanTransformTest, SampleTest4)
@@ -176,5 +256,8 @@ TEST(CanTransformTest, SampleTest4)
                        "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
     EXPECT_TRUE(
         canTransformDS1("XXXXXXRXXLXRXXXXXRXXXXXRXXXXXLXXXLXLXXRXXXXXLXXXXX",
+                        "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
+    EXPECT_TRUE(
+        canTransformDS2("XXXXXXRXXLXRXXXXXRXXXXXRXXXXXLXXXLXLXXRXXXXXLXXXXX",
                         "XXRXXXXLXXRXXXRXXXXRXXXXXLXXLXXXXXXLXXXXRXXXXLXXXX"));
 }
