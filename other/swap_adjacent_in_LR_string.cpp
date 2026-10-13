@@ -158,6 +158,9 @@ static bool canTransformDS1(std::string start, std::string result)
 static bool canTransformDS2(std::string start, std::string result)
 {
     //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
+    //!
+    //!          Time complexity O(N) where N = the length of start and result.
+    //!          Space complexity O(1)
 
     const auto string_size = static_cast<int>(std::ssize(start));
 
