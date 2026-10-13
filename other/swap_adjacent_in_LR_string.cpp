@@ -79,6 +79,10 @@ static bool canTransformFA(std::string start, std::string result)
 static bool canTransformDS1(std::string start, std::string result)
 {
     //! @details leetcode.com/problems/swap-adjacent-in-lr-string/editorial
+    //!
+    //!          Time complexity O(N) where N = the length of start and result.
+    //!          Space complexity O(N). std::ranges::remove_copy uses O(N) for
+    //!          the two vectors, while the remaining operations use O(1) space.
 
     std::vector<char> start_without_x;
     std::vector<char> result_without_x;
