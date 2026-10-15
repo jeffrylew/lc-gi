@@ -3,6 +3,7 @@ set (
     "bulls_and_cows"
     "candy"
     "fruit_into_baskets"
+    "guess_the_word"
     "isomorphic_strings"
     "license_key_formatting"
     "minimum_area_rectangle"
