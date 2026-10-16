@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 /*
@@ -12,6 +13,22 @@ public:
     int guess(std::string word);
 };
  */
+
+[[nodiscard]] constexpr int
+    get_num_matches(std::string_view word1, std::string_view word2)
+{
+    int num_matches {};
+
+    for (int idx = 0; idx < std::ssize(word1); ++idx)
+    {
+        if (word1[idx] == word2[idx])
+        {
+            ++num_matches;
+        }
+    }
+
+    return num_matches;
+}
 
  //! @brief Guess the word discussion solution
  //! @param[in]      words  Reference to a vector of unique six letter words
