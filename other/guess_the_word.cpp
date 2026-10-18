@@ -39,6 +39,10 @@ static void findSecretWordDS1(const std::vector<std::string>& words,
                               Master&                         master)
 {
     //! @details leetcode.com/explore/interview/card/google/66/others-4/3104
+    //!
+    //!          Time complexity O(10 * N) = O(N) since the loop runs 10 times
+    //!          or less and in each iteration, we traverse the word list.
+    //!          Space complexity O(10 * N) = O(N).
 
     //! Obtain a random seed from the hardward
     std::random_device rd;
