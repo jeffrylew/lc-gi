@@ -55,19 +55,20 @@ static void findSecretWordDS1(const std::vector<std::string>& words,
     auto word_list = words;
     int  num_matching_chars {};
 
-    for (int attempt = 0; attempt < 10 && num_matching_chars != 6; ++attempt)
+    for (int attempt = 0; attempt < 30 && num_matching_chars != 6; ++attempt)
     {
         const auto num_words = static_cast<int>(std::ssize(word_list));
 
         //! Define the inclusive range
         std::uniform_int_distribution<int> distrib(0, num_words - 1);
 
-        auto      guess_word = word_list[distrib(gen)];
-        const int num_matches {master.guess(guess_word)};
+        const auto& guess_word = word_list[distrib(gen)];
+        num_matching_chars     = master.guess(guess_word);
 
         for (auto& word : word_list)
         {
-            if (num_matches == get_num_matches(guess_word, word))
+            if (word != guess_word
+                && num_matching_chars == get_num_matches(guess_word, word))
             {
                 candidate_words.push_back(std::move(word));
             }
