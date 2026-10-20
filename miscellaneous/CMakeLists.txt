@@ -40,6 +40,7 @@ set (
     "three_consecutive_odds"
     "valid_parentheses"
     "water_bottles"
+    "zigzag_conversion"
 )
 
 foreach (cpp_file IN ITEMS ${cpp_files})
