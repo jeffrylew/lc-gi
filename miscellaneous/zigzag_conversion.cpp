@@ -12,6 +12,11 @@
 static std::string convertFA(std::string s, int numRows)
 {
     //! @details https://leetcode.com/problems/zigzag-conversion/description/
+    //!
+    //!          Time complexity O(max(S, numRows)) where S = s.size(). We
+    //!          iterate over s in O(S) and we iterate over the row_strings
+    //!          vector in O(numRows).
+    //!          Space complexity O(S) to store all chars from s in row_strings.
 
     if (numRows == 1)
     {
