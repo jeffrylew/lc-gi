@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <iterator>
 #include <string>
 #include <utility>
 #include <vector>
@@ -45,7 +46,9 @@ static std::string convertFA(std::string s, int numRows)
 
     for (auto& row_string : row_strings)
     {
-        converted_string.append_range(std::move(row_string));
+        converted_string.insert(converted_string.end(),
+                                std::make_move_iterator(row_string.begin()),
+                                std::make_move_iterator(row_string.end()));
     }
 
     return converted_string;
