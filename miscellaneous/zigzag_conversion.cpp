@@ -1,6 +1,8 @@
 #include <gtest/gtest.h>
 
 #include <string>
+#include <utility>
+#include <vector>
 
 //! @brief First attempt to write s in a zigzag pattern for a given num rows
 //! @param[in] s       String to write in a zigzag pattern
@@ -10,7 +12,43 @@ static std::string convertFA(std::string s, int numRows)
 {
     //! @details https://leetcode.com/problems/zigzag-conversion/description/
 
-    
+    std::string converted_string;
+    converted_string.reserve(s.size());
+
+    std::vector<std::string> row_strings(numRows);
+
+    int  row_index {};
+    bool should_decrement_index {};
+
+    for (const char ch : s)
+    {
+        row_strings[row_index] += ch;
+
+        if (row_index == 0)
+        {
+            should_decrement_index = false;
+        }
+        else if (row_index == numRows - 1)
+        {
+            should_decrement_index = true;
+        }
+
+        if (should_decrement_index)
+        {
+            --row_index;
+        }
+        else
+        {
+            ++row_index;
+        }
+    }
+
+    for (auto& row_string : row_strings)
+    {
+        converted_string.append_range(std::move(row_string));
+    }
+
+    return converted_string;
 }
 
 TEST(ConvertTest, SampleTest1)
