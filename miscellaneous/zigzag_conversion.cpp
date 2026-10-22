@@ -13,6 +13,11 @@ static std::string convertFA(std::string s, int numRows)
 {
     //! @details https://leetcode.com/problems/zigzag-conversion/description/
 
+    if (numRows == 1)
+    {
+        return s;
+    }
+
     std::string converted_string;
     converted_string.reserve(s.size());
 
