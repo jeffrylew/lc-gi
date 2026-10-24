@@ -72,6 +72,13 @@ static std::string convertFA(std::string s, int numRows)
 static std::string convertDS1(std::string s, int numRows)
 {
     //! @details https://leetcode.com/problems/zigzag-conversion/editorial/
+    //!
+    //!          Time complexity O(numRows * S) where S = s.size(). The empty 2D
+    //!          matrix of size numRows * numCols takes O(numRows * numCols) to
+    //!          initialize, where O(numCols) = O(S). We iterate over the input
+    //!          s in O(S) and traverse the matrix to convert the string in
+    //!          O(numRows * S).
+    //!          Space complexity O(numRows * S) for the 2D matrix.
 
     if (numRows == 1)
     {
@@ -79,8 +86,13 @@ static std::string convertDS1(std::string s, int numRows)
     }
 
     const auto num_chars = static_cast<int>(std::ssize(s));
+
+    //! Each section has 2 * numRows - 2 chars. numRows chars in the column and
+    //! numRows - 2 chars in the diagonal
     const auto num_sections =
         static_cast<int>(std::ceil(num_chars / (2 * numRows - 2.0)));
+
+    //! Each section has numRows - 1 columns
     const int num_cols {num_sections * (numRows - 1)};
 
     std::vector<std::vector<char>> matrix(
