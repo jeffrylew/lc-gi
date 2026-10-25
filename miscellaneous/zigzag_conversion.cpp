@@ -145,6 +145,54 @@ static std::string convertDS1(std::string s, int numRows)
     return converted_string;
 }
 
+//! @brief String traversal discussion solution
+//! @param[in] s       String to write in a zigzag pattern
+//! @param[in] numRows The number of rows to write s across
+//! @return The line by line converted string
+static std::string convertDS2(std::string s, int numRows)
+{
+    //! @details https://leetcode.com/problems/zigzag-conversion/editorial/
+
+    if (numRows == 1)
+    {
+        return s;
+    }
+
+    std::string converted_string;
+    converted_string.reserve(s.size());
+
+    const auto num_chars = static_cast<int>(std::ssize(s));
+    const int  chars_in_section {2 * (numRows - 1)};
+
+    for (int curr_row = 0; curr_row < numRows; ++curr_row)
+    {
+        int curr_idx {curr_row};
+
+        while (curr_idx < num_chars)
+        {
+            converted_string += s[curr_idx];
+
+            //! If curr_row is not the first or last row then there is another
+            //! char in the same row of the current section that we need to add
+            if (curr_row != 0 && curr_row != numRows - 1)
+            {
+                const int chars_to_next_idx {chars_in_section - 2 * curr_row};
+                const int next_idx {curr_idx + chars_to_next_idx};
+
+                if (next_idx < num_chars)
+                {
+                    converted_string += s[next_idx];
+                }
+            }
+
+            //! Jump to the first char in the same row of the next section
+            curr_idx += chars_in_section;
+        }
+    }
+
+    return converted_string;
+}
+
 TEST(ConvertTest, SampleTest1)
 {
     // 01234567890123
@@ -155,6 +203,7 @@ TEST(ConvertTest, SampleTest1)
     // Row 2: {2, Y}, {6, I}, {10, R}
     EXPECT_EQ("PAHNAPLSIIGYIR", convertFA("PAYPALISHIRING", 3));
     EXPECT_EQ("PAHNAPLSIIGYIR", convertDS1("PAYPALISHIRING", 3));
+    EXPECT_EQ("PAHNAPLSIIGYIR", convertDS2("PAYPALISHIRING", 3));
 }
 
 TEST(ConvertTest, SampleTest2)
@@ -168,10 +217,12 @@ TEST(ConvertTest, SampleTest2)
     // Row 3: {3, P}, {9, I}
     EXPECT_EQ("PINALSIGYAHRPI", convertFA("PAYPALISHIRING", 4));
     EXPECT_EQ("PINALSIGYAHRPI", convertDS1("PAYPALISHIRING", 4));
+    EXPECT_EQ("PINALSIGYAHRPI", convertDS2("PAYPALISHIRING", 4));
 }
 
 TEST(ConvertTest, SampleTest3)
 {
     EXPECT_EQ("A", convertFA("A", 1));
     EXPECT_EQ("A", convertDS1("A", 1));
+    EXPECT_EQ("A", convertDS2("A", 1));
 }
