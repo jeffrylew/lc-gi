@@ -152,6 +152,10 @@ static std::string convertDS1(std::string s, int numRows)
 static std::string convertDS2(std::string s, int numRows)
 {
     //! @details https://leetcode.com/problems/zigzag-conversion/editorial/
+    //!
+    //!          Time complexity O(S) where S = s.size(). We iterate over each
+    //!          index of the input once and perform constant work at each index
+    //!          Space complexity O(1).
 
     if (numRows == 1)
     {
