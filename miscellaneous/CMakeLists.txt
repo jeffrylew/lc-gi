@@ -1,6 +1,7 @@
 set (
     cpp_files
     "add_binary"
+    "concatenation_of_array"
     "crawler_log_folder"
     "create_binary_tree_from_descriptions"
     "encode_n_ary_tree_to_binary_tree"
