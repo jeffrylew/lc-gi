@@ -8,6 +8,11 @@
 static std::vector<int> getConcatenationFA(const std::vector<int>& nums)
 {
     //! @details leetcode.com/problems/concatenation-of-array/description
+    //!
+    //!          Time complexity O(N) where N = nums.size(). std::vector::insert
+    //!          is linear wrt the number of elements in nums and initializing
+    //!          concatenated_vec also takes O(N).
+    //!          Space complexity O(1) since concatenated_vec is the output.
 
     auto concatenated_vec = nums;
     concatenated_vec.reserve(2U * nums.size());
