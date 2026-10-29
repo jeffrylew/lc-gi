@@ -14,6 +14,7 @@ set (
     "lemonade_change"
     "length_of_last_word"
     "longest_common_prefix"
+    "longest_consecutive_sequence"
     "longest_substring_with_at_most_k_distinct_characters"
     "lucky_numbers_in_a_matrix"
     "maximum_depth_of_binary_tree"
