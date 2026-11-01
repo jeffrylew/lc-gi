@@ -39,11 +39,54 @@ static int longestConsecutiveDS1(const std::vector<int>& nums)
     return longest_streak_len;
 }
 
+//! @brief Sorting discussion solution to get longest consecutive seq length
+//! @param[in] nums Reference to vector of unsorted integers
+//! @return Length of the longest consecutive elements sequence
+static int longestConsecutiveDS2(const std::vector<int>& nums)
+{
+    //! @details leetcode.com/problems/longest-consecutive-sequence/editorial
+
+    if (nums.empty())
+    {
+        return 0;
+    }
+
+    auto sorted_nums = nums;
+    std::ranges::sort(sorted_nums);
+
+    int longest_streak_len {1};
+    int curr_streak_len {1};
+
+    for (int idx = 1; idx < std::ssize(sorted_nums); ++idx)
+    {
+        if (sorted_nums[idx] == sorted_nums[idx - 1])
+        {
+            //! Current sequence is neither extended nor broken so move on
+            continue;
+        }
+
+        if (sorted_nums[idx] == sorted_nums[idx - 1] + 1)
+        {
+            ++curr_streak_len;
+        }
+        else
+        {
+            //! Sequence broke, reset curr_streak_len to 1 for num that broke it
+            longest_streak_len = std::max(longest_streak_len, curr_streak_len);
+            curr_streak_len    = 1;
+        }
+    }
+
+    //! The last element of nums could be part of the longest sequence
+    return std::max(longest_streak_len, curr_streak_len);
+}
+
 TEST(LongestConsecutiveTest, SampleTest1)
 {
     const std::vector<int> nums {100, 4, 200, 1, 3, 2};
 
     EXPECT_EQ(4, longestConsecutiveDS1(nums));
+    EXPECT_EQ(4, longestConsecutiveDS2(nums));
 }
 
 TEST(LongestConsecutiveTest, SampleTest2)
@@ -51,6 +94,7 @@ TEST(LongestConsecutiveTest, SampleTest2)
     const std::vector<int> nums {0, 3, 7, 2, 5, 8, 4, 6, 0, 1};
 
     EXPECT_EQ(9, longestConsecutiveDS1(nums));
+    EXPECT_EQ(9, longestConsecutiveDS2(nums));
 }
 
 TEST(LongestConsecutiveTest, SampleTest3)
@@ -58,4 +102,5 @@ TEST(LongestConsecutiveTest, SampleTest3)
     const std::vector<int> nums {1, 0, 1, 2};
 
     EXPECT_EQ(3, longestConsecutiveDS1(nums));
+    EXPECT_EQ(3, longestConsecutiveDS2(nums));
 }
