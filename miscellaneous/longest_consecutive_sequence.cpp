@@ -9,6 +9,12 @@
 static int longestConsecutiveDS1(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/longest-consecutive-sequence
+    //!
+    //!          Time complexity O(N ^ 3) where N = nums.size(). The outer loop
+    //!          runs N times and curr_num increments by 1 during each iteration
+    //!          so it runs in O(N). During each iteration of the while loop, an
+    //!          O(N) lookup in nums is performed.
+    //!          Space complexity O(1).
 
     const auto nums_contains = [&](int query_num) -> bool {
         return std::ranges::find(nums, query_num) != nums.end();
