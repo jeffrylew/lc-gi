@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <unordered_set>
 #include <vector>
 
 //! @brief Brute force discussion solution to get longest consecutive seq length
@@ -81,12 +82,46 @@ static int longestConsecutiveDS2(const std::vector<int>& nums)
     return std::max(longest_streak_len, curr_streak_len);
 }
 
+//! @brief Hashset discussion solution to get longest consecutive seq length
+//! @param[in] nums Reference to vector of unsorted integers
+//! @return Length of the longest consecutive elements sequence
+static int longestConsecutiveDS3(const std::vector<int>& nums)
+{
+    //! @details leetcode.com/problems/longest-consecutive-sequence/editorial
+
+    std::unordered_set<int> unique_nums(nums.begin(), nums.end());
+
+    int longest_streak_len {};
+
+    for (const int num : unique_nums)
+    {
+        if (unique_nums.contains(num - 1))
+        {
+            continue;
+        }
+
+        int curr_num {num};
+        int curr_streak_len {1};
+
+        while (unique_nums.contains(curr_num + 1))
+        {
+            ++curr_num;
+            ++curr_streak_len;
+        }
+
+        longest_streak_len = std::max(longest_streak_len, curr_streak_len);
+    }
+
+    return longest_streak_len;
+}
+
 TEST(LongestConsecutiveTest, SampleTest1)
 {
     const std::vector<int> nums {100, 4, 200, 1, 3, 2};
 
     EXPECT_EQ(4, longestConsecutiveDS1(nums));
     EXPECT_EQ(4, longestConsecutiveDS2(nums));
+    EXPECT_EQ(4, longestConsecutiveDS3(nums));
 }
 
 TEST(LongestConsecutiveTest, SampleTest2)
@@ -95,6 +130,7 @@ TEST(LongestConsecutiveTest, SampleTest2)
 
     EXPECT_EQ(9, longestConsecutiveDS1(nums));
     EXPECT_EQ(9, longestConsecutiveDS2(nums));
+    EXPECT_EQ(9, longestConsecutiveDS3(nums));
 }
 
 TEST(LongestConsecutiveTest, SampleTest3)
@@ -103,4 +139,5 @@ TEST(LongestConsecutiveTest, SampleTest3)
 
     EXPECT_EQ(3, longestConsecutiveDS1(nums));
     EXPECT_EQ(3, longestConsecutiveDS2(nums));
+    EXPECT_EQ(3, longestConsecutiveDS3(nums));
 }
