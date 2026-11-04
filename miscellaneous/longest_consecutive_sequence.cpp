@@ -46,6 +46,11 @@ static int longestConsecutiveDS1(const std::vector<int>& nums)
 static int longestConsecutiveDS2(const std::vector<int>& nums)
 {
     //! @details leetcode.com/problems/longest-consecutive-sequence/editorial
+    //!
+    //!          Time complexity O(N * log N) where N = nums.size(). The main
+    //!          for loop does constaint work N times so the time complexity is
+    //!          dominated by std::ranges::sort, which runs in O(N * log N).
+    //!          Space complexity O(log N) for a Quick Sort variant.
 
     if (nums.empty())
     {
