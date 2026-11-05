@@ -93,6 +93,9 @@ static int longestConsecutiveDS2(const std::vector<int>& nums)
 static int longestConsecutiveDS3(const std::vector<int>& nums)
 {
     //! @details leetcode.com/problems/longest-consecutive-sequence/editorial
+    //!
+    //!          Time complexity O(N) where N = nums.size().
+    //!          Space complexity O(N) for the hash set to store O(N) numbers.
 
     std::unordered_set<int> unique_nums(nums.begin(), nums.end());
 
