@@ -94,7 +94,11 @@ static int longestConsecutiveDS3(const std::vector<int>& nums)
 {
     //! @details leetcode.com/problems/longest-consecutive-sequence/editorial
     //!
-    //!          Time complexity O(N) where N = nums.size().
+    //!          Time complexity O(N) where N = nums.size(). The while loop is
+    //!          reached only when curr_num is the beginning of a sequence, and
+    //!          it can only run for N iterations throughout the entire lifetime
+    //!          of the algorithm. So despite looking like O(N * N) complexity,
+    //!          the nested loops run in O(N + N) = O(N) time.
     //!          Space complexity O(N) for the hash set to store O(N) numbers.
 
     std::unordered_set<int> unique_nums(nums.begin(), nums.end());
