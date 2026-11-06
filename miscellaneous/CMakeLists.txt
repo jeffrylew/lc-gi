@@ -23,6 +23,7 @@ set (
     "minimum_deletions_to_make_string_balanced"
     "minimum_difference_between_largest_and_smallest_value_in_three_moves"
     "minimum_operations_to_make_array_values_equal_to_k"
+    "minimum_sum_of_squared_difference"
     "my_calendar_i"
     "my_calendar_ii"
     "my_calendar_iii"
