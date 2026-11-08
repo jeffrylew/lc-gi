@@ -1,6 +1,9 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cmath>
+#include <functional>
+#include <numeric>
 #include <queue>
 #include <utility>
 #include <vector>
@@ -83,6 +86,86 @@ static long long minSumSquareDiffFA(const std::vector<int>& nums1,
     return min_sum_diffs;
 }
 
+//! @brief Greedy discussion solution to minimize sum of squared differences
+//! @param[in] nums1 Vector of zero and positive ints
+//! @param[in] nums2 Vector of zero and positive ints
+//! @param[in] k1    The number of times +1 and -1 can be applied to nums1
+//! @param[in] k2    The number of times +1 and -1 can be applied to nums2
+//! @return The minimum sum of squared differences
+static long long minSumSquareDiffDS1(const std::vector<int>& nums1,
+                                     const std::vector<int>& nums2,
+                                     int                     k1,
+                                     int                     k2)
+{
+    //! @details https://leetcode.com/problems/minimum-sum-of-squared-difference
+    //!          /editorial/
+
+    auto       max_operations = static_cast<long long>(k1 + k2);
+    const auto num_diffs      = static_cast<int>(std::ssize(nums1));
+
+    std::vector<long long> diffs;
+    diffs.reserve(num_diffs + 1);
+    for (int idx = 0; idx < num_diffs; ++idx)
+    {
+        diffs.push_back(std::abs(nums1[idx] - nums2[idx]));
+    }
+
+    if (std::accumulate(diffs.begin(), diffs.end(), 0LL) <= max_operations)
+    {
+        //! Can modify the diff of |nums1[idx] - nums2[idx]| to be 0 for all idx
+        return 0;
+    }
+
+    //! Append a sentinel value of 0 to avoid boundary checks
+    std::ranges::sort(diffs, std::ranges::greater {});
+    diffs.push_back(0LL);
+
+    for (int idx = 1; idx <= num_diffs; ++idx)
+    {
+        //! This doesn't make sense to me...
+        const auto num_operations_to_reduce_prefix_to_diff_i =
+            static_cast<long long>(diffs[idx - 1] - diffs[idx]) * idx;
+
+        if (num_operations_to_reduce_prefix_to_diff_i > max_operations)
+        {
+            //! Remaining operations are sufficient to reduce all elements in
+            //! prefix diff[0...idx - 1] to diff[idx]
+            const long long first_idx_elems_reduction {max_operations / idx};
+            const long long remaining_operations {max_operations % idx};
+            const long long first_idx_elems_new_val {
+                diffs[idx - 1] - first_idx_elems_reduction};
+
+            //! Calculate sum of squared differences for idx = 0 thru idx - 1
+            //! * (idx - remaining_operations) elements remain at
+            //!   first_idx_elems_new_val, contributing
+            //!   (first_idx_elems_new_val) ^ 2 * (idx - remaining_operations)
+            //! * remaining_operations elements are reduced to
+            //!   (first_idx_elems_new_val - 1), contributing
+            //!   (first_idx_elems_new_val - 1) ^ 2 * remaining_operations
+            long long min_sum_diffs {
+                first_idx_elems_new_val
+                * first_idx_elems_new_val
+                * (idx - remaining_operations)
+                + (first_idx_elems_new_val - 1)
+                * (first_idx_elems_new_val - 1)
+                * remaining_operations};
+
+            //! Add sum of squared differences for remaining unreduced elements
+            //! from index idx through num_diffs - 1
+            for (int remain_idx = idx; remain_idx < num_diffs; ++remain_idx)
+            {
+                min_sum_diffs += diffs[remain_idx] * diffs[remain_idx];
+            }
+
+            return min_sum_diffs;
+        }
+
+        max_operations -= num_operations_to_reduce_prefix_to_diff_i;
+    }
+
+    return 0;
+}
+
 TEST(MinSumSquareDiff, SampleTest1)
 {
     const std::vector<int> nums1 {1, 2, 3, 4};
@@ -91,6 +174,7 @@ TEST(MinSumSquareDiff, SampleTest1)
     constexpr int          k2 {};
 
     EXPECT_EQ(579LL, minSumSquareDiffFA(nums1, nums2, k1, k2));
+    EXPECT_EQ(579LL, minSumSquareDiffDS1(nums1, nums2, k1, k2));
 }
 
 TEST(MinSumSquareDiff, SampleTest2)
@@ -101,6 +185,7 @@ TEST(MinSumSquareDiff, SampleTest2)
     constexpr int          k2 {1};
 
     EXPECT_EQ(43LL, minSumSquareDiffFA(nums1, nums2, k1, k2));
+    EXPECT_EQ(43LL, minSumSquareDiffDS1(nums1, nums2, k1, k2));
 }
 
 TEST(MinSumSquareDiff, SampleTest3)
