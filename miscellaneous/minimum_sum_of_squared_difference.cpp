@@ -99,6 +99,13 @@ static long long minSumSquareDiffDS1(const std::vector<int>& nums1,
 {
     //! @details https://leetcode.com/problems/minimum-sum-of-squared-difference
     //!          /editorial/
+    //!
+    //!          Time complexity O(N * log N) where N = length of nums1/nums2.
+    //!          Computing the absolute differences takes O(N). Sorting the
+    //!          diffs vector of size N takes O(N * log N). The subsequent
+    //!          linear pass to reduce the elements takes O(N).
+    //!          Space complexity O(N) to store and sort differences in the
+    //!          diffs vector. std::ranges::sort needs O(log N) auxiliary space.
 
     auto       max_operations = static_cast<long long>(k1 + k2);
     const auto num_diffs      = static_cast<int>(std::ssize(nums1));
