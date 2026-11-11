@@ -173,6 +173,57 @@ static long long minSumSquareDiffDS1(const std::vector<int>& nums1,
     return 0;
 }
 
+//! @brief Binary search discussion solution to minimize sum of squared diffs
+//! @param[in] nums1 Vector of zero and positive ints
+//! @param[in] nums2 Vector of zero and positive ints
+//! @param[in] k1    The number of times +1 and -1 can be applied to nums1
+//! @param[in] k2    The number of times +1 and -1 can be applied to nums2
+//! @return The minimum sum of squared differences
+static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
+                                     const std::vector<int>& nums2,
+                                     int                     k1,
+                                     int                     k2)
+{
+    //! @details https://leetcode.com/problems/minimum-sum-of-squared-difference
+    //!          /editorial/
+
+    const auto num_diffs      = static_cast<int>(std::ssize(nums1));
+    auto       max_operations = static_cast<long long>(k1 + k2);
+
+    long long min_sum_diffs {};
+    int       max_height_diff {};
+    int       min_target_height {};
+
+    std::vector<long long> height_diffs;
+    height_diffs.reserve(num_diffs);
+
+    for (int idx = 0; idx < num_diffs; ++idx)
+    {
+        height_diffs.push_back(std::abs(nums1[idx] - nums2[idx]));
+        max_height_diff = std::max(max_height_diff, height_diffs.back());
+    }
+
+    const auto find_min_target_height = [&](long long query_height) -> bool {
+        long long sum_of_diffs {};
+
+        for (const long long height_diff : height_diffs)
+        {
+            sum_of_diffs +=
+                height_diff > query_height ? height_diff - query_height : 0LL;
+        }
+
+        return sum_of_diffs 
+    };
+
+    int min_diff {};
+    int max_diff {max_height_diff};
+
+    while (min_diff <= max_diff)
+    {
+        //! @todo
+    }
+}
+
 TEST(MinSumSquareDiff, SampleTest1)
 {
     const std::vector<int> nums1 {1, 2, 3, 4};
@@ -182,6 +233,7 @@ TEST(MinSumSquareDiff, SampleTest1)
 
     EXPECT_EQ(579LL, minSumSquareDiffFA(nums1, nums2, k1, k2));
     EXPECT_EQ(579LL, minSumSquareDiffDS1(nums1, nums2, k1, k2));
+    EXPECT_EQ(579LL, minSumSquareDiffDS2(nums1, nums2, k1, k2));
 }
 
 TEST(MinSumSquareDiff, SampleTest2)
@@ -193,6 +245,7 @@ TEST(MinSumSquareDiff, SampleTest2)
 
     EXPECT_EQ(43LL, minSumSquareDiffFA(nums1, nums2, k1, k2));
     EXPECT_EQ(43LL, minSumSquareDiffDS1(nums1, nums2, k1, k2));
+    EXPECT_EQ(43LL, minSumSquareDiffDS2(nums1, nums2, k1, k2));
 }
 
 TEST(MinSumSquareDiff, SampleTest3)
