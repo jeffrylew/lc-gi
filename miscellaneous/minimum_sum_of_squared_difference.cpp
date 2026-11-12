@@ -203,7 +203,7 @@ static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
         max_height_diff = std::max(max_height_diff, height_diffs.back());
     }
 
-    const auto find_min_target_height = [&](long long query_height) -> bool {
+    const auto can_reduce_height = [&](long long query_height) -> bool {
         long long sum_of_diffs {};
 
         for (const long long height_diff : height_diffs)
@@ -212,7 +212,7 @@ static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
                 height_diff > query_height ? height_diff - query_height : 0LL;
         }
 
-        return sum_of_diffs 
+        return sum_of_diffs <= max_operations;
     };
 
     int min_diff {};
@@ -220,8 +220,28 @@ static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
 
     while (min_diff <= max_diff)
     {
-        //! @todo
+        const int mid_diff {min_diff + (max_diff - min_diff) / 2};
+
+        if (can_reduce_height(mid_diff))
+        {
+            max_diff          = mid_diff - 1;
+            min_target_height = mid_diff;
+        }
+        else
+        {
+            min_diff = mid_diff + 1;
+        }
     }
+
+    for (const long long height_diff : height_diffs)
+    {
+        if (height_diff > min_target_height)
+        {
+            max_operations -= (height_diff - min_target_height);
+        }
+    }
+
+    //! @todo
 }
 
 TEST(MinSumSquareDiff, SampleTest1)
