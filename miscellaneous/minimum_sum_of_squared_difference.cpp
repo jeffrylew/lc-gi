@@ -186,6 +186,15 @@ static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
 {
     //! @details https://leetcode.com/problems/minimum-sum-of-squared-difference
     //!          /editorial/
+    //!
+    //!          Time complexity O(N * (log N + log D)) where N = the lengths of
+    //!          nums1 and nums2 and D = the max absolute difference between
+    //!          corresponding elements of the two vectors. Finding the max
+    //!          difference takes O(N). Binary search takes O(N * log D) across
+    //!          O(log D) iterations. Sorting the vector takes O(N * log N) and
+    //!          the final pass takes O(N).
+    //!          Space complexity O(N) for the height_diffs vector. Sorting uses
+    //!          O(log N).
 
     const auto num_diffs      = static_cast<int>(std::ssize(nums1));
     auto       max_operations = static_cast<long long>(k1 + k2);
