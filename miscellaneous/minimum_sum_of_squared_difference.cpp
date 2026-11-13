@@ -241,7 +241,23 @@ static long long minSumSquareDiffDS2(const std::vector<int>& nums1,
         }
     }
 
-    //! @todo
+    std::ranges::sort(height_diffs, std::ranges::greater());
+
+    for (const long long height_diff : height_diffs)
+    {
+        long long curr_diff {
+            min_target_height >= height_diff ? height_diff : min_target_height};
+
+        if (max_operations > 0 && curr_diff > 0)
+        {
+            --curr_diff;
+            --max_operations;
+        }
+
+        min_sum_diffs += curr_diff * curr_diff;
+    }
+
+    return min_sum_diffs;
 }
 
 TEST(MinSumSquareDiff, SampleTest1)
