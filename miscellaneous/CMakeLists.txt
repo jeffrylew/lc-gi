@@ -17,6 +17,7 @@ set (
     "longest_consecutive_sequence"
     "longest_substring_with_at_most_k_distinct_characters"
     "lucky_numbers_in_a_matrix"
+    "majority_element"
     "maximum_depth_of_binary_tree"
     "maximum_depth_of_n_ary_tree"
     "merge_nodes_in_between_zeros"
