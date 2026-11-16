@@ -33,11 +33,42 @@ static int majorityElementFA(const std::vector<int>& nums)
     return 0;
 }
 
+//! @brief Brute force discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS1(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    const auto majority_count = static_cast<int>(std::ssize(nums) / 2);
+
+    for (const int start_num : nums)
+    {
+        int curr_count {};
+
+        for (const int curr_num : nums)
+        {
+            if (curr_num == start_num)
+            {
+                ++curr_count;
+            }
+        }
+
+        if (curr_count > majority_count)
+        {
+            return start_num;
+        }
+    }
+
+    return -1;
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
 
     EXPECT_EQ(3, majorityElementFA(nums));
+    EXPECT_EQ(3, majorityElementDS1(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -45,4 +76,5 @@ TEST(MajorityElementTest, SampleTest2)
     const std::vector<int> nums {2, 2, 1, 1, 1, 2, 2};
 
     EXPECT_EQ(2, majorityElementFA(nums));
+    EXPECT_EQ(2, majorityElementDS1(nums));
 }
