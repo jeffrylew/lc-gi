@@ -39,6 +39,11 @@ static int majorityElementFA(const std::vector<int>& nums)
 static int majorityElementDS1(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(N ^ 2) where N = nums.size(). The brute force
+    //!          algorithm contains two nested for loops that each run for N
+    //!          iterations, adding up to quadratic time complexity.
+    //!          Space complexity O(1).
 
     const auto majority_count = static_cast<int>(std::ssize(nums) / 2);
 
