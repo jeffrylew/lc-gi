@@ -68,12 +68,37 @@ static int majorityElementDS1(const std::vector<int>& nums)
     return -1;
 }
 
+//! @brief Hashmap discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS2(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    std::unordered_map<int, int> num_counts;
+    for (const int num : nums)
+    {
+        ++num_counts[num];
+    }
+
+    for (const auto& [num, count] : num_counts)
+    {
+        if (count > std::ssize(nums) / 2)
+        {
+            return num;
+        }
+    }
+
+    return 0;
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
 
     EXPECT_EQ(3, majorityElementFA(nums));
     EXPECT_EQ(3, majorityElementDS1(nums));
+    EXPECT_EQ(3, majorityElementDS2(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -82,4 +107,5 @@ TEST(MajorityElementTest, SampleTest2)
 
     EXPECT_EQ(2, majorityElementFA(nums));
     EXPECT_EQ(2, majorityElementDS1(nums));
+    EXPECT_EQ(2, majorityElementDS2(nums));
 }
