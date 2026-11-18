@@ -74,6 +74,14 @@ static int majorityElementDS1(const std::vector<int>& nums)
 static int majorityElementDS2(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(N) where N = nums.size(). We iterate over
+    //!          nums once and make constant time insertions.
+    //!          Space complexity O(N). At most, the map can contain
+    //!          N - floor(N / 2) elements. nums is guaranteed to contain a
+    //!          majority element, which occupies floor(n / 2) + 1 indices in
+    //!          nums at minimum. Therefore, N - (floor(N / 2) + 1) indices in
+    //!          nums can be occupied by distinct elements.
 
     std::unordered_map<int, int> num_counts;
     for (const int num : nums)
