@@ -100,6 +100,18 @@ static int majorityElementDS2(const std::vector<int>& nums)
     return 0;
 }
 
+//! @brief Sorting discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS3(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    auto sorted_nums = nums;
+    std::ranges::sort(sorted_nums);
+    return sorted_nums[sorted_nums.size() / 2];
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
@@ -107,6 +119,7 @@ TEST(MajorityElementTest, SampleTest1)
     EXPECT_EQ(3, majorityElementFA(nums));
     EXPECT_EQ(3, majorityElementDS1(nums));
     EXPECT_EQ(3, majorityElementDS2(nums));
+    EXPECT_EQ(3, majorityElementDS3(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -116,4 +129,5 @@ TEST(MajorityElementTest, SampleTest2)
     EXPECT_EQ(2, majorityElementFA(nums));
     EXPECT_EQ(2, majorityElementDS1(nums));
     EXPECT_EQ(2, majorityElementDS2(nums));
+    EXPECT_EQ(2, majorityElementDS3(nums));
 }
