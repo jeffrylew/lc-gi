@@ -106,6 +106,11 @@ static int majorityElementDS2(const std::vector<int>& nums)
 static int majorityElementDS3(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(N * log N) where N = nums.size(). Sorting the
+    //!          vector costs O(N * log N).
+    //!
+    //!          Space complexity O(N) for additional linear space to copy nums.
 
     auto sorted_nums = nums;
     std::ranges::sort(sorted_nums);
