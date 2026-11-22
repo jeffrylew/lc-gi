@@ -117,6 +117,42 @@ static int majorityElementDS3(const std::vector<int>& nums)
     return sorted_nums[sorted_nums.size() / 2];
 }
 
+//! @brief Bit manipulation discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS4(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+
+    int majority_element {};
+
+    for (int bit_idx = 0; bit_idx < 32; ++bit_idx)
+    {
+        const int bit {1 << bit_idx};
+
+        //! Count how many numbers have this bit set
+        int bit_count {};
+        for (const int num : nums)
+        {
+            if ((num & bit) != 0)
+            {
+                ++bit_count;
+            }
+        }
+
+        //! If this bit is present in more than N / 2 elements
+        //! then it must be set in the majority element
+        if (bit_count > nums_size / 2)
+        {
+            majority_element |= bit;
+        }
+    }
+
+    return majority_element;
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
@@ -125,6 +161,7 @@ TEST(MajorityElementTest, SampleTest1)
     EXPECT_EQ(3, majorityElementDS1(nums));
     EXPECT_EQ(3, majorityElementDS2(nums));
     EXPECT_EQ(3, majorityElementDS3(nums));
+    EXPECT_EQ(3, majorityElementDS4(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -135,4 +172,5 @@ TEST(MajorityElementTest, SampleTest2)
     EXPECT_EQ(2, majorityElementDS1(nums));
     EXPECT_EQ(2, majorityElementDS2(nums));
     EXPECT_EQ(2, majorityElementDS3(nums));
+    EXPECT_EQ(2, majorityElementDS4(nums));
 }
