@@ -123,6 +123,12 @@ static int majorityElementDS3(const std::vector<int>& nums)
 static int majorityElementDS4(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(N * log C) where N = nums.size() and C is the
+    //!          max absolute value in nums, which is 10 ^ 5 for this problem.
+    //!          We enumerate all log C bits for each number in nums.
+    //!          Space complexity O(1). We count the majority of each bit in
+    //!          O(1) space as it only has the two potential values 0 and 1.
 
     const auto nums_size = static_cast<int>(std::ssize(nums));
 
