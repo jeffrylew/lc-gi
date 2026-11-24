@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <random>
 #include <unordered_map>
 #include <vector>
 
@@ -159,6 +160,40 @@ static int majorityElementDS4(const std::vector<int>& nums)
     return majority_element;
 }
 
+//! @brief Randomization discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS5(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    const auto nums_size = static_cast<int>(std::ssize(nums));
+    const int  majority_count {nums_size / 2};
+
+    //! Obtain a non-deterministic seed from the hardware/OS
+    std::random_device rd;
+
+    //! Seed the Mersenne Twister engine
+    std::mt19937 gen {rd()};
+
+    //! Define distribution
+    std::uniform_int_distribution<int> nums_dist(0, nums_size - 1);
+
+    const auto count_occurrences = [&](int candidate) -> int {
+        //! @todo
+    };
+
+    while (true)
+    {
+        const int majority_element_candidate {nums[nums_dist(gen)]};
+
+        if (count_occurrences(majority_element_candidate) > majority_count)
+        {
+            return majority_element_candidate;
+        }
+    }
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
@@ -168,6 +203,7 @@ TEST(MajorityElementTest, SampleTest1)
     EXPECT_EQ(3, majorityElementDS2(nums));
     EXPECT_EQ(3, majorityElementDS3(nums));
     EXPECT_EQ(3, majorityElementDS4(nums));
+    EXPECT_EQ(3, majorityElementDS5(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -179,4 +215,5 @@ TEST(MajorityElementTest, SampleTest2)
     EXPECT_EQ(2, majorityElementDS2(nums));
     EXPECT_EQ(2, majorityElementDS3(nums));
     EXPECT_EQ(2, majorityElementDS4(nums));
+    EXPECT_EQ(2, majorityElementDS5(nums));
 }
