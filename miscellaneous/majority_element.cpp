@@ -167,6 +167,15 @@ static int majorityElementDS4(const std::vector<int>& nums)
 static int majorityElementDS5(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(infinity). It is technically possible for the
+    //!          algorithm to run indefinitely if we never manage to randomly
+    //!          select the major element. However, the expected runtime is
+    //!          linear - the majority element is guaranteed to occupy more than
+    //!          half of the vector so the expected number of iterations will be
+    //!          less than it would be if the element occupied exactly half of
+    //!          the vector.
+    //!          Space complexity O(1).
 
     const auto nums_size = static_cast<int>(std::ssize(nums));
     const int  majority_count {nums_size / 2};
