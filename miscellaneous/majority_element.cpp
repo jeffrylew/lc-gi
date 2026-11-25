@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <random>
 #include <unordered_map>
 #include <vector>
@@ -179,15 +180,12 @@ static int majorityElementDS5(const std::vector<int>& nums)
     //! Define distribution
     std::uniform_int_distribution<int> nums_dist(0, nums_size - 1);
 
-    const auto count_occurrences = [&](int candidate) -> int {
-        //! @todo
-    };
-
     while (true)
     {
         const int majority_element_candidate {nums[nums_dist(gen)]};
 
-        if (count_occurrences(majority_element_candidate) > majority_count)
+        if (std::ranges::count(nums, majority_element_candidate)
+            > majority_count)
         {
             return majority_element_candidate;
         }
