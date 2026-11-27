@@ -201,6 +201,46 @@ static int majorityElementDS5(const std::vector<int>& nums)
     }
 }
 
+[[nodiscard]] constexpr int
+    majority_element_recursive(const std::vector<int>& nums,
+                               int                     lower_bound_idx,
+                               int                     upper_bound_idx)
+{
+    if (lower_bound_idx == upper_bound_idx)
+    {
+        return nums[lower_bound_idx];
+    }
+
+    const int mid_idx {
+        lower_bound_idx + (upper_bound_idx - lower_bound_idx) / 2};
+    const int left_idx {
+        majority_element_recursive(nums, lower_bound_idx, mid_idx)};
+    const int right_idx {
+        majority_element_recursive(nums, mid_idx + 1, upper_bound_idx)};
+
+    if (left_idx == right_idx)
+    {
+        return left_idx;
+    }
+
+    const int left_count {
+        count_in_range(nums, left_idx, lower_bound_idx, upper_bound_idx)};
+    const int right_count {
+        count_in_range(nums, right_idx, lower_bound_idx, upper_bound_idx)};
+
+    return left_count > right_count ? left_idx : right_idx;
+}
+
+//! @brief Divide and conquer discussion solution
+//! @param[in] nums Vector of size N
+//! @return The majority element in nums
+static int majorityElementDS6(const std::vector<int>& nums)
+{
+    //! @details https://leetcode.com/problems/majority-element/editorial
+
+    return majority_element_recursive(nums, 0, std::ssize(nums) - 1);
+}
+
 TEST(MajorityElementTest, SampleTest1)
 {
     const std::vector<int> nums {3, 2, 3};
@@ -211,6 +251,7 @@ TEST(MajorityElementTest, SampleTest1)
     EXPECT_EQ(3, majorityElementDS3(nums));
     EXPECT_EQ(3, majorityElementDS4(nums));
     EXPECT_EQ(3, majorityElementDS5(nums));
+    EXPECT_EQ(3, majorityElementDS6(nums));
 }
 
 TEST(MajorityElementTest, SampleTest2)
@@ -223,4 +264,5 @@ TEST(MajorityElementTest, SampleTest2)
     EXPECT_EQ(2, majorityElementDS3(nums));
     EXPECT_EQ(2, majorityElementDS4(nums));
     EXPECT_EQ(2, majorityElementDS5(nums));
+    EXPECT_EQ(2, majorityElementDS6(nums));
 }
