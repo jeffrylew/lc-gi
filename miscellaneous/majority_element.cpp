@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 
 #include <algorithm>
+#include <iterator>
 #include <random>
 #include <unordered_map>
 #include <vector>
@@ -201,6 +202,11 @@ static int majorityElementDS5(const std::vector<int>& nums)
     }
 }
 
+//! @brief Get the majority element from nums between the lower and upper bounds
+//! @param[in] nums Reference to vector of ints
+//! @param[in] lower_bound_idx The lower bound index in nums to search from
+//! @param[in] upper_bound_idx The upper bound index in nums to search until
+//! @return The value of the majority element from nums between the bounds
 [[nodiscard]] constexpr int
     majority_element_recursive(const std::vector<int>& nums,
                                int                     lower_bound_idx,
@@ -213,22 +219,29 @@ static int majorityElementDS5(const std::vector<int>& nums)
 
     const int mid_idx {
         lower_bound_idx + (upper_bound_idx - lower_bound_idx) / 2};
-    const int left_idx {
+    const int left_majority_element {
         majority_element_recursive(nums, lower_bound_idx, mid_idx)};
-    const int right_idx {
+    const int right_majority_element {
         majority_element_recursive(nums, mid_idx + 1, upper_bound_idx)};
 
-    if (left_idx == right_idx)
+    if (left_majority_element == right_majority_element)
     {
-        return left_idx;
+        return left_majority_element;
     }
 
-    const int left_count {
-        count_in_range(nums, left_idx, lower_bound_idx, upper_bound_idx)};
-    const int right_count {
-        count_in_range(nums, right_idx, lower_bound_idx, upper_bound_idx)};
+    //! Count occurrences of left_majority_element and right_majority_element
+    const auto left_count {
+        std::ranges::count(std::next(nums.begin(), lower_bound_idx),
+                           std::next(nums.begin(), upper_bound_idx + 1),
+                           left_majority_element)};
+    const auto right_count {
+        std::ranges::count(std::next(nums.begin(), lower_bound_idx),
+                           std::next(nums.begin(), upper_bound_idx + 1),
+                           right_majority_element)};
 
-    return left_count > right_count ? left_idx : right_idx;
+    return left_count > right_count
+        ? left_majority_element
+        : right_majority_element;
 }
 
 //! @brief Divide and conquer discussion solution
