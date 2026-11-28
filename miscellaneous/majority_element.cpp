@@ -250,6 +250,21 @@ static int majorityElementDS5(const std::vector<int>& nums)
 static int majorityElementDS6(const std::vector<int>& nums)
 {
     //! @details https://leetcode.com/problems/majority-element/editorial
+    //!
+    //!          Time complexity O(N * log N) where N = nums.size(). Each call
+    //!          to majority_element_recursive performs two recursive calls on
+    //!          subslices of N / 2 and two linear scans of length N. The time
+    //!          complexity can be represented by the recurrence relation:
+    //!          T(N) = 2 * T(N / 2) + 2N. By the master theorem, the recurrence
+    //!          satisfies case 2 so T(N) = O(N * log N).
+    //!          Space complexity O(log N) for stack frames due to recursion.
+    //!          The algorithm cuts the vector in half at each level of
+    //!          recursion so there can only be O(log N) "cuts" before the base
+    //!          case of 1 is reached. The resulting recursion tree is balanced
+    //!          so all paths from the root to a leaf are of length O(log N).
+    //!          Because the recursion tree is traversed in a depth-first manner
+    //!          the space complexity is equivalent to the length of the longest
+    //!          path, which is O(log N).
 
     return majority_element_recursive(nums, 0, std::ssize(nums) - 1);
 }
